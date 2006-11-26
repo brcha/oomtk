@@ -13,11 +13,11 @@ default: build
 #
 #  Invoke as something like:
 #
-#      "make -f Makefile.xenv TARGETS="oomtk-i386 oomtk-arm"
+#      "make TARGETS="oomtk-i386 oomtk-arm"
 #
 #  where each element of TARGETS is in the set
 #
-#    oomtk-{i386,x86_64,arm}
+#    oomtk-{i386,x86_64,arm,powerpc}
 #
 ##################################################################
 

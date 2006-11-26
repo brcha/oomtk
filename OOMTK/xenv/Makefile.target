@@ -9,7 +9,7 @@ include Makefile.vars
 
 default: build
 
-CROSSTARGET=$(CROSSARCH)-pc-$(CROSSOS)
+CROSSTARGET=$(CROSSARCH)-unknown-$(CROSSOS)
 CROSSHOSTROOT=$(CROSSROOT)/host
 CROSSSYSROOT=$(CROSSROOT)/sysroot-$(CROSSARCH)
 

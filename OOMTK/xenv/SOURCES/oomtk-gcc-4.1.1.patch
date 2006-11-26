@@ -1,6 +1,6 @@
-diff -Naur gcc-4.1.1-orig/config.sub gcc-4.1.1/config.sub
---- gcc-4.1.1-orig/config.sub	2005-12-16 13:57:40.000000000 +0100
-+++ gcc-4.1.1/config.sub	2006-10-25 13:27:05.000000000 +0200
+diff -Naur gcc-4.1.1/config.sub gcc-4.1.1-new/config.sub
+--- gcc-4.1.1/config.sub	2005-12-16 13:57:40.000000000 +0100
++++ gcc-4.1.1-new/config.sub	2006-11-24 02:03:52.000000000 +0100
 @@ -1205,6 +1205,8 @@
  	      | -skyos* | -haiku*)
  	# Remember, each alternative MUST END IN *, to match a version number.
@@ -10,9 +10,9 @@ diff -Naur gcc-4.1.1-orig/config.sub gcc-4.1.1/config.sub
  	-qnx*)
  		case $basic_machine in
  		    x86-* | i*86-*)
-diff -Naur gcc-4.1.1-orig/gcc/config/i386/t-oomtk64 gcc-4.1.1/gcc/config/i386/t-oomtk64
---- gcc-4.1.1-orig/gcc/config/i386/t-oomtk64	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-4.1.1/gcc/config/i386/t-oomtk64	2006-10-25 13:35:45.000000000 +0200
+diff -Naur gcc-4.1.1/gcc/config/i386/t-oomtk64 gcc-4.1.1-new/gcc/config/i386/t-oomtk64
+--- gcc-4.1.1/gcc/config/i386/t-oomtk64	1970-01-01 01:00:00.000000000 +0100
++++ gcc-4.1.1-new/gcc/config/i386/t-oomtk64	2006-11-24 02:03:52.000000000 +0100
 @@ -0,0 +1,20 @@
 +# On x86-64 we do not need any exports for glibc for 64-bit libgcc_s,
 +# override the settings
@@ -34,9 +34,9 @@ diff -Naur gcc-4.1.1-orig/gcc/config/i386/t-oomtk64 gcc-4.1.1/gcc/config/i386/t-
 +# because then __FRAME_END__ might not be the last thing in .eh_frame
 +# section.
 +CRTSTUFF_T_CFLAGS = -fno-omit-frame-pointer -fno-asynchronous-unwind-tables
-diff -Naur gcc-4.1.1-orig/gcc/config/oomtk.h gcc-4.1.1/gcc/config/oomtk.h
---- gcc-4.1.1-orig/gcc/config/oomtk.h	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-4.1.1/gcc/config/oomtk.h	2006-10-25 13:34:09.000000000 +0200
+diff -Naur gcc-4.1.1/gcc/config/oomtk.h gcc-4.1.1-new/gcc/config/oomtk.h
+--- gcc-4.1.1/gcc/config/oomtk.h	1970-01-01 01:00:00.000000000 +0100
++++ gcc-4.1.1-new/gcc/config/oomtk.h	2006-11-24 02:03:52.000000000 +0100
 @@ -0,0 +1,27 @@
 +/* Configuration common to all targets running OOMTK.
 +   Copyright (C) 2000, 2002, 2004 Free Software Foundation, Inc. 
@@ -65,9 +65,9 @@ diff -Naur gcc-4.1.1-orig/gcc/config/oomtk.h gcc-4.1.1/gcc/config/oomtk.h
 +	builtin_define ("__OOMTK__");	    \
 +	builtin_assert ("system=OOMTK");    \
 +    } while (0)
-diff -Naur gcc-4.1.1-orig/gcc/config.build gcc-4.1.1/gcc/config.build
---- gcc-4.1.1-orig/gcc/config.build	2005-06-25 04:02:01.000000000 +0200
-+++ gcc-4.1.1/gcc/config.build	2006-10-25 13:36:44.000000000 +0200
+diff -Naur gcc-4.1.1/gcc/config.build gcc-4.1.1-new/gcc/config.build
+--- gcc-4.1.1/gcc/config.build	2005-06-25 04:02:01.000000000 +0200
++++ gcc-4.1.1-new/gcc/config.build	2006-11-24 02:03:52.000000000 +0100
 @@ -85,6 +85,9 @@
      build_xm_file=i386/xm-djgpp.h
      build_exeext=.exe
@@ -78,10 +78,10 @@ diff -Naur gcc-4.1.1-orig/gcc/config.build gcc-4.1.1/gcc/config.build
    i[34567]86-*-sco3.2v5*) 
      # 80386 running SCO Open Server 5
      build_install_headers_dir=install-headers-cpio
-diff -Naur gcc-4.1.1-orig/gcc/config.gcc gcc-4.1.1/gcc/config.gcc
---- gcc-4.1.1-orig/gcc/config.gcc	2006-05-09 22:02:29.000000000 +0200
-+++ gcc-4.1.1/gcc/config.gcc	2006-10-25 13:43:21.000000000 +0200
-@@ -978,6 +978,17 @@
+diff -Naur gcc-4.1.1/gcc/config.gcc gcc-4.1.1-new/gcc/config.gcc
+--- gcc-4.1.1/gcc/config.gcc	2006-05-09 22:02:29.000000000 +0200
++++ gcc-4.1.1-new/gcc/config.gcc	2006-11-24 02:18:18.000000000 +0100
+@@ -978,6 +978,25 @@
  	use_collect2=yes
  	gas=yes
  	;;
@@ -95,6 +95,14 @@ diff -Naur gcc-4.1.1-orig/gcc/config.gcc gcc-4.1.1/gcc/config.gcc
 +	tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h i386/x86_64.h oomtk.h"
 +	tmake_file="${tmake_file} i386/t-oomtk64"
 +	use_fixproto=yes
++	;;
++arm-*-oomtk*)
++	tm_file="dbxelf.h elfos.h arm/unknown-elf.h arm/elf.h arm/aout.h arm/arm.h oomtk.h"
++	tmake_file=arm/t-arm-elf
++	use_fixprotos=yes
++	;;
++powerpc*-*-oomtk*)
++	# All the configuration is presently done generically.
 +	;;
  i[34567]86-*-darwin*)
  	# All the configuration is presently done generically.

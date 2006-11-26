@@ -36,7 +36,24 @@ DEFINES	:= -DOOMTK -DOOMTK_VERSION="\"$(OOMTK_VERSION)\"" -DOOMTK_BUILD="\"$(OOM
 ##                          ##
 
 V	?= @
-OOMTK_TOOLCHAIN_PREFIX	?= /oomtk/host/bin/i386-pc-oomtk-
+
+ifeq ($(ARCH_CONFIG),IA32)
+	TARGET := i386-unknown-oomtk
+else ifeq ($(ARCH_CONFIG),AMD64)
+	TARGET := x86_64-unknown-oomtk
+	$(error AMD64 is not supported at the moment.)
+else ifeq ($(ARCH_CONFIG),ARM)
+	TARGET := arm-unknown-oomtk
+	$(error ARM is not supported at the moment.)
+else ifeq ($(ARCH_CONFIG),PPC)
+	TARGET := powerpc-unknown-oomtk
+	$(error PowerPC is not supported at the moment.)
+else
+	$(error Unsupported architecture!)
+endif
+
+
+OOMTK_TOOLCHAIN_PREFIX	?= /oomtk/host/bin/$(TARGET)-
 
 CCACHE	:= `type -p ccache`
 CC	:= $(V)$(CCACHE) $(OOMTK_TOOLCHAIN_PREFIX)gcc
