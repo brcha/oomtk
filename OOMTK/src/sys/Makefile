@@ -30,6 +30,7 @@ SUBDIRECTORIES += libs/minilibc
 SUBDIRECTORIES += libs/supc++
 SUBDIRECTORIES += libs/libc++
 SUBDIRECTORIES += devices
+SUBDIRECTORIES += kernel
 
 # Initialize the variables
 INCLUDE_DIRS := $(SYS_SOURCE_DIR)/include

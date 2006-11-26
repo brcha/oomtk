@@ -57,13 +57,18 @@ void systemStartup()
   Console::stdout = &vga;
   Console::stderr = &vga;
 
-//   printf("OOMTK version %s build %s (built %s by %s)\n",
-//               OOMTK_VERSION, OOMTK_BUILD, OOMTK_BUILD_DATE, OOMTK_BUILD_USER);
+  // Colored Hello World :)
+  printf(ANSI_FG_WHITE "OOMTK version %s build %s (built %s by %s)\n" ANSI_NORMAL,
+              ANSI_FG_CYAN OOMTK_VERSION ANSI_FG_WHITE,
+              ANSI_FG_CYAN OOMTK_BUILD ANSI_FG_WHITE,
+              ANSI_FG_CYAN OOMTK_BUILD_DATE ANSI_FG_WHITE,
+              ANSI_FG_CYAN OOMTK_BUILD_USER ANSI_FG_WHITE
+        );
 
-  clog << "OOMTK version " << ANSI_FG_CYAN OOMTK_VERSION
-       << " build " << ANSI_FG_CYAN OOMTK_BUILD
-       << " (built " << ANSI_FG_CYAN OOMTK_BUILD_DATE
-       << " by " << ANSI_FG_CYAN OOMTK_BUILD_USER << ")" << endl;
+//   clog << "OOMTK version " << ANSI_FG_CYAN OOMTK_VERSION
+//        << " build " << ANSI_FG_CYAN OOMTK_BUILD
+//        << " (built " << ANSI_FG_CYAN OOMTK_BUILD_DATE
+//        << " by " << ANSI_FG_CYAN OOMTK_BUILD_USER << ")" << endl;
 
   CPUID cpuid = CPUID();
 
