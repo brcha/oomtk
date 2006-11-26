@@ -29,10 +29,12 @@ class CPUID {
      * @brief CPU Features
      *
      * Names of the features are the same as in IA-32 manual (with excluded '-'
-     * in some names).
+     * in some names and with 'a' added in front of AMD's 3DNow features).
      *
      * See IA-32 Intel Architecture Software Developer's Manual, Volume 2A:
-     * Instruction Set Reference, A-M, pages 165-...
+     * Instruction Set Reference, A-M, pages 165-179.
+     * Also see AMD CPUID Specification and AMD64 Architecture Programmer's Manual,
+     * Volume 3: General-Purpose and System Instructions, pages 102-103.
      */
     enum cpuFeatures {
       // eax = 1, ecx features
@@ -61,24 +63,43 @@ class CPUID {
       MCA,        ///< @brief Machine Check Architecture
       CMOV,       ///< @brief Conditional Move instruction supported
       PAT,        ///< @brief Page Attribute Table
-      PSE36,
-      PSN,
-      CLFSH,
-      DS,
-      ACPI,
-      MMX,
-      FXSR,
-      SSE,
-      SSE2,
-      SS,
-      HT,
-      TM,
-      SBF,
+      PSE36,      ///< @brief 36bit Page Size Extension - 4 MB pages beyond 4 GB
+      PSN,        ///< @brief Processor Serial Number (96bit)
+      CLFSH,      ///< @brief CLFLUSH instruction
+      DS,         ///< @brief Debug Store
+      ACPI,       ///< @brief Thermal Monitor and Software Controlled Clock Facilities
+      MMX,        ///< @brief Intel MMX Technology
+      FXSR,       ///< @brief FXSAVE and FXRSTOR instructions (for FPU context)
+      SSE,        ///< @brief SSE extensions
+      SSE2,       ///< @brief SSE2 extensions
+      SS,         ///< @brief Self Snoop
+      HTT,        ///< @brief Multi-Threading - more than one logical processor
+      TM,         ///< @brief Thermal Monitor
+      PBE,        ///< @brief Pending Break Enable
       // eax = 80000001, ecx features
-      LAHF64,
-      CMPLEGACY,
-      SVM,
-      AltMovCr8,
+      LahfSahf,   ///< @brief LAHF/SAHF available in 64bit mode
+      CmpLegacy,  ///< @brief CMPLEGACY available (Athlon64 and Opteron)
+      SVM,        ///< @brief AMD's Secure Virtual Machine feature
+      AltMovCr8,  ///< @brief LOCK MOV CR0 means MOV CR8
+      // eax = 80000001, edx features
+      SYSCALL,    ///< @brief SYSCALL and SYSRET instructions
+      FCMOV,      ///< @brief TransMeta FCMOV instruction
+      NX,         ///< @brief No-eXecute page protection
+      MmxExt,     ///< @brief AMD's extensions to MMX instructions
+      FFXSR,      ///< @brief FXSAVE and FXRSTOR instruction optimizations
+      RDTSCP,     ///< @brief RDTSCP instruction
+      LM,         ///< @brief AMD's Long Mode (64-bit mode)
+      EM64T,      ///< @brief Intel's EM64T mode (64-bit mode)
+      a3DNowExt,  ///< @brief AMD's extensions for 3DNow! instructions
+      a3DNow,     ///< @brief 3DNow! instructions
+      // eax = 80000007, edx features (APM information on AMD)
+      TS,         ///< @brief Temperature sensor
+      FID,        ///< @brief Frequency ID control
+      VID,        ///< @brief Voltage ID control
+      TTP,        ///< @brief THERMTRIP is supported
+      TM,         ///< @brief Hardware thermal control is supported
+      STC,        ///< @brief Software thermal control is supported
+      TscInvariant, ///< @brief TSC rate is ensured to be invariant across all P,C-States and stop-grant transitions (such as STPCLK Throttling) => TSC is good as a time source.
     };
 
   protected:
