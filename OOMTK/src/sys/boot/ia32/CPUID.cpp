@@ -253,19 +253,19 @@ PUBLIC void CPUID::identify()
      * @todo families, steppings and so on as regular strings, not as these pure
      * @todo values...
      */
-/*    printf("CPU[%2d]: family %d, model %d, stepping %d, brand %d, clflush %d\n",
-           _cpuNumber,
-           _cpuFamily,
-           _cpuModel,
-           _cpuStepping,
-           fields(regs.ebx, 7, 0),
-           fields(regs.ebx, 15, 8)
-          );
-    printf("CPU[%2d]: Logical CPUs: %d, Init APIC ID: %d\n",
-           _cpuNumber,
-           _nLogicalProcessors,
-           fields(regs.ebx, 31, 24)
-          );*/
+//     printf("CPU[%2d]: family %d, model %d, stepping %d, brand %d, clflush %d\n",
+//            _cpuNumber,
+//            _cpuFamily,
+//            _cpuModel,
+//            _cpuStepping,
+//            fields(regs.ebx, 7, 0),
+//            fields(regs.ebx, 15, 8)
+//           );
+//     printf("CPU[%2d]: Logical CPUs: %d, Init APIC ID: %d\n",
+//            _cpuNumber,
+//            _nLogicalProcessors,
+//            fields(regs.ebx, 31, 24)
+//           );
   };
 
   // Get the extended information
@@ -584,7 +584,7 @@ void CPUID::addFeature(uint32_t id, uint32_t code, uint32_t reg, const char * na
  * @param feature CPU Feature in question
  * @returns true if CPU supports the feature
  */
-PUBLIC bool has(cpuFeature_t feature)
+PUBLIC bool CPUID::has(cpuFeature_t feature)
 {
   if (feature < NUM_FEATURES)
     return features[feature].has;
@@ -594,7 +594,7 @@ PUBLIC bool has(cpuFeature_t feature)
 /**
  * @brief Is CPU identified?
  */
-PUBLIC bool isIdentified()
+PUBLIC bool CPUID::isIdentified()
 {
   return _identified;
 }
@@ -603,7 +603,7 @@ PUBLIC bool isIdentified()
  * @brief What is the CPU name?
  * @return CPU name
  */
-PUBLIC const char * name()
+PUBLIC const char * CPUID::name()
 {
   if (!_identified)
     return "";
@@ -614,7 +614,7 @@ PUBLIC const char * name()
  * @brief What is the CPU vendor?
  * @returns vendor string
  */
-PUBLIC const char * vendor()
+PUBLIC const char * CPUID::vendor()
 {
   if (!_identified)
     return "";
@@ -625,7 +625,7 @@ PUBLIC const char * vendor()
  * @brief What is the CPU vendor?
  * @returns vendor id
  */
-PUBLIC uint32_t vendorId()
+PUBLIC uint32_t CPUID::vendorId()
 {
   if (!_identified)
     return 0;

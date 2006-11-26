@@ -46,15 +46,15 @@ ifeq (_prep,$(notdir $(CURDIR)))
 .SUFFIXES:
 .DEFAULT: ; @:
 
-all:: prepare_preprocess $(foreach p, $(PREPROCESS_MODULES), $(p)-preprocessed.stamp) ; @:
+all:: prep.deps $(foreach p, $(PREPROCESS_MODULES), $(p)-preprocessed.stamp) ; @:
 
 # $(foreach p, $(PREPROCESS_MODULES), $(p)-preprocessed.stamp: $($(p)_SOURCES)\n)
 
-prepare_preprocess:
+prep.deps:
 	@($(foreach p, $(PREPROCESS_MODULES), \
-		echo "$(p)-preprocessed.stamp: $($(p)_SOURCES)";)) > $(PREP_DIR)/prep.deps
+		echo "$(p)-preprocessed.stamp: $($(p)_SOURCES) prep.deps";)) > prep.deps
 
--include $(PREP_DIR)/prep.deps
+-include prep.deps
 
 else
 # We have preprocessed everything, now we build
