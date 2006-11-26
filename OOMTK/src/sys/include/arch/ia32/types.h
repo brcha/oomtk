@@ -43,6 +43,15 @@ typedef u16_t   uint;
 typedef u16_t   u_int;
 typedef u8_t    uchar;
 typedef u8_t    u_char;
+
+// The following names are best, since I've got syntax highlight for them
+// And they are kind-of in the standard :)
+typedef u32_t   uint32_t;
+typedef s32_t   int32_t;
+typedef u16_t   uint16_t;
+typedef s16_t   int16_t;
+typedef u8_t    uint8_t;
+typedef s8_t    int8_t;
 /** @} */
 
 /**

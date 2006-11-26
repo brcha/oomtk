@@ -55,7 +55,7 @@ LIBSUPCPP	:= $(shell $(OOMTK_TOOLCHAIN_PREFIX)g++ -print-file-name=libsupc++.a)
 ##                       ##
 
 # Generic flags
-CFLAGS_GEN	:= -static -include $(SYS_SOURCE_DIR)/include/macros.h -include $(SYS_SOURCE_DIR)/include/config.h -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs -I$(wildcard $(dir $(LIBGCC))/include $(dir $(LIBGCC))/../include)
+CFLAGS_GEN	:= -static -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs -include $(SYS_SOURCE_DIR)/include/macros.h -include $(SYS_SOURCE_DIR)/include/config.h -I$(wildcard $(dir $(LIBGCC))/include $(dir $(LIBGCC))/../include)
 CXXFLAGS_ADDONS	:= -fno-exceptions -fno-rtti
 ASMFLAGS_ADDONS	:= -D__ASSEMBLER__
 

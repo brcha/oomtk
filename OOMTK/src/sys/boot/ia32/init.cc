@@ -9,10 +9,13 @@
 
 #include <stdio.h>
 #include <VgaConsole.h>
+#include <KernelOutputStream.h>
 
 #include <CPUID.h>
 
 #include <SegmentDescriptor.h>
+
+using namespace std;
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,13 +43,27 @@ void systemStartup()
   // Static constructed console
   VgaConsole vga = VgaConsole();
 
+  KernelOutputStream<char> kcout = KernelOutputStream<char>(ANSI_NORMAL);
+  KernelOutputStream<char> kcerr = KernelOutputStream<char>(ANSI_FG_RED);
+  KernelOutputStream<char> kclog = KernelOutputStream<char>(ANSI_FG_WHITE);
+
+  basic_ostream<char> & cout = kcout;
+  basic_ostream<char> & cerr = kcerr;
+  basic_ostream<char> & clog = kclog;
+
   vga.clear();
   // Say hello to make sure we're really in the higher half...
 
   Console::stdout = &vga;
   Console::stderr = &vga;
-  printf("OOMTK version %s build %s (built %s by %s)\n",
-              OOMTK_VERSION, OOMTK_BUILD, OOMTK_BUILD_DATE, OOMTK_BUILD_USER);
+
+//   printf("OOMTK version %s build %s (built %s by %s)\n",
+//               OOMTK_VERSION, OOMTK_BUILD, OOMTK_BUILD_DATE, OOMTK_BUILD_USER);
+
+  clog << "OOMTK version " << ANSI_FG_CYAN OOMTK_VERSION
+       << " build " << ANSI_FG_CYAN OOMTK_BUILD
+       << " (built " << ANSI_FG_CYAN OOMTK_BUILD_DATE
+       << " by " << ANSI_FG_CYAN OOMTK_BUILD_USER << ")" << endl;
 
   CPUID cpuid = CPUID();
 
