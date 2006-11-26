@@ -164,8 +164,6 @@ class CPUID {
     // eax = 1, ebx fields
     uint32_t _nLogicalProcessors;
 
-    /// @brief CPU Number starting at 0 (for multiple-processor platforms support)
-    uint32_t _cpuNumber;
     /// @brief Print to console or not?
     bool _printOut;
 
@@ -186,6 +184,17 @@ IMPLEMENTATION:
 #include INC_ARCH(EFLAGS.h)
 #include <fatal.h>
 #include <string.h>
+
+/**
+ * @brief Make only one instance of this class
+ * @returns the instance
+ */
+PUBLIC static CPUID * CPUID::instance(bool printOut = true)
+{
+  static CPUID _instance = CPUID(printOut);
+
+  return &_instance;
+};
 
 /**
  * @brief Do the identification
@@ -225,7 +234,7 @@ PUBLIC void CPUID::identify()
   else
     _cpuVendorID = Unknown;
 
-//   printf("CPU[%2d]: vendor = %s\n", _cpuNumber, _cpuVendor);
+//   printf("CPU0: vendor = %s\n",  _cpuVendor);
 
   if (maximumFunction == 0)
     fatal("CPUID supports 0 functions, which is quite odd :(\n");
@@ -253,16 +262,14 @@ PUBLIC void CPUID::identify()
      * @todo families, steppings and so on as regular strings, not as these pure
      * @todo values...
      */
-//     printf("CPU[%2d]: family %d, model %d, stepping %d, brand %d, clflush %d\n",
-//            _cpuNumber,
+//     printf("CPU0: family %d, model %d, stepping %d, brand %d, clflush %d\n",
 //            _cpuFamily,
 //            _cpuModel,
 //            _cpuStepping,
 //            fields(regs.ebx, 7, 0),
 //            fields(regs.ebx, 15, 8)
 //           );
-//     printf("CPU[%2d]: Logical CPUs: %d, Init APIC ID: %d\n",
-//            _cpuNumber,
+//     printf("CPU0: Logical CPUs: %d, Init APIC ID: %d\n",
 //            _nLogicalProcessors,
 //            fields(regs.ebx, 31, 24)
 //           );
@@ -286,7 +293,7 @@ PUBLIC void CPUID::identify()
     // Terminate the _cpuName string
     _cpuName[48] = '\0';
     // Print it on the console
-    printf("CPU[%2d]: %s\n", _cpuNumber, _cpuName);
+    printf("CPU0: %s\n", _cpuName);
   }
 
   // Check all the features and show results
@@ -340,13 +347,13 @@ PUBLIC void CPUID::identify()
       uint32_t len = strlen(features[i].name) + 1;
       if (firstPass)
       {
-        printf("CPU[%2d]: [ ", _cpuNumber); // 11 characters
+        printf("CPU0: [ "); // 8 characters
         firstPass = false;
         currentLine = 11;
       }
       if ((currentLine + len) >= 75) // must write new line
       {
-        printf("\n           "); // 11 spaces
+        printf("\n        "); // 8 spaces
         currentLine = 11;
       }
       printf("%s ", features[i].name);
@@ -436,13 +443,11 @@ PROTECTED inline uint32_t CPUID::cpuid(uint32_t code, cpuidRegisters & regs)
 
 /**
  * @brief CPUID Constructor
- * @param cpuNumber the number of the CPU (if you have more than one CPU)
  * @param printOut print the messages on screen or not
  */
-PUBLIC CPUID::CPUID(uint32_t cpuNumber = 0, bool printOut = true)
+PROTECTED CPUID::CPUID(bool printOut = true)
 {
   // Construct local variables
-  _cpuNumber = cpuNumber;
   _printOut = printOut;
   _identified = false;
 

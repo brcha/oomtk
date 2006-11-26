@@ -87,7 +87,21 @@ IMPLEMENTATION:
 
 #include <PortIO.h>
 
-PUBLIC VgaConsole::VgaConsole()
+/**
+ * @brief One instance of VgaConsole
+ * @returns the instance
+ */
+PUBLIC static VgaConsole * VgaConsole::instance()
+{
+  static VgaConsole _instance = VgaConsole();
+
+  return &_instance;
+};
+
+/**
+ * @brief Protected constructor -- not for use by mortals
+ */
+PROTECTED VgaConsole::VgaConsole()
 {
   m_display = (u16_t *) (KVA + 0xB8000); //0xF00B8000;
   m_x = 0;

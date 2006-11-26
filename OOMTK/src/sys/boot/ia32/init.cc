@@ -15,6 +15,8 @@
 
 #include <SegmentDescriptor.h>
 
+#include <Paging.h>
+
 using namespace std;
 
 #ifdef __cplusplus
@@ -41,7 +43,7 @@ void systemStartup()
 //   callCtors();
 
   // Static constructed console
-  VgaConsole vga = VgaConsole();
+  VgaConsole * vga = VgaConsole::instance();
 
   KernelOutputStream<char> kcout = KernelOutputStream<char>(ANSI_NORMAL);
   KernelOutputStream<char> kcerr = KernelOutputStream<char>(ANSI_FG_RED);
@@ -51,11 +53,11 @@ void systemStartup()
   basic_ostream<char> & cerr = kcerr;
   basic_ostream<char> & clog = kclog;
 
-  vga.clear();
+  vga->clear();
   // Say hello to make sure we're really in the higher half...
 
-  Console::stdout = &vga;
-  Console::stderr = &vga;
+  Console::stdout = vga;
+  Console::stderr = vga;
 
   // Colored Hello World :)
   printf(ANSI_FG_WHITE "OOMTK version %s build %s (built %s by %s)\n" ANSI_NORMAL,
@@ -70,9 +72,11 @@ void systemStartup()
 //        << " (built " << ANSI_FG_CYAN OOMTK_BUILD_DATE
 //        << " by " << ANSI_FG_CYAN OOMTK_BUILD_USER << ")" << endl;
 
-  CPUID cpuid = CPUID();
+  CPUID * cpuid = CPUID::instance();
 
-  cpuid.identify();
+  cpuid->identify();
+
+  Paging * paging = Paging::instance();
 
   for (;;);
 

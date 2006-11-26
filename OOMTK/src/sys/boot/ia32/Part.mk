@@ -28,10 +28,14 @@ paging_Paging_SOURCES	:= Paging.cpp
 PREPROCESS_MODULES	+= paging_Paging
 boot_ia32_OBJECTS	+= $(call sources2objects,$(paging_Paging_SOURCES))
 
+paging_PAE_SOURCES	:= PagingPAE.cpp
+PREPROCESS_MODULES	+= paging_PAE
+boot_ia32_OBJECTS	+= $(call sources2objects,$(paging_PAE_SOURCES))
+
 linker.ia32.ld: linker.ia32.ld.S
 	$(CPP_MESSAGE)
 	$(CPP_BUILD)
 
 oomtk: linker.ia32.ld $(boot_ia32_OBJECTS) minilibc.a supc++.a libc++.a Devices.a Kernel.a
 	$(LD_MESSAGE)
-	$(LD) -N -o $@ -T $< -gc-sections $(filter-out $<,$^) #$(LIBSUPCPP)
+	$(LD) -N -o $@ -T $< -gc-sections $(filter-out $<,$^)

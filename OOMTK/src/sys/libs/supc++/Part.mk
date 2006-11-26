@@ -12,7 +12,7 @@ VPATH += $(supc++_SOURCE_DIR)
 INCLUDE_DIRS += $(supc++_SOURCE_DIR)/include
 
 supc++_SOURCES	:= initialize.cc memory.cc stdexcept.cc finalize.cc
-supc++_SOURCES	+= purevirtual.cc typeinfo.cc
+supc++_SOURCES	+= purevirtual.cc typeinfo.cc guard.cc
 
 supc++_OBJECTS	:= $(call sources2objects,$(supc++_SOURCES))
 

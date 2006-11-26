@@ -137,3 +137,9 @@ PUBLIC virtual int Console::charAvailable() const
   return -1;
 }
 
+/**
+ * @brief Don't construct this class!
+ */
+PROTECTED Console::Console()
+{
+};

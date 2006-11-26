@@ -22,3 +22,9 @@ class Paging
 
 IMPLEMENTATION:
 
+PUBLIC static Paging * Paging::instance()
+{
+  static Paging paging = Paging();
+
+  return &paging;
+};
