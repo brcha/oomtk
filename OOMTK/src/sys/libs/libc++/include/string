@@ -1,0 +1,251 @@
+#ifndef LIBCPP_STRING
+#define LIBCPP_STRING
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+#include <type_traits>
+
+namespace std
+{
+	inline void itoa(unsigned int n, char *s, unsigned int base)
+	{
+		char st[33];
+		unsigned int i = 0;
+		
+		do
+		{
+			unsigned int t = n % base;
+			if (t < 10)st[i++] = t + '0';
+			else st[i++] = (t - 10) + 'A';
+		} while((n /= base) > 0);
+		st[i] = '\0';
+		
+		unsigned int y = 0;
+		for (;i > 0;i--)
+		{
+			s[y] = st[i-1];
+			y++;
+		}
+		s[y] = '\0';
+	}
+	
+	template<class T, class Container>
+	class const_sequential_iterator;
+	template<class T, class Container>
+	class sequential_iterator;
+	
+	/*! Standard basic_string class */
+	template<class charT, class traits=char_traits<charT>, class Allocator=allocator<charT> >
+	class basic_string
+	{
+		public:
+			typedef traits																		traits_type;
+			typedef typename traits::char_type													value_type;
+			typedef Allocator																	allocator_type;
+			typedef typename Allocator::size_type												size_type;
+			typedef typename Allocator::difference_type											difference_type;
+			typedef typename Allocator::reference												reference;
+			typedef typename Allocator::const_reference											const_reference;
+			typedef sequential_iterator<charT, basic_string<charT, traits, Allocator> >			iterator;
+			typedef const_sequential_iterator<charT, basic_string<charT, traits, Allocator> >	const_iterator;
+			typedef typename Allocator::pointer													pointer;
+			typedef typename Allocator::const_pointer											const_pointer;
+			
+			/*! The constructor */
+			inline explicit basic_string()
+				: _str(0), _l(0), _n(0){}
+			/*! The constructor */
+			inline basic_string(const charT *str)
+				: _str(0), _l(0), _n(0)
+			{
+				fromChar(str);
+			}
+			/*! The copy constructor */
+			inline basic_string(const basic_string &str)
+				: _str(0), _l(0), _n(0)
+			{
+				//TODO: Speed improvement: Use the length saved in the string object
+				fromChar(str.c_str(), 0);
+			}
+			/*! The copy constructor */
+			inline basic_string(const basic_string &str, size_type pos)
+				: _str(0), _l(0), _n(0)
+			{
+				//TODO: Speed improvement: Use the length saved in the string object
+				fromChar(str.c_str(), pos);
+			}
+			/*! The constructor */
+			template<class InputIterator>
+			inline basic_string(InputIterator first, InputIterator last)
+				: _str(0)
+			{
+				_l = last.getOffset() - first.getOffset();
+				_n = _l + 1;
+				_str = new char[_n];
+				
+				for (unsigned int i = 0;i < _l;i++)
+				{
+					_str[i] = *first++;
+				}
+				_str[_l] = '\0';
+			}
+			/*!\todo */
+			basic_string &append(size_type n, charT c)
+			{
+				if (_n < (_l + n + 1))
+				{
+					charT *tmp = _str;
+					_n = _l + n + 1;
+					_str = new charT[_n];
+					traits::copy(_str, tmp, _l);
+					delete []tmp;
+				}
+				for (size_type i=0;i < n;i++)
+					_str[_l + i] = c;
+				_l += n;
+				_str[_l] = '\0';
+				return *this;
+			}
+			/*!\todo*/
+			basic_string &append(const charT *s)
+			{
+				return append(s, traits::length(s));
+			}
+			/*!\todo */
+			basic_string &append(const basic_string &s)
+			{
+				return append(s._str, s._l);
+			}
+			/*!\todo */
+			basic_string &append(const charT *s, size_type slen)
+			{
+				if (_n < (_l + slen + 1))
+				{
+					charT *tmp = _str;
+					_n = _l + slen + 1;
+					_str = new charT[_n];
+					traits::copy(_str, tmp, _l);
+					delete []tmp;
+				}
+				traits::copy(&_str[_l], s, slen + 1);
+				_l += slen;
+				return *this;
+			}
+			/*! Remove an element from the string
+			 *\param[in] pos the position in the string */
+			void erase(iterator pos)
+			{
+				unsigned int off = pos.getOffset();
+				for (unsigned int i=(off + 1);i < _n;i++)
+				{
+					_str[i-1] = _str[i];
+				}
+				--_l;
+			}
+			/*! Remove the elements between first and last
+			 *\param[in] first first element to remove
+			 *\param[in] last last element to remove */
+			void erase(iterator first, iterator last)
+			{
+				unsigned int off1 = first.getOffset();
+				unsigned int off2 = last.getOffset();
+				unsigned int move = _l - off2 - 1;
+				for (unsigned int i=off1;(i <= off2) && ((i - off1) < move);i++)
+				{
+					_str[i] = _str[off2 + i - off1];
+				}
+				_l -= off2 - off1 + 1;
+			}
+			/*! Get an iterator for the string's beginning */
+			iterator begin(){return iterator(*this, 0);}
+			/*! Get a const iterator for the string's beginning */
+			const_iterator begin() const{return const_iterator(*this, 0);}
+			/*! Get an iterator for the string's end */
+			iterator end(){return iterator(*this, _l);}
+			/*! Get a const iterator for the string's end */
+			const_iterator end() const{return const_iterator(*this, _l);}
+			/*! Get the string length
+			 *\return the string length */
+			inline size_t length() const{return _l;}
+			/*! Get the string length
+			 *\return the string length */
+			inline size_t size() const{return _l;}
+			/*! Get the c-style string */
+			inline const charT *c_str() const{return _str;}
+			/*! The destructor */
+			inline ~basic_string()
+			{
+				if (_str != 0)delete []_str;
+			}
+			
+			/*! The [] operator */
+			inline reference operator [] (size_type n)
+			{
+				//throw an exception if (n >= _n)
+				return _str[n];
+			}
+			/*! The [] operator */
+			inline const_reference operator [] (size_type n) const
+			{
+				//throw an exception if (n >= _n)
+				return _str[n];
+			}
+			/*! The = operator */
+			inline void operator = (const basic_string &str)
+			{
+				if (_str != 0)delete []_str;
+				fromChar(str.c_str(), 0);
+			}
+			/*! The = operator */
+			inline void operator = (const charT *str)
+			{
+				if (_str != 0)delete []_str;
+				fromChar(str);
+			}
+			/*! The == operator */
+			inline bool operator == (const basic_string &str)
+			{
+				if (_l != str._l)return false;
+				return (traits::compare(_str, str._str, _l) == 0);
+			}
+		private:
+			/*! Create string from character sequence */
+			void fromChar(const charT *str, size_type pos = 0)
+			{
+				if (str == 0)return;
+				_l = traits::length(str) - pos;
+				_n = _l + 1;
+				_str = new charT[_n];
+				traits::copy(_str, &str[pos], _l + 1);
+			}
+			/*! Pointer to the character sequence */
+			charT *_str;
+			/*! The string length */
+			size_type _l;
+			/*! The size of the allocation */
+			size_type _n;
+	};
+	
+	/*! Define the standard string class */
+	typedef basic_string<char> string;
+	
+	/*! Define the standard wstring class */
+	typedef basic_string<wchar_t> wstring;	
+}
+
+#include <ostream>
+
+namespace std
+{
+	template<class T>
+	inline basic_ostream<T> &operator << (basic_ostream<T> &os, const basic_string<T> &s)
+	{
+		os << s.c_str();
+		return os;
+	}
+};
+
+/*@}*/
+
+#endif

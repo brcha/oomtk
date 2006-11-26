@@ -1,0 +1,17 @@
+#ifndef LIBCPP_CSTDARG
+#define LIBCPP_CSTDARG
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+namespace std
+{
+	extern "C"
+	{
+		#include <stdarg.h>
+	};
+};
+
+/*@}*/
+
+#endif

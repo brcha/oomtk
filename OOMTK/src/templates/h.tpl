@@ -5,9 +5,6 @@
  *
  *  This file is part of OOMTK
  */
-/*
- * $Id: $
- */
 /** @file
  * @brief description
  */

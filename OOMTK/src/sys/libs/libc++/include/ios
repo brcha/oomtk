@@ -1,0 +1,86 @@
+#ifndef LIBCPP_IOS
+#define LIBCPP_IOS
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+#include <type_traits>
+
+namespace std
+{
+	/*! Standard ios_base class */
+	class ios_base
+	{
+		public:
+			enum __fmtflags
+			{
+				__dec			= 0x01,
+				__hex			= 0x02,
+				__oct			= 0x04,
+				__basefield		= 0x07,
+			};
+			typedef __fmtflags fmtflags;
+			static const fmtflags dec = __dec;
+			static const fmtflags hex = __hex;
+			static const fmtflags oct = __oct;
+			static const fmtflags basefield = __basefield;
+			
+			inline fmtflags flags() const{return _fmtflags;}
+			fmtflags flags(fmtflags fmtfl);
+			fmtflags setf(fmtflags fmtfl);
+			fmtflags setf(fmtflags fmtfl, fmtflags mask);
+		protected:
+			inline virtual ~ios_base(){}
+		private:
+			fmtflags _fmtflags;
+	};
+	
+	inline ios_base &dec(ios_base &base)
+	{
+		base.setf(ios_base::dec, ios_base::basefield);
+		return base;
+	}
+	inline ios_base &hex(ios_base &base)
+	{
+		base.setf(ios_base::hex, ios_base::basefield);
+		return base;
+	}
+	inline ios_base &oct(ios_base &base)
+	{
+		base.setf(ios_base::oct, ios_base::basefield);
+		return base;
+	}
+	
+	/*! | operator for ios_base::fmtflags */
+	inline ios_base::fmtflags operator | (ios_base::fmtflags fl1, ios_base::fmtflags fl2)
+	{
+		return static_cast<ios_base::fmtflags>(static_cast<int>(fl1) | static_cast<int>(fl2));
+	}
+	/*! & operator for ios_base::fmtflags */
+	inline ios_base::fmtflags operator & (ios_base::fmtflags fl1, ios_base::fmtflags fl2)
+	{
+		return static_cast<ios_base::fmtflags>(static_cast<int>(fl1) & static_cast<int>(fl2));
+	}
+	/*! ~ operator for ios_base::fmtflags */
+	inline ios_base::fmtflags operator ~ (ios_base::fmtflags fl)
+	{
+		return static_cast<ios_base::fmtflags>(~static_cast<int>(fl));
+	}
+	
+	/*! Standard basic_ios class template */
+	template<class charT, class traits=std::char_traits<charT> >
+	class basic_ios : public ios_base
+	{
+		public:
+			typedef charT char_type;
+			typedef traits traits_type;
+			
+			inline virtual ~basic_ios(){}
+	};
+	
+	class ios : public basic_ios<char>{};
+};
+
+/*@}*/
+
+#endif

@@ -3,5 +3,3 @@
 #
 #  This file is part of OOMTK
 #
-
-# $Id: $

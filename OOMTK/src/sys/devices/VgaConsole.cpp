@@ -60,11 +60,10 @@ IMPLEMENTATION:
 #include <cctype>
 
 #include <PortIO.h>
-#include INC_ARCH(pmap.h)
 
 PUBLIC VgaConsole::VgaConsole()
 {
-  m_display = (u16_t *) PA(0xB8000); //0xF00B8000;
+  m_display = (u16_t *) (KVA + 0xB8000); //0xF00B8000;
   m_x = 0;
   m_y = 0;
   m_color = LightGrey;

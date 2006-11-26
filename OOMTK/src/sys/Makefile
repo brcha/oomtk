@@ -24,9 +24,11 @@ include $(SYS_SOURCE_DIR)/Mk/rules.mk
 
 # Define directories where are the sources
 SUBDIRECTORIES  = boot/$(ARCH_CONFIG_LC)
-# SUBDIRECTORIES += libs/libDisplay
 SUBDIRECTORIES += libs/minilibc
-SUBDIRECTORIES += libs/cxxlib
+# SUBDIRECTORIES += libs/cxxlib
+# SUBDIRECTORIES += libs/pdclib
+SUBDIRECTORIES += libs/supc++
+SUBDIRECTORIES += libs/libc++
 SUBDIRECTORIES += devices
 
 # Initialize the variables

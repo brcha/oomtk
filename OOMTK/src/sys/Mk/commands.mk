@@ -45,7 +45,7 @@ AR	:= $(V)$(OOMTK_TOOLCHAIN_PREFIX)ar
 RANLIB	:= $(V)$(OOMTK_TOOLCHAIN_PREFIX)ranlib
 LD	:= $(V)$(OOMTK_TOOLCHAIN_PREFIX)ld
 PREP    := $(V)perl $(OOMTK_ROOT)/tools/preprocess/src/preprocess
-MOVE_IF_CHANGE	:= $(OOMTK_ROOT)/tools/move-if-change
+MOVE_IF_CHANGE	:= sh $(OOMTK_ROOT)/tools/move-if-change
 
 LIBGCC	:= $(shell $(OOMTK_TOOLCHAIN_PREFIX)g++ -print-libgcc-file-name)
 LIBSUPCPP	:= $(shell $(OOMTK_TOOLCHAIN_PREFIX)g++ -print-file-name=libsupc++.a)
@@ -95,6 +95,7 @@ impl_name = $(basename $(firstword $(notdir $(1))))
 
 # Building
 C_BUILD		=$(CC) $(CFLAGS) -c $< -o $@
+CPP_BUILD	=$(CC) -E -P $(CFLAGS) $< -o $@
 CXX_BUILD	=$(CXX) $(CXXFLAGS) -c $< -o $@
 ASM_BUILD	=$(CC) $(ASMFLAGS) -c $< -o $@
 PREP_BUILD	=$(PREP) $(PREPFLAGS) -e "$(PREP_TAGS)" -s \
@@ -104,6 +105,7 @@ AR_BUILD        =$(AR) $(ARFLAGS) $@ $^ &>/dev/null
 
 # Messages
 C_MESSAGE	=$(V)echo -e "    \033[01;35m CC    \033[01;37m $< \033[00m"
+CPP_MESSAGE	=$(V)echo -e "    \033[01;36m CPP   \033[01;37m $< \033[00m"
 CXX_MESSAGE	=$(V)echo -e "    \033[01;33m C++   \033[01;37m $< \033[00m"
 ASM_MESSAGE	=$(V)echo -e "    \033[01;32m ASM   \033[01;37m $< \033[00m"
 PREP_MESSAGE	=$(V)echo -e "    \033[01;36m PREP  \033[01;37m $< \033[00m"

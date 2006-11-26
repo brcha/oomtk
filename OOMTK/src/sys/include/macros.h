@@ -14,12 +14,44 @@
 
 /* This file is autoincluded in all files */
 
+#ifndef __GNUC__
+#error "Ha ha ha :) You are not using a compiler... at least not a GNU Compiler"
+#endif
+
 /* Include macros */
 /**
  * @brief Include arch-dependent file
  * Requires __ARCH__=<something> to be defined
  */
 #define INC_ARCH(x)               <arch/__ARCH__/x>
+
+/**
+ * Define per-CPU data if SMP is being compiled...
+ */
+#ifdef SMP
+#define DEFINE_PER_CPU(ty, nm) \
+  __attribute__((__section__(".data.percpu"))) __typeof__(ty) nm
+#else /* ! SMP */
+#define DEFINE_PER_CPU(ty, nm) __typeof__(ty) nm
+#endif /* SMP */
+
+/**
+ * Declare per-CPU data
+ */
+#define DECLARE_PER_CPU(ty, nm) extern __typeof__(ty) nm
+
+/**
+ * Cache align data
+ */
+#define CACHE_ALIGN __attribute__((__aligned__(CACHE_LINE_SIZE), \
+                                   __section__(".data.cachealign")))
+
+/**
+ * Page align data
+ */
+#define PAGE_ALIGN __attribute__((__aligned__(PAGE_SIZE), \
+                                  __section__(".pagedata")))
+
 
 /* Macros for code/data placement */
 #define SECTION(x)    __attribute__((section(x)))
@@ -103,6 +135,9 @@
 #else
 #define __UL(x)       x##UL
 #endif
+
+/* Use inline assembler */
+#define GNU_ASM(...) __asm__ __volatile__(__VA_ARGS__)
 
 /* Used in C library to make it able to link with C and C++ */
 #ifndef __cplusplus

@@ -3,93 +3,133 @@
  *
  *  This file is part of OOMTK
  */
-/*
- * $Id: start.S 195 2006-10-22 20:25:10Z brcha $
- */
 /** @file
  * @brief Assembly start code
  */
 
-#include INC_ARCH(asmMacros.h)
-#include INC_ARCH(mmu.h)
-#include INC_ARCH(pmap.h)
+/* Standard assembly macros */
+#include INC_ARCH(asm.h)
 
 /*
- * Kernel code is linked at KERNEL_BASE + 1MB, but GRUB loads it at 1MB
- * VIRT_TO_PHYS(x) maps a symbol x from link address to actual physical address
+ * This is the first file that hits the CPU after GRUB.
+ *
+ * In previous versions, this file was handling various descriptor tables...
+ * As far as I can see now, it is not flexible to put those things into asm,
+ * so now this file will do absolutely nothing more than it should be.
+ *
+ * And that is -> Load C++ :)
+ *
+ * To do so, this file must also establish the Stack (because GRUB can't do
+ * that)
  */
-#define VIRT_TO_PHYS(x) ((x) - KERNEL_BASE)
-
-/* Temporary kernel code/data selectors */
-.set CODE_SELECTOR,0x8
-.set DATA_SELECTOR,0x10
 
 #define MB_PAGE_ALIGN   (1<<0)
 #define MB_MEM_INFO     (1<<1)
+#define MB_VIDEO_MODES	(1<<2)
 #define MB_MAGIC        (0x1badb002)
 #define MB_FLAGS        (MB_MEM_INFO | MB_PAGE_ALIGN)
 #define MB_CHECKSUM     (-(MB_MAGIC + MB_FLAGS))
 
+
 /* Kernel entry point */
-.text
+    .text
+GEXT(start)
+GEXT(_start)
+    jmp over_multiboot_stuff
 
-/* Multiboot header */
-.align 4
-.long MB_MAGIC
-.long MB_FLAGS
-.long MB_CHECKSUM
+    /* Multiboot header */
+    .align 4
+multiboot_header:
+    .long MB_MAGIC
+    .long MB_FLAGS
+    .long MB_CHECKSUM
 
-.globl  _start
-_start:
-    movw    $0x1234,0x472   /* warm boot */
+over_multiboot_stuff:
+    /* First of all, save EAX to some other register. It holds
+     * Multiboot Info, but it is used by any other instruction (duh)
+     */
+    movl    %eax, %edx
 
-    /* Load temporary GDT and replace GRUB's one */
-    lgdt    VIRT_TO_PHYS(tempGdtDesc)
+    cld
 
-    /* Reload the segmen registers with the new ones */
-    movl    $DATA_SELECTOR, %eax        /* Data segment selector    */
-    movw    %ax,%ds                     /* Data Segment             */
-    movw    %ax,%es                     /* Extra Segment            */
-    movw    %ax,%ss                     /* Stack Segment            */
-    ljmp    $CODE_SELECTOR,$nextLine    /* Code Segment (must jump) */
+    /* Clear the BSS Section und die Mapping Directories */
+    movl    $EXT(_bss_start), %edi  /* Load destination */
+    movl    $EXT(_end_maps), %ecx   /* Count revision 1 */
+    subl    $EXT(_bss_start), %ecx  /* Count revision 2 */
+    movl    $0x0, %eax		    /* Fill with NULL	*/
+    subl    $KVA, %edi		    /* No paging set up yet! */
+
+    /* Do the clear loop */
+    rep
+    stosb
+
+    /* BSS & Mappings cleared :) */
+
+    /* Now save the multiboot informations into kernel (in init.cc) */
+    movl    $EXT(multibootSignature)-KVA, %esi
+    movl    %edx, (%esi)    /* Signature */
+    movl    $EXT(multibootInfo)-KVA, %esi
+    movl    %ebx, (%esi)    /* Multiboot info (pointer) */
+
+    /* Now, setup the Stack (preallocated in the linker script */
+    movl    $kstack_hi - KVA, %esp
+
+    /* Setup temporary GDT */
+    lgdt    trickGDTptr - KVA
+
+    /* Reload the segment registers with the new ones */
+    movl    $0x10, %eax	    /* Data segment selector */
+    movw    %ax, %ds
+    movw    %ax, %es
+    movw    %ax, %ss
+
+    ljmp    $0x8, $nextLine  /* Code segment selector */
 nextLine:
-    /* Clear the frame pointer (for debugging) */
-    movl    $0x0,%ebp
+    /* Clear the frame pointer */
+    movl    $0x0, %ebp
 
-    /* Load the temporary boot stack (+leave some space for trap frame) */
-    movl    $(tempStackTop-0x40),%esp
+    /* Setup the stack right */
+    movl    $kstack_hi, %esp
 
-    /* Go to C */
-    pushl   %ebx			/* Multiboot info structure */
-    call    init
+    /* Welcome to C++ */
+    call    EXT(systemStartup)
+    /* We should never come here... but just in case */
+    jmp	    halt
 
-    /* If we are here, there was an error, halt the computer */
-forest:
-    hlt
-    jmp	    forest
+
+    /* Global function halt() for halting the kernel... (what else) */
+GEXT(halt)
+1:
+    cli		    /* Stop interrupts		*/
+    hlt		    /* Halt			*/
+    jmp	    1b	    /* And jump to halt again	*/
+
+/* Define scripts for GDT */
+#define SEG_NULL            \
+          .word 0, 0;       \
+          .byte 0, 0, 0, 0
+#define SEG(type,base,limit)                                    \
+          .word (((limit)>>12)&0xffff), ((base)&0xffff);        \
+          .byte (((base)>>16)&0xff), (0x90|(type)),             \
+                (0xc0|(((limit)>>28)&0xf)), (((base)>>24)&0xff)
+/* Segment types are already defined in SegmentDescriptor.h */
+#define segType_A     0x1
+#define segType_W     0x2
+#define segType_E     0x4
+#define segType_R     0x2
+#define segType_C     0x4
+#define segType_Code  0x8
+#define segType_Data  0x0
 
 .data
-    /* Virtual page table */
-    .globl  _vpt
-    .set    _vpt, VPT
-    .globl  _vpd
-    .set    _vpd, (VPT + SRL(VPT, 10))
+    /* Many thanx to Tim Robinson for this GDT trick :) */
+trickGDTptr:
+    .word trickGDTend - trickGDT - 1	/* sizeof(trickGDT) - 1	*/
+    .long trickGDT - KVA		/* Address of trickGDT	*/
 
-    /* Temporary stack */
-    .p2align	PGSHIFT		/* Page alignment   */
-    .globl	tempStack
-tempStack:
-    .space	KSTACKSIZE
-    .globl	tempStackTop
-tempStackTop:
-
-    /* Setup the temporary GDT */
-    .p2align	2		/* 4byte alignment  */
-tempGDT:
-    SEG_NULL					/* Null segment	*/
-    SEG(STA_X|STA_R, -KERNEL_BASE, 0xffffffff)	/* Code segment	*/
-    SEG(STA_W, -KERNEL_BASE, 0xffffffff)	/* Data segment */
-tempGdtDesc:
-    .word   0x17		    /* sizeof(tempGDT) - 1  */
-    .long   VIRT_TO_PHYS(tempGDT)   /* Address of tempGDT   */
-
+    .p2align	2			/* 4byte alignment	*/
+trickGDT:
+    SEG_NULL					    /* Null segment */
+    SEG(segType_Code | segType_R, -KVA, 0xffffffff) /* Code segment */
+    SEG(segType_Data | segType_W, -KVA, 0xffffffff) /* Data segment */
+trickGDTend:

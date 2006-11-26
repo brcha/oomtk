@@ -1,0 +1,17 @@
+#ifndef LIBCPP_CSTDLIB
+#define LIBCPP_CSTDLIB
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+namespace std
+{
+	extern "C"
+	{
+		#include <stdlib.h>
+	};
+};
+
+/*@}*/
+
+#endif

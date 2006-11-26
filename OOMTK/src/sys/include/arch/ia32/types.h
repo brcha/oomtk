@@ -1,9 +1,9 @@
 #ifndef __ARCH__IA32__TYPES_H__
 #define __ARCH__IA32__TYPES_H__
 /*
- *  Copyright (C) 1994-2006 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
  *
- *  This file is part of OOMTK v.2
+ *  This file is part of OOMTK
  */
 /*
  * $Id: types.h 195 2006-10-22 20:25:10Z brcha $

@@ -12,11 +12,43 @@
  * @brief Configuration defines
  */
 
-#define KERNEL_OFFSET 0xF0000000
+/* Take from arch-specific config.h first, then define what's left undefined here */
+#include INC_ARCH(config.h)
 
-#define SEC_INIT      ".init"
+/* Don't have console by default */
+#ifndef HAVE_CONSOLE
+#define HAVE_CONSOLE 0
+#endif /* HAVE_CONSOLE */
 
-#define CONFIG_CPU_IA32_I686
-/*#define CONFIG_IA32_PGE*/
+#ifndef PHYSMEM_NREGIONS
+/**
+ * Number of physical memory regions
+ */
+#define PHYSMEM_NREGIONS 64
+#endif /* PHYSMEM_NREGIONS */
+
+#ifndef CACHE_LINE_SIZE
+/**
+ * Size of CPU Cache Line (CPU specific, so do define this in arch/__/config.h)
+ */
+#define CACHE_LINE_SIZE 64
+#endif /* CACHE_LINE_SIZE */
+
+#ifndef KSTACK_NPAGES
+/**
+ * Number of pages for per-CPU stacks (2^n)
+ */
+#define KSTACK_NPAGES 0x1
+#endif /* KSTACK_NPAGES */
+
+/**
+ * Size of per-CPU kernel stack (in bytes)
+ */
+#define KSTACK_SIZE   (KSTACK_NPAGES * PAGE_SIZE)
+
+/**
+ * Mask to strip stack offset from stack pointer
+ */
+#define KSTACK_MASK   (~(KSTACK_NPAGES * PAGE_SIZE - 1))
 
 #endif /* __CONFIG_H__ */
