@@ -25,7 +25,7 @@ boot_ia32_OBJECTS	+= $(call sources2objects,$(boot_ia32_CPUID_SOURCES))
 
 # Paging support
 paging_Paging_SOURCES	:= Paging.cpp
-PREPROCESS_MODULES	+= paging_Paging_SOURCES
+PREPROCESS_MODULES	+= paging_Paging
 boot_ia32_OBJECTS	+= $(call sources2objects,$(paging_Paging_SOURCES))
 
 linker.ia32.ld: linker.ia32.ld.S
