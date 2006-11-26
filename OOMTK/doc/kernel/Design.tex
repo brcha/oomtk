@@ -1,0 +1,61 @@
+\documentclass{article}
+
+\title{OOMTK v.2}
+\author{Filip Br\v ci\' c\\$<$brcha@users.sourceforge.net$>$}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This is the OOMTK v.2. That stands for ``Object-Oriented Multi-Tasking Kernel''.
+
+\subsection{Design goals}
+
+\begin{itemize}
+\item Robustness
+\item Binary compatibility
+\item Portability
+\item User-friendly and developer-friendly design
+\end{itemize}
+
+\subsection{Implementation details}
+
+\subsubsection{Robustness}
+
+The system is designed to run on a very small microkernel. The idea is to separate
+as much things as possible from the kernel into the user-space. One of the basic
+microkernel servers will be the Phoenix server. His responsibility will be to watch
+the other servers and to restart them if that is needed. The kernel itself will
+only be used to bootstrap the system and to start the scheduler. The kernel will then
+launch the MMU and IPC servers which will be responsible for manageing the memory
+and inter-process communication.
+
+When those three servers (Phoenix, MMU and IPC) are lounched, the kernel will launch
+the Init server that will handle the rest of the boot process. The system booting
+will depend on GNU Grub for loading the servers. If GNU Grub is not ported to other
+architectures, the kernel will get the readonly kernel filesystem to read the servers
+itself.
+
+\subsubsection{Binary compatibility}
+
+The intent is to make the system able to run unmodified applications from other
+systems, such as GNU/Linux, GNU/Hurd, FreeBSD, NetBSD, OpenBSD, Darwin, Mac OS X,
+Windows, etc. For that purpose it will have separate SysCall servers that will be
+launched on demand and that will translate syscalls into server requests. Since the
+kernel itself is not going to handle any syscalls (it only does task switching after
+bootup), the Syscall server will exist even for the native system. It will get
+information about loaded servers and on request it will send their ids to other
+processes. I might integrate Syscall server and Phoenix into one server since they
+both have to have information about other servers, but maybe it is better left doubled
+like this. This way Syscall server can act like Phoenix if Phoenix dies, or revitalize
+and reinitialize Phoenix if it dies.
+
+\section{Microkernel design}
+
+\section{Basic servers}
+
+\section{Additional servers}
+
+\end{document}

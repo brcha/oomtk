@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.44"
+   sodipodi:docbase="/Users/brcha/Projects/OOMTK/doc"
+   sodipodi:docname="oomtk-logo.svg"
+   inkscape:export-filename="/Users/brcha/Projects/OOMTK/doc/oomtk-logo.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mend"
+       style="overflow:visible;">
+      <path
+         id="path2941"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
+         transform="scale(0.4) rotate(180) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mstart"
+       style="overflow:visible">
+      <path
+         id="path2944"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path2947"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path2950"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="375"
+     inkscape:cy="710.19584"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="921"
+     inkscape:window-height="706"
+     inkscape:window-x="353"
+     inkscape:window-y="22" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>OOMTK</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Filip Brcic &lt;brcha@users.sourceforge.net&gt;</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:date>$Date: 2006-10-13 01:07:25 +0200 (Fri, 13 Oct 2006) $</dc:date>
+        <dc:identifier>$Id: oomtk-logo.svg 182 2006-10-12 23:07:25Z brcha $</dc:identifier>
+        <dc:source>$HeadURL: https://opensvn.csie.org/bsystems/trunk/Projects/OOMTK/doc/oomtk-logo.svg $</dc:source>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/GPL/2.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/GPL/2.0/">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/Notice" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/ShareAlike" />
+        <cc:requires
+           rdf:resource="http://web.resource.org/cc/SourceCode" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="arc"
+       style="opacity:1;fill:#e3dbde;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:2, 12;stroke-dashoffset:0"
+       id="path9186"
+       sodipodi:cx="450"
+       sodipodi:cy="453.79074"
+       sodipodi:rx="387.14285"
+       sodipodi:ry="387.14285"
+       d="M 837.14285,453.79074 A 387.14285,387.14285 0 1 1 837.13087,450.74527"
+       transform="matrix(0.704797,0,0,0.704797,52.84129,-6.039614)"
+       sodipodi:start="0"
+       sodipodi:end="6.2753187"
+       sodipodi:open="true" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#5df"
+       id="path1874"
+       sodipodi:cx="337.14285"
+       sodipodi:cy="395.21933"
+       sodipodi:rx="57.142857"
+       sodipodi:ry="57.142857"
+       d="M 394.28571 395.21933 A 57.142857 57.142857 0 1 1  280,395.21933 A 57.142857 57.142857 0 1 1  394.28571 395.21933 z"
+       transform="matrix(0.704797,0,0,0.704797,123.321,22.15229)" />
+    <text
+       xml:space="preserve"
+       style="font-size:101.37918854px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Serif"
+       x="282.37619"
+       y="359.28461"
+       id="text1876"
+       transform="scale(1.160323,0.861829)"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan1878"
+         x="282.37619"
+         y="359.28461">μ</tspan></text>
+    <path
+       d="M 394.28571 395.21933 A 57.142857 57.142857 0 1 1  280,395.21933 A 57.142857 57.142857 0 1 1  394.28571 395.21933 z"
+       sodipodi:ry="57.142857"
+       sodipodi:rx="57.142857"
+       sodipodi:cy="395.21933"
+       sodipodi:cx="337.14285"
+       id="path1880"
+       style="fill:#5fd35f"
+       sodipodi:type="arc"
+       transform="matrix(0.704797,0,0,0.704797,-7.880604,203.5216)" />
+    <path
+       transform="matrix(0.704797,0,0,0.704797,227.2835,-164.9272)"
+       sodipodi:type="arc"
+       style="fill:#5fd35f"
+       id="path1882"
+       sodipodi:cx="337.14285"
+       sodipodi:cy="395.21933"
+       sodipodi:rx="57.142857"
+       sodipodi:ry="57.142857"
+       d="M 394.28571 395.21933 A 57.142857 57.142857 0 1 1  280,395.21933 A 57.142857 57.142857 0 1 1  394.28571 395.21933 z" />
+    <path
+       d="M 394.28571 395.21933 A 57.142857 57.142857 0 1 1  280,395.21933 A 57.142857 57.142857 0 1 1  394.28571 395.21933 z"
+       sodipodi:ry="57.142857"
+       sodipodi:rx="57.142857"
+       sodipodi:cy="395.21933"
+       sodipodi:cx="337.14285"
+       id="path1884"
+       style="fill:#ff8080"
+       sodipodi:type="arc"
+       transform="matrix(0.704797,0,0,0.704797,-4.341744,-132.3654)" />
+    <path
+       transform="matrix(0.704797,0,0,0.704797,304.7468,63.73169)"
+       sodipodi:type="arc"
+       style="fill:#ff8080"
+       id="path1886"
+       sodipodi:cx="337.14285"
+       sodipodi:cy="395.21933"
+       sodipodi:rx="57.142857"
+       sodipodi:ry="57.142857"
+       d="M 394.28571 395.21933 A 57.142857 57.142857 0 1 1  280,395.21933 A 57.142857 57.142857 0 1 1  394.28571 395.21933 z" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.40959406;stroke-linecap:round;stroke-linejoin:round;marker-start:url(#Arrow1Lstart);marker-mid:none;marker-end:url(#Arrow1Lend);stroke-miterlimit:4;stroke-dasharray:1.40959409, 8.45756454;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 507.93886,336.94837 L 393.15762,296.67425"
+       id="path1888" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.40959406;stroke-linecap:round;stroke-linejoin:round;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow1Lend);stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 330.73274,332.92096 L 252.19821,451.7296"
+       id="path3856"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.40959406;stroke-linecap:round;stroke-linejoin:round;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow1Lend);stroke-miterlimit:4;stroke-dasharray:1.40959409, 5.63837636;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 328.71904,276.5372 L 256.22563,169.81079"
+       id="path3858"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.40959406;stroke-linecap:round;stroke-linejoin:round;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow1Lend);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 371.00686,266.46867 L 443.50026,147.66002"
+       id="path3860" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:2.11439109;stroke-linecap:round;stroke-linejoin:round;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow1Lend);stroke-miterlimit:4;stroke-dasharray:2.11439113, 12.6863468;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 240.11598,181.89302 C 240.11598,181.89302 305.56142,238.78021 304.55457,304.72908 C 303.54771,370.67794 236.08857,445.68849 236.08857,445.68849"
+       id="path5638"
+       sodipodi:nodetypes="czc" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1.40959406;stroke-linecap:butt;stroke-linejoin:miter;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow1Lend);stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 473.70586,149.67373 C 466.15446,165.65752 456.51388,181.52782 449.58698,191.83891 C 430.26952,220.59401 431.31101,215.08151 414.30154,242.3042 C 390.58968,280.25367 425.3326,313.14824 409.26727,332.92096 C 389.63363,357.08543 362.44861,343.99634 326.70533,374.20193 C 290.96206,404.40752 290.45863,428.8237 266.29415,453.74331"
+       id="path7414"
+       sodipodi:nodetypes="csssss" />
+    <text
+       xml:space="preserve"
+       style="font-size:99.22640991px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Shohl"
+       x="307.14349"
+       y="501.00711"
+       id="text9190"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan9192"
+         x="307.14349"
+         y="501.00711">OOMTK</tspan></text>
+  </g>
+</svg>

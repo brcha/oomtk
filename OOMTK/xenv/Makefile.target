@@ -1,0 +1,238 @@
+THISMAKEFILE := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
+
+##################################################################
+#
+#  A bunch of important variables are defined in Makefile.vars
+#
+##################################################################
+include Makefile.vars
+
+default: build
+
+CROSSTARGET=$(CROSSARCH)-pc-$(CROSSOS)
+CROSSHOSTROOT=$(CROSSROOT)/host
+CROSSSYSROOT=$(CROSSROOT)/sysroot-$(CROSSARCH)
+
+##################################################################
+#
+#  Tool Versions.
+#
+##################################################################
+BINUTILS_VERSION=2.17
+#GCC_VERSION=4.0.2
+GCC_VERSION=4.1.1
+NEWLIB_VERSION=1.13.0
+#NEWLIB_PATCH=newlib-cvs20050928.patch.bz2
+NEWLIB_PATCH=newlib-cvs20051119.patch.bz2
+
+##################################################################
+#
+#  CONFIGDIRS: Directories to override for configure.
+#
+##################################################################
+
+# FIX: This will probably require adjustment for share/man, share/info
+CONFIGDIRS=\
+    --prefix=$(CROSSHOSTROOT) \
+    --mandir=$(CROSSHOSTROOT)/share/man \
+    --infodir=$(CROSSHOSTROOT)/share/info
+
+##################################################################
+#
+#  FSDIRS:     Directories to pre-install.
+#
+##################################################################
+FSDIRS=\
+    $(CROSSROOT) \
+    $(CROSSHOSTROOT) \
+    $(CROSSHOSTROOT)/bin \
+    $(CROSSHOSTROOT)/lib \
+    $(CROSSHOSTROOT)/share \
+    $(CROSSHOSTROOT)/share/locale \
+    $(CROSSHOSTROOT)/share/man \
+    $(CROSSHOSTROOT)/share/info \
+
+SYSFSDIRS=\
+    $(CROSSSYSROOT) \
+    $(CROSSSYSROOT)/usr \
+    $(CROSSSYSROOT)/usr/include \
+    $(CROSSSYSROOT)/usr/lib
+
+
+
+##################################################################
+#
+# GETTING THE SOURCES UNCREATED
+#
+##################################################################
+
+# Create the BUILD subdirectory, as needed:
+BUILD:
+	mkdir BUILD
+
+# unpack binutils, apply patches
+BUILD/binutils-$(BINUTILS_VERSION): | BUILD
+	@echo "Unpacking binutils-$(BINUTILS_VERSION)"
+	(cd BUILD; tar xjf ../SOURCES/binutils-$(BINUTILS_VERSION).tar.bz2)
+	(cd BUILD; patch -p0 < ../SOURCES/oomtk-binutils-$(BINUTILS_VERSION).patch)
+# 	for patch in SOURCES/binutils-$(BINUTILS_VERSION)*.patch; do \
+# 	  (cd BUILD; patch -p0 < ../$${patch}); \
+# 	done
+
+# unpack newlib, apply patches
+BUILD/newlib-$(NEWLIB_VERSION): | BUILD
+	@echo "Unpacking newlib-$(NEWLIB_VERSION)"
+	(cd BUILD; tar xjf ../SOURCES/newlib-$(NEWLIB_VERSION).tar.bz2)
+	(cd BUILD; bzcat ../SOURCES/$(NEWLIB_PATCH) | patch -p0)
+	(cd BUILD; patch -p0 < ../SOURCES/oomtk-newlib-$(NEWLIB_VERSION).patch)
+
+# unpack gcc, apply patches
+BUILD/gcc-$(GCC_VERSION): | BUILD
+	@echo "Unpacking gcc-$(GCC_VERSION)"
+	(cd BUILD; tar xjf ../SOURCES/gcc-$(GCC_VERSION).tar.bz2)
+	(cd BUILD; patch -p0 < ../SOURCES/oomtk-gcc-$(GCC_VERSION).patch)
+# 	for patch in SOURCES/gcc-$(GCC_VERSION)*.patch; do \
+# 	  (cd BUILD; patch -p0 < ../$${patch}); \
+# 	done
+
+##################################################################
+#
+# FS PRE-INSTALL
+#
+# Get the per-target installation directories in place
+#
+##################################################################
+filesystem:
+	echo $(CROSSROOT)
+	echo $(BUILDTARGET)
+	@for d in $(FSDIRS); do \
+	  if [ ! -d $$d ]; then \
+	    echo install -m 755 -d $$d; \
+	    install -m 755 -d $$d; \
+	  fi; \
+	done
+	@for d in $(SYSFSDIRS); do \
+	  if [ ! -d $$d ]; then \
+	    echo install -m 755 -d $$d; \
+	    install -m 755 -d $$d; \
+	  fi; \
+	done
+
+##################################################################
+#
+# BINUTILS
+#
+# Get the per-target binutils built and installed
+#
+##################################################################
+binutils: filesystem
+binutils: | BUILD/binutils-$(BINUTILS_VERSION)
+binutils:
+	rm -rf BUILD/build-binutils-$(CROSSARCH)
+	mkdir BUILD/build-binutils-$(CROSSARCH)
+	(cd BUILD/build-binutils-$(CROSSARCH); \
+	  CC="${CCACHE} gcc" ../binutils-$(BINUTILS_VERSION)/configure \
+	     ${CONFIGDIRS} \
+	     --with-sysroot=$(CROSSSYSROOT) \
+	     --target ${CROSSTARGET})
+	$(MAKE) -C BUILD/build-binutils-$(CROSSARCH) tooldir=$(CROSSHOSTROOT) all
+	$(MAKE) -C BUILD/build-binutils-$(CROSSARCH) install
+
+##################################################################
+#
+# PREGCC
+#
+# Get the per-target pregcc built and installed
+#
+##################################################################
+pregcc: | BUILD/gcc-$(GCC_VERSION)
+pregcc:
+	rm -rf BUILD/build-gcc-$(CROSSARCH)
+	mkdir BUILD/build-gcc-$(CROSSARCH)
+	(cd BUILD/build-gcc-$(CROSSARCH); \
+	  PATH=$(CROSSHOSTROOT)/bin:$(PATH) CC="$(CCACHE) gcc" \
+	    ../gcc-$(GCC_VERSION)/configure \
+	      $(CONFIGDIRS) \
+	      --with-local-prefix=$(CROSSSYSROOT) \
+	      --without-headers \
+	      --with-newlib \
+	      --with-sysroot=$(CROSSSYSROOT) \
+	      --disable-libmudflap \
+	      --enable-languages=c \
+	      --target $(CROSSTARGET))
+	PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
+	  $(MAKE) -C BUILD/build-gcc-$(CROSSARCH) \
+	    gcc_tooldir=$(CROSSHOSTROOT) all-gcc
+	PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
+	  $(MAKE) -C BUILD/build-gcc-$(CROSSARCH) \
+	    gcc_tooldir=$(CROSSHOSTROOT) install-gcc
+
+##################################################################
+#
+# NEWLIB
+#
+# Get the per-target newlib built and installed
+#
+##################################################################
+newlib: | BUILD/newlib-$(NEWLIB_VERSION)
+newlib:
+	rm -rf BUILD/build-newlib-$(CROSSARCH)
+	mkdir BUILD/build-newlib-$(CROSSARCH)
+	(cd BUILD/build-newlib-$(CROSSARCH); \
+	  PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
+	    ../newlib-$(NEWLIB_VERSION)/configure \
+	      $(CONFIGDIRS) \
+	      --with-local-prefix=$(CROSSSYSROOT) \
+	      --target $(CROSSTARGET))
+	PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
+	  $(MAKE) -C BUILD/build-newlib-$(CROSSARCH) \
+	    tooldir=$(CROSSSYSROOT)/usr STAGE_CC_WRAPPER="$(CCACHE)" all
+	PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
+	  $(MAKE) -C BUILD/build-newlib-$(CROSSARCH) \
+	    tooldir=$(CROSSSYSROOT)/usr STAGE_CC_WRAPPER="$(CCACHE)" install
+
+##################################################################
+#
+# GCC
+#
+# Get the per-target gcc built and installed
+#
+##################################################################
+gcc: | BUILD/gcc-$(GCC_VERSION)
+gcc:
+	rm -rf BUILD/build-gcc-$(CROSSARCH)
+	mkdir BUILD/build-gcc-$(CROSSARCH)
+	(cd BUILD/build-gcc-$(CROSSARCH); \
+	  PATH=$(CROSSHOSTROOT)/bin:$(PATH) CC="$(CCACHE) gcc" \
+	    ../gcc-$(GCC_VERSION)/configure \
+	      $(CONFIGDIRS) \
+	      --with-local-prefix=$(CROSSSYSROOT) \
+	      --with-newlib \
+	      --with-sysroot=$(CROSSSYSROOT) \
+	      --disable-libmudflap \
+	      --enable-languages=c,c++ \
+	      --target $(CROSSTARGET))
+	PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
+	  $(MAKE) -C BUILD/build-gcc-$(CROSSARCH) \
+	    gcc_tooldir=$(CROSSHOSTROOT) all-gcc
+	PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
+	  $(MAKE) -C BUILD/build-gcc-$(CROSSARCH) \
+	    gcc_tooldir=$(CROSSHOSTROOT) install-gcc
+
+gcc-links:
+	@for tool in ld nm strip; do \
+	  echo ln -s ../../../../bin/$(CROSSTARGET)-$${tool} $(CROSSHOSTROOT)/libexec/gcc/$(CROSSTARGET)/$(GCC_VERSION)/$${tool}; \
+	  ln -s ../../../../bin/$(CROSSTARGET)-$${tool} $(CROSSHOSTROOT)/libexec/gcc/$(CROSSTARGET)/$(GCC_VERSION)/$${tool}; \
+	done
+
+
+build:
+	$(MAKE) -f $(THISMAKEFILE) filesystem
+	$(MAKE) -f $(THISMAKEFILE) binutils
+	$(MAKE) -f $(THISMAKEFILE) pregcc
+	$(MAKE) -f $(THISMAKEFILE) newlib
+	$(MAKE) -f $(THISMAKEFILE) gcc
+	$(MAKE) -f $(THISMAKEFILE) gcc-links
+
+clean:
+	-rm -rf BUILD

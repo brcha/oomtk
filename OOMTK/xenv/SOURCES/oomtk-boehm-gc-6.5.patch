@@ -1,0 +1,13 @@
+diff -Naur boehm-gc-6.5/config.sub boehm-gc-6.5-new/config.sub
+--- boehm-gc-6.5/config.sub	2002-05-25 01:18:38.000000000 +0200
++++ boehm-gc-6.5-new/config.sub	2006-03-01 03:26:07.000000000 +0100
+@@ -1197,6 +1197,9 @@
+         -*mint | -mint[0-9]* | -*MiNT | -MiNT[0-9]*)
+ 	        os=-mint
+ 		;;
++	-oomtk*)
++		os=-oomtk
++		;;
+ 	-none)
+ 		;;
+ 	*)

@@ -1,0 +1,2 @@
+This is the bootstrap module. It is activated first and it's task is to load the rest
+of the kernel into high memory.

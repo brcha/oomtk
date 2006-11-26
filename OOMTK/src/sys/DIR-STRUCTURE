@@ -1,0 +1,4 @@
+boot    -- Bootup files
+kernel  -- The Kernel (scheduler, ipc & friends)
+devices -- Hardware devices (CPU, Console, I/O Ports, ...)
+libs    -- External libraries (libc)

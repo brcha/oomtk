@@ -1,0 +1,10 @@
+
+Kernel memory:
+    start   at 3GB (0xf0000000)
+	boot memory:
+	    start   at 3GB (0xf0000000)
+	    end	    at start + 4MB (0xf0400000) - one page
+	kernel memory:
+	    start   at boot memory :: end (0xf0400000)
+	    end	    at start + 192MB (0xfc400000)
+    end	    at kernel memory :: end (0xfc400000)

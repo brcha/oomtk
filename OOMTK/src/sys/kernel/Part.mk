@@ -1,0 +1,21 @@
+#
+#  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
+#
+#  This file is part of OOMTK
+#
+
+# $Id: $
+
+VPATH += $(SYS_SOURCE_DIR)/kernel $(SYS_SOURCE_DIR)/kernel/$(ARCH_CONFIG_LC)
+
+# devices_CPU_SOURCES	:= CPU.cpp CPU-$(ARCH_CONFIG_LC).cpp
+# PREPROCESS_MODULES	+= devices_CPU
+# devices_OBJECTS		:= $(call sources2objects,$(devices_CPU_SOURCES))
+#
+# devices_PortIO_SOURCES	:= PortIO.cpp PortIO-$(ARCH_CONFIG_LC).cpp
+# PREPROCESS_MODULES	+= devices_PortIO
+# devices_OBJECTS		+= $(call sources2objects,$(devices_PortIO_SOURCES))
+#
+# devices_Console_SOURCES := Console.cpp
+# PREPROCESS_MODULES += devices_Console
+# devices_OBJECTS		:= $(call sources2objects,$(devices_Console_SOURCES))
