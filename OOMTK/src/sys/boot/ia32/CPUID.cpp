@@ -5,13 +5,17 @@ INTERFACE:
  *  This file is part of OOMTK
  */
 /** @file
- * @brief CPU Identicifation
+ * @brief CPU Identification
  */
 
 #include <types.h>
 
 /**
  * @brief CPUID class identifies the CPU
+ *
+ * Supported CPU's are Intel's until 15th November 2006 and AMD's until 1st
+ * September 2006 (those are the dates of their documentations... hope that's
+ * accurate).
  */
 class CPUID {
   public:
@@ -39,7 +43,7 @@ class CPUID {
      * For AMD see AMD's CPUID Specification and AMD64 Architecture Programmer's
      * Manual, Volume 3: General-Purpose and System Instructions, pages 102-103.
      */
-    enum cpuFeatures {
+    enum cpuFeature_t {
       // eax = 1, ecx features
       SSE3 = 0,   ///< @brief Streaming SIMD Extensions 3 (SSE3)
       MONITOR,    ///< @brief Monitor/MWait support
@@ -82,6 +86,7 @@ class CPUID {
       SS,         ///< @brief Self Snoop
       HTT,        ///< @brief Multi-Threading - more than one logical processor
       iTM,        ///< @brief Thermal Monitor (Intel)
+      IA64,       ///< @brief Intel IA-64 capabilities (=> this is IA32e mode)
       PBE,        ///< @brief Pending Break Enable
       // eax = 80000001, ecx features
       LahfSahf,   ///< @brief LAHF/SAHF available in 64bit mode
@@ -90,12 +95,13 @@ class CPUID {
       AltMovCr8,  ///< @brief LOCK MOV CR0 means MOV CR8
       // eax = 80000001, edx features
       SYSCALL,    ///< @brief SYSCALL and SYSRET instructions
-      NX,         ///< @brief No-eXecute page protection
+      NX,         ///< @brief No-eXecute page protection (AMD)
+      XD,         ///< @brief eXecution Disable bit (Intel)
       MmxExt,     ///< @brief AMD's extensions to MMX instructions
       FFXSR,      ///< @brief FXSAVE and FXRSTOR instruction optimizations
       RDTSCP,     ///< @brief RDTSCP instruction
       LM,         ///< @brief AMD's Long Mode (64-bit mode)
-      EM64T,      ///< @brief Intel's EM64T mode (64-bit mode)
+      Intel64,    ///< @brief Intel's EM64T mode (64-bit mode)
       a3DNowExt,  ///< @brief AMD's extensions for 3DNow! instructions
       a3DNow,     ///< @brief 3DNow! instructions
       // eax = 80000007, edx features (APM information on AMD)
@@ -167,6 +173,9 @@ class CPUID {
     uint32_t maximumFunction;
     /// @brief Maximum extended function
     uint32_t maximumExtendedFunction;
+
+    /// @brief True when CPU has been identified
+    bool _identified;
 };
 
 IMPLEMENTATION:
@@ -183,7 +192,10 @@ IMPLEMENTATION:
  */
 PUBLIC void CPUID::identify()
 {
-  if(!is486())
+  if (_identified)
+    return; // CPU has already been identified...
+
+  if (!is486())
     fatal(ANSI_FG_RED "You need newer processor than 386 to run OOMTK\n");
 
   if (!supportsCPUID())
@@ -213,7 +225,7 @@ PUBLIC void CPUID::identify()
   else
     _cpuVendorID = Unknown;
 
-  printf("CPU[%d]: vendor = %s\n", _cpuNumber, _cpuVendor);
+//   printf("CPU[%2d]: vendor = %s\n", _cpuNumber, _cpuVendor);
 
   if (maximumFunction == 0)
     fatal("CPUID supports 0 functions, which is quite odd :(\n");
@@ -241,7 +253,7 @@ PUBLIC void CPUID::identify()
      * @todo families, steppings and so on as regular strings, not as these pure
      * @todo values...
      */
-    printf("CPU[%d]: family %d, model %d, stepping %d, brand %d, clflush %d\n",
+/*    printf("CPU[%2d]: family %d, model %d, stepping %d, brand %d, clflush %d\n",
            _cpuNumber,
            _cpuFamily,
            _cpuModel,
@@ -249,11 +261,11 @@ PUBLIC void CPUID::identify()
            fields(regs.ebx, 7, 0),
            fields(regs.ebx, 15, 8)
           );
-    printf("CPU[%d]: Logical CPUs: %d, Init APIC ID: %d\n",
+    printf("CPU[%2d]: Logical CPUs: %d, Init APIC ID: %d\n",
            _cpuNumber,
            _nLogicalProcessors,
            fields(regs.ebx, 31, 24)
-          );
+          );*/
   };
 
   // Get the extended information
@@ -274,8 +286,76 @@ PUBLIC void CPUID::identify()
     // Terminate the _cpuName string
     _cpuName[48] = '\0';
     // Print it on the console
-    printf("CPU[%d]: name = %s\n", _cpuNumber, _cpuName);
+    printf("CPU[%2d]: %s\n", _cpuNumber, _cpuName);
   }
+
+  // Check all the features and show results
+  uint32_t code = 0;
+  uint32_t currentLine = 0;
+  bool firstPass = true;
+  for (uint32_t i = 0; i < NUM_FEATURES; i++)
+  {
+    // Check if this features applies to current vendor
+    if (!(features[i].vendor & _cpuVendorID))
+      continue;
+
+    // If this feature has a new unseen code, run CPUID again
+    if (features[i].code != code)
+    {
+      // Check if this new code is supported
+      if ((features[i].code < 0x80000000) &&
+           (features[i].code > maximumFunction))
+        continue; // unsupported standard function
+      if ((features[i].code >= 0x80000000) &&
+           (features[i].code > maximumExtendedFunction))
+        continue; // unsupported extended function
+
+      code = features[i].code;  // save the cpuid code
+      cpuid(code, regs);        // and load new values into registers
+    }
+
+    // Now I have loaded CPUID registers for the function that is applicable to
+    // current processor. I can check if feature is supported now.
+    switch (features[i].reg)
+    {
+      case EAX:
+        features[i].has = regs.eax & (1u << features[i].bit);
+        break;
+      case EBX:
+        features[i].has = regs.ebx & (1u << features[i].bit);
+        break;
+      case ECX:
+        features[i].has = regs.ecx & (1u << features[i].bit);
+        break;
+      case EDX:
+        features[i].has = regs.edx & (1u << features[i].bit);
+        break;
+      default:
+        fatal(ANSI_FG_RED "ERROR in CPUID::identify(): features[%d].reg = %d\n",
+              i, features[i].reg);
+    }
+
+    if (features[i].has)
+    {
+      uint32_t len = strlen(features[i].name) + 1;
+      if (firstPass)
+      {
+        printf("CPU[%2d]: [ ", _cpuNumber); // 11 characters
+        firstPass = false;
+        currentLine = 11;
+      }
+      if ((currentLine + len) >= 75) // must write new line
+      {
+        printf("\n           "); // 11 spaces
+        currentLine = 11;
+      }
+      printf("%s ", features[i].name);
+      currentLine += len;
+    }
+  }
+  printf("]\n");
+
+  _identified = true;
 };
 
 PROTECTED bool CPUID::is486()
@@ -364,9 +444,11 @@ PUBLIC CPUID::CPUID(uint32_t cpuNumber = 0, bool printOut = true)
   // Construct local variables
   _cpuNumber = cpuNumber;
   _printOut = printOut;
+  _identified = false;
 
   // Initialize the CPU features list
-  // Please keep the features sorted by opcode, so that the identification algorithm
+
+  // Features are sorted by opcode, so that the identification algorithm
   // optimizations can be effective.
 
   // eax = 1, ecx features
@@ -378,10 +460,65 @@ PUBLIC CPUID::CPUID(uint32_t cpuNumber = 0, bool printOut = true)
   addFeature(TM2,     0x00000001u, ECX, "TM2",             8, Intel);
   addFeature(SSSE3,   0x00000001u, ECX, "SSSE3",           9, Intel);
   addFeature(CID,     0x00000001u, ECX, "CID",            10, Intel);
-  addFeature(CX16,    0x00000001u, ECX, "CMPXCHG16B",     13, Intel | AMD);
+  addFeature(CX16,    0x00000001u, ECX, "CX16",           13, Intel | AMD);
   addFeature(xTPR,    0x00000001u, ECX, "xTPR",           14, Intel);
   addFeature(DCA,     0x00000001u, ECX, "DCA",            18, Intel);
   addFeature(RAZ,     0x00000001u, ECX, "RAZ",            31, AMD);
+  // eax = 1, edx features
+  addFeature(FPU,     0x00000001u, EDX, "FPU",             0, Intel | AMD);
+  addFeature(VME,     0x00000001u, EDX, "VME",             1, Intel | AMD);
+  addFeature(DE,      0x00000001u, EDX, "DE",              2, Intel | AMD);
+  addFeature(PSE,     0x00000001u, EDX, "PSE",             3, Intel | AMD);
+  addFeature(TSC,     0x00000001u, EDX, "TSC",             4, Intel | AMD);
+  addFeature(MSR,     0x00000001u, EDX, "MSR",             5, Intel | AMD);
+  addFeature(PAE,     0x00000001u, EDX, "PAE",             6, Intel | AMD);
+  addFeature(MCE,     0x00000001u, EDX, "MCE",             7, Intel | AMD);
+  addFeature(CX8,     0x00000001u, EDX, "CX8",             8, Intel | AMD);
+  addFeature(APIC,    0x00000001u, EDX, "APIC",            9, Intel | AMD);
+  addFeature(SEP,     0x00000001u, EDX, "SEP",            11, Intel | AMD);
+  addFeature(MTRR,    0x00000001u, EDX, "MTRR",           12, Intel | AMD);
+  addFeature(PGE,     0x00000001u, EDX, "PGE",            13, Intel | AMD);
+  addFeature(MCA,     0x00000001u, EDX, "MCA",            14, Intel | AMD);
+  addFeature(CMOV,    0x00000001u, EDX, "CMOV",           15, Intel | AMD);
+  addFeature(PAT,     0x00000001u, EDX, "PAT",            16, Intel | AMD);
+  addFeature(PSE36,   0x00000001u, EDX, "PSE-36",         17, Intel | AMD);
+  addFeature(PSN,     0x00000001u, EDX, "PSN",            18, Intel);
+  addFeature(CLFSH,   0x00000001u, EDX, "CLFSH",          19, Intel | AMD);
+  addFeature(DS,      0x00000001u, EDX, "DS",             21, Intel);
+  addFeature(ACPI,    0x00000001u, EDX, "ACPI",           22, Intel);
+  addFeature(MMX,     0x00000001u, EDX, "MMX",            23, Intel | AMD);
+  addFeature(FXSR,    0x00000001u, EDX, "FXSR",           24, Intel | AMD);
+  addFeature(SSE,     0x00000001u, EDX, "SSE",            25, Intel | AMD);
+  addFeature(SSE2,    0x00000001u, EDX, "SSE2",           26, Intel | AMD);
+  addFeature(SS,      0x00000001u, EDX, "SS",             27, Intel);
+  addFeature(HTT,     0x00000001u, EDX, "HTT",            28, Intel | AMD);
+  addFeature(iTM,     0x00000001u, EDX, "TM",             29, Intel);
+  addFeature(IA64,    0x00000001u, EDX, "IA64",           30, Intel);
+  addFeature(PBE,     0x00000001u, EDX, "PBE",            31, Intel);
+  // eax = 80000001, ecx features
+  addFeature(LahfSahf,  0x80000001u, ECX, "LahfSahf",      0, Intel | AMD);
+  addFeature(CmpLegacy, 0x80000001u, ECX, "CmpLegacy",     1, AMD);
+  addFeature(SVM,       0x80000001u, ECX, "SVM",           2, AMD);
+  addFeature(AltMovCr8, 0x80000001u, ECX, "AltMovCr8",     4, AMD);
+  // eax = 80000001, edx features
+  addFeature(SYSCALL, 0x80000001u, EDX, "SYSCALL",        11, Intel | AMD);
+  addFeature(NX,      0x80000001u, EDX, "NX",             20, AMD);   // AMD was first
+  addFeature(XD,      0x80000001u, EDX, "XD",             20, Intel); // Intel's name
+  addFeature(MmxExt,  0x80000001u, EDX, "MmxExt",         22, AMD);
+  addFeature(FFXSR,   0x80000001u, EDX, "FFXSR",          25, AMD);
+  addFeature(RDTSCP,  0x80000001u, EDX, "RDTSCP",         27, AMD);
+  addFeature(LM,      0x80000001u, EDX, "LM",             29, AMD);   // AMD64
+  addFeature(Intel64, 0x80000001u, EDX, "Intel64",        29, Intel); // Intel64
+  addFeature(a3DNowExt, 0x80000001u, EDX, "3DNow!Ext",    30, AMD);
+  addFeature(a3DNow,  0x80000001u, EDX, "3DNow!",         31, AMD);
+  // eax = 80000007, edx features (AMD only)
+  addFeature(TS,      0x80000007u, EDX, "TS",              0, AMD);
+  addFeature(FID,     0x80000007u, EDX, "FID",             1, AMD);
+  addFeature(VID,     0x80000007u, EDX, "VID",             2, AMD);
+  addFeature(TTP,     0x80000007u, EDX, "TTP",             3, AMD);
+  addFeature(aTM,     0x80000007u, EDX, "TM",              4, AMD);
+  addFeature(STC,     0x80000007u, EDX, "STC",             5, AMD);
+  addFeature(TscInvariant, 0x80000007u, EDX, "TscInvariant", 8, AMD);
 };
 
 #include <stdarg.h>
@@ -438,4 +575,59 @@ void CPUID::addFeature(uint32_t id, uint32_t code, uint32_t reg, const char * na
   features[id].name[19] = '\0'; // ensure that the string is null terminated
   features[id].bit    = bit;
   features[id].vendor = vendor;
+}
+
+// Get-set methods
+
+/**
+ * @brief Does the CPU have the feature?
+ * @param feature CPU Feature in question
+ * @returns true if CPU supports the feature
+ */
+PUBLIC bool has(cpuFeature_t feature)
+{
+  if (feature < NUM_FEATURES)
+    return features[feature].has;
+  return false;
+}
+
+/**
+ * @brief Is CPU identified?
+ */
+PUBLIC bool isIdentified()
+{
+  return _identified;
+}
+
+/**
+ * @brief What is the CPU name?
+ * @return CPU name
+ */
+PUBLIC const char * name()
+{
+  if (!_identified)
+    return "";
+  return _cpuName;
+}
+
+/**
+ * @brief What is the CPU vendor?
+ * @returns vendor string
+ */
+PUBLIC const char * vendor()
+{
+  if (!_identified)
+    return "";
+  return _cpuVendor;
+}
+
+/**
+ * @brief What is the CPU vendor?
+ * @returns vendor id
+ */
+PUBLIC uint32_t vendorId()
+{
+  if (!_identified)
+    return 0;
+  return _cpuVendorID;
 }
