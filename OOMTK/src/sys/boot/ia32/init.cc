@@ -16,6 +16,11 @@
 #include <SegmentDescriptor.h>
 
 #include <Paging.h>
+#include <PagingLegacy.h>
+
+#include <fatal.h>
+
+#include <c++abi.h>
 
 using namespace std;
 
@@ -34,14 +39,6 @@ extern "C" {
 
 void systemStartup()
 {
-  // Try to initialize GDT
-//   SetupGDT();
-  // Initialize Paging
-//   halt();
-
-  // Call constructors
-//   callCtors();
-
   // Static constructed console
   VgaConsole * vga = VgaConsole::instance();
 
@@ -67,16 +64,25 @@ void systemStartup()
               ANSI_FG_CYAN OOMTK_BUILD_USER ANSI_FG_WHITE
         );
 
-//   clog << "OOMTK version " << ANSI_FG_CYAN OOMTK_VERSION
-//        << " build " << ANSI_FG_CYAN OOMTK_BUILD
-//        << " (built " << ANSI_FG_CYAN OOMTK_BUILD_DATE
-//        << " by " << ANSI_FG_CYAN OOMTK_BUILD_USER << ")" << endl;
-
   CPUID * cpuid = CPUID::instance();
 
   cpuid->identify();
 
-  Paging * paging = Paging::instance();
+  // Setup the paging
+  Paging * paging;
+//   if (cpuid->has(CPUID::PAE))
+//     paging = PagingPAE::instance();
+//   else
+    paging = PagingLegacy::instance();
+  paging->setup();
+
+  // Try to setup new GDT
+  printf("Before new GDT\n");
+//   SetupGDT();
+  printf("After new GDT :)\n");
+
+  // Call the constructors
+//   callCtors();
 
   for (;;);
 
@@ -84,29 +90,3 @@ void systemStartup()
 //   callDtors();
 }
 
-/** @brief IA32 PAE PTE data structure. */
-union IA32_PAE {
-  struct {
-    u64_t V       :  1;	/**< valid */
-    u64_t W       :  1;	/**< writable  */
-    u64_t USER    :  1;	/**< user-accessable */
-    u64_t PWT     :  1;	/**< page write through */
-    u64_t PCD     :  1;	/**< page cache disable */
-    u64_t ACC     :  1;	/**< accessed */
-    u64_t DIRTY   :  1;	/**< dirty */
-    u64_t PGSZ    :  1;	/**< large page */
-    u64_t GLBL    :  1;	/**< global mapping */
-    u64_t SW0     :  1;	/**< software use */
-    u64_t SW1     :  1;	/**< software use */
-    u64_t SW2     :  1;	/**< software use */
-    u64_t frameno : 40;	/**< frame number */
-  } bits;
-  /* Declared in IPC-vars.cxx: */
-
-  u64_t value;
-};
-typedef union IA32_PAE IA32_PAE;
-
-bool UsingPAE = false;
-
-DEFINE_PER_CPU(IA32_PAE[4], KernelPDPT);

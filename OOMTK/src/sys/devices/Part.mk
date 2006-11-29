@@ -8,10 +8,6 @@
 
 VPATH += $(SYS_SOURCE_DIR)/devices $(SYS_SOURCE_DIR)/devices/$(ARCH_CONFIG_LC)
 
-devices_CPU_SOURCES		:= CPU.cpp CPU-$(ARCH_CONFIG_LC).cpp
-PREPROCESS_MODULES		+= devices_CPU
-devices_OBJECTS			:= $(call sources2objects,$(devices_CPU_SOURCES))
-
 devices_PortIO_SOURCES		:= PortIO.cpp PortIO-$(ARCH_CONFIG_LC).cpp
 PREPROCESS_MODULES		+= devices_PortIO
 devices_OBJECTS			+= $(call sources2objects,$(devices_PortIO_SOURCES))

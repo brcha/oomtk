@@ -56,7 +56,7 @@ over_multiboot_stuff:
     movl    $EXT(_bss_start), %edi  /* Load destination */
     movl    $EXT(_end_maps), %ecx   /* Count revision 1 */
     subl    $EXT(_bss_start), %ecx  /* Count revision 2 */
-    movl    $0x0, %eax		    /* Fill with NULL	*/
+    xorl    %eax, %eax		    /* Fill with NULL	*/
     subl    $KVA, %edi		    /* No paging set up yet! */
 
     /* Do the clear loop */

@@ -79,15 +79,21 @@ SECTIONS
     }
     _bss_end = .;
 
+    /* Begin mappings */
+    . = ALIGN(PAGE_SIZE);
     _begin_maps = .;
-    /* Master paging directory PTE & PAE versions */
-    MasterPageDirPTE = .;
-    MasterPageDirPAE = .;
+    /* Master paging directory */
+    MasterPageDir = .;
     . = . + PAGE_SIZE;
 
     /* Kernel page table - 2MB for PAE or 4MB for PTE */
     . = ALIGN(PAGE_SIZE);
-    KernelPageTable = .;
+    KernPageTable = .;
+    . = . + PAGE_SIZE;
+
+    /* Transient mappings - idea from Coyotos */
+    . = ALIGN(PAGE_SIZE);
+    TransMap = .;
     . = . + PAGE_SIZE;
 
     /* Kernel Stack */
@@ -97,9 +103,10 @@ SECTIONS
     kstack_hi = .;
 
     _end_maps = .;
+    /* End mappings */
 
     /* Discard debugging, relocations, exceptions, etc */
-    debug :
+    /DISCARD/ :
     {
 	*(.stab*)
 	*(.debug*)
@@ -107,11 +114,10 @@ SECTIONS
 	*(.shstrtab*)
 	*(.symtab*)
 	*(.strtab*)
-    }
-
-    /DISCARD/ :
-    {
 	*(.rel.*)
 	*(.eh_frame)
     }
+    /* I should see about exceptions... if they are implemented, I will
+     * enable them
+     */
 }

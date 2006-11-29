@@ -28,6 +28,10 @@ paging_Paging_SOURCES	:= Paging.cpp
 PREPROCESS_MODULES	+= paging_Paging
 boot_ia32_OBJECTS	+= $(call sources2objects,$(paging_Paging_SOURCES))
 
+paging_Legacy_SOURCES	:= PagingLegacy.cpp
+PREPROCESS_MODULES	+= paging_Legacy
+boot_ia32_OBJECTS	+= $(call sources2objects,$(paging_Legacy_SOURCES))
+
 paging_PAE_SOURCES	:= PagingPAE.cpp
 PREPROCESS_MODULES	+= paging_PAE
 boot_ia32_OBJECTS	+= $(call sources2objects,$(paging_PAE_SOURCES))
