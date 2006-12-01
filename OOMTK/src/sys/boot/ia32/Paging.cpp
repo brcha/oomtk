@@ -22,9 +22,15 @@ class Paging
 {
 };
 
+/**
+ * @brief Enable debuging messages or not
+ */
+#define DEBUG_PAGING DEBUG_ENABLE
+
 IMPLEMENTATION:
 
 #include <fatal.h>
+#include <ansi.h>
 
 /**
  * @brief Inhibit creating instances of this class
@@ -46,7 +52,7 @@ PROTECTED Paging::Paging()
  */
 PUBLIC virtual void Paging::setup()
 {
-  fatal("Paging::setup is virtual function!!!\n");
+  fatal(ANSI_FG_RED "Paging::setup is virtual function!!!\n" ANSI_NORMAL);
 };
 
 // Low-level get/set operators

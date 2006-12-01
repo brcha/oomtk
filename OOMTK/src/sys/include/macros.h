@@ -150,4 +150,17 @@
 
 #define def_to_string(s) #s
 
+/**
+ * @brief Enable debugging messages
+ *
+ * @note Optimization will remove the if(1).
+ */
+#define DEBUG_ENABLE  if(1)
+/**
+ * @brief Disable debugging messages
+ *
+ * @note Optimization will remove if(0) and the following command.
+ */
+#define DEBUG_DISABLE if(0)
+
 #endif /* __MACROS_H__ */

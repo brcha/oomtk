@@ -17,6 +17,7 @@
 
 #include <Paging.h>
 #include <PagingLegacy.h>
+#include <PagingPAE.h>
 
 #include <fatal.h>
 
@@ -70,9 +71,9 @@ void systemStartup()
 
   // Setup the paging
   Paging * paging;
-//   if (cpuid->has(CPUID::PAE))
-//     paging = PagingPAE::instance();
-//   else
+  if (cpuid->has(CPUID::PAE))
+    paging = PagingPAE::instance();
+  else
     paging = PagingLegacy::instance();
   paging->setup();
 

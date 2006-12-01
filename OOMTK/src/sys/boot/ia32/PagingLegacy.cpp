@@ -22,7 +22,7 @@ class PagingLegacy : public Paging
     /**
      * @brief Page directory entry
      */
-    union PageDirectoryEntry {
+    union PDE_t {
       struct {
         uint32_t  present     : 1;  ///< @brief Present
         uint32_t  rw          : 1;  ///< @brief Read/Write
@@ -33,7 +33,7 @@ class PagingLegacy : public Paging
         uint32_t  s           : 1;  ///< @brief Reserved (set to 0)
         uint32_t  ps          : 1;  ///< @brief Page size (0 indicates 4 kb)
         uint32_t  global      : 1;  ///< @brief Global page (ignored)
-        uint32_t  avail       : 3;  ///< @brief Available for system programmer's use
+        uint32_t  available   : 3;  ///< @brief Available for system programmer's use
         uint32_t  pt_base     :20;  ///< @brief Page-Table Base Address
       } bits4k;                     ///< @brief Page directory entry bits for 4 kb pages
       struct {
@@ -46,7 +46,7 @@ class PagingLegacy : public Paging
         uint32_t  dirty       : 1;  ///< @brief Dirty
         uint32_t  ps          : 1;  ///< @brief Page size (1 indicates 4 Mb)
         uint32_t  global      : 1;  ///< @brief Global page
-        uint32_t  avail       : 3;  ///< @brief Available for system programmer's use
+        uint32_t  available   : 3;  ///< @brief Available for system programmer's use
         uint32_t  pat         : 1;  ///< @brief Page attribute table index (set to 0 if not supported)
         uint32_t  reserved    : 9;  ///< @brief Reserved (must be set to 0) - AMD uses bits 20:13 for physical page base address bits 39:32, but since we are not going to address 1 TB address space and Intel doesn't support that, we will ignore that.
         uint32_t  page_base   :10;  ///< @brief Page Base Address
@@ -57,7 +57,7 @@ class PagingLegacy : public Paging
     /**
      * @brief Page Table Entry
      */
-    union PageTableEntry {
+    union PTE_t {
       struct {
         uint32_t  present     : 1;  ///< @brief Present
         uint32_t  rw          : 1;  ///< @brief Read/Write
@@ -68,20 +68,33 @@ class PagingLegacy : public Paging
         uint32_t  dirty       : 1;  ///< @brief Dirty
         uint32_t  pat         : 1;  ///< @brief Page attribute table index (set to 0 if not supported)
         uint32_t  global      : 1;  ///< @brief Global page
-        uint32_t  avail       : 3;  ///< @brief Available for system programmer's use
+        uint32_t  available   : 3;  ///< @brief Available for system programmer's use
         uint32_t  page_base   :20;  ///< @brief Page Base Address
       } bits4k;
       uint32_t    value;            ///< @brief Page table entry 32bit value
     };
 
-    PageDirectoryEntry * PageDirectory;
-    PageTableEntry * KernelPageTable;
-    PageTableEntry * TransientMappings;
+    /**
+     * @brief Master page directory
+     */
+    PDE_t * PageDirectory;
+    /**
+     * @brief Kernel's page table
+     */
+    PTE_t * KernelPageTable;
+    /**
+     * @brief Transient mappings
+     *
+     * Idea is to remap the page from user-space to kernel-space using this page
+     * table.
+     */
+    PTE_t * TransientMappings;
 };
 
 IMPLEMENTATION:
 
 #include <stdio.h>
+#include <ansi.h>
 #include <CPUID.h>
 #include INC_ARCH(CR.h)
 
@@ -109,11 +122,12 @@ extern void * TransMap;       ///< @brief Transient mappings page
 /**
  * @brief Protected constructor
  */
-PROTECTED PagingLegacy::PagingLegacy()
+PROTECTED PagingLegacy::PagingLegacy() :
+    Paging()
 {
-  PageDirectory = reinterpret_cast<PageDirectoryEntry*>(&MasterPageDir);
-  KernelPageTable = reinterpret_cast<PageTableEntry*>(&KernPageTable);
-  TransientMappings = reinterpret_cast<PageTableEntry*>(&TransMap);
+  PageDirectory     = reinterpret_cast<PDE_t*>(&MasterPageDir);
+  KernelPageTable   = reinterpret_cast<PTE_t*>(&KernPageTable);
+  TransientMappings = reinterpret_cast<PTE_t*>(&TransMap);
 };
 
 /**
@@ -129,6 +143,8 @@ PROTECTED PagingLegacy::PagingLegacy()
  */
 PUBLIC virtual void PagingLegacy::setup()
 {
+  DEBUG_PAGING
+      printf("Starting IA32 legacy paging ... ");
   // Map first [0,4M]
   uint32_t address = 0u;
   for (size_t i = 0; i < 1024; i++)
@@ -205,4 +221,7 @@ PUBLIC virtual void PagingLegacy::setup()
   CR0 |= CR0_PE; // protection enable (this should have been enabled by grub)
 
   cr0(CR0);
+
+  DEBUG_PAGING
+      printf(ANSI_FG_GREEN "[ok]\n" ANSI_NORMAL);
 };
