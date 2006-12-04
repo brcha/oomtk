@@ -50,7 +50,7 @@ all:: prep.deps $(foreach p, $(PREPROCESS_MODULES), $(p)-preprocessed.stamp) ; @
 
 # $(foreach p, $(PREPROCESS_MODULES), $(p)-preprocessed.stamp: $($(p)_SOURCES)\n)
 
-prep.deps:
+prep.deps: $(foreach p, $(PREPROCESS_MODULES), $($(p)_SOURCES))
 	@($(foreach p, $(PREPROCESS_MODULES), \
 		echo "$(p)-preprocessed.stamp: $($(p)_SOURCES) prep.deps";)) > prep.deps
 
