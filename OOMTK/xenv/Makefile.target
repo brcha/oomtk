@@ -82,7 +82,7 @@ BUILD/binutils-$(BINUTILS_VERSION): | BUILD
 # unpack newlib, apply patches
 BUILD/newlib-$(NEWLIB_VERSION): | BUILD
 	@echo "Unpacking newlib-$(NEWLIB_VERSION)"
-	(cd BUILD; tar xjf ../SOURCES/newlib-$(NEWLIB_VERSION).tar.bz2)
+	(cd BUILD; tar xzf ../SOURCES/newlib-$(NEWLIB_VERSION).tar.gz)
 	(cd BUILD; bzcat ../SOURCES/$(NEWLIB_PATCH) | patch -p0)
 	(cd BUILD; patch -p0 < ../SOURCES/oomtk-newlib-$(NEWLIB_VERSION).patch)
 
