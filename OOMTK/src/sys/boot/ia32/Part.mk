@@ -15,10 +15,6 @@ boot_ia32_OBJECTS := $(call sources2objects,$(boot_ia32_SOURCES))
 # PREPROCESS_MODULES	+= boot_ia32_ctors
 # boot_ia32_OBJECTS	+= $(call sources2objects,$(boot_ia32_ctors_SOURCES))
 
-boot_ia32_SegmentDescriptor_SOURCES	:= SegmentDescriptor.cpp
-PREPROCESS_MODULES	+= boot_ia32_SegmentDescriptor
-boot_ia32_OBJECTS	+= $(call sources2objects,$(boot_ia32_SegmentDescriptor_SOURCES))
-
 boot_ia32_CPUID_SOURCES	:= CPUID.cpp
 PREPROCESS_MODULES	+= boot_ia32_CPUID
 boot_ia32_OBJECTS	+= $(call sources2objects,$(boot_ia32_CPUID_SOURCES))
@@ -35,6 +31,11 @@ boot_ia32_OBJECTS	+= $(call sources2objects,$(paging_Legacy_SOURCES))
 paging_PAE_SOURCES	:= PagingPAE.cpp
 PREPROCESS_MODULES	+= paging_PAE
 boot_ia32_OBJECTS	+= $(call sources2objects,$(paging_PAE_SOURCES))
+
+# GDT
+gdt_SOURCES		:= GDT.cpp
+PREPROCESS_MODULES	+= gdt
+boot_ia32_OBJECTS	+= $(call sources2objects,$(gdt_SOURCES))
 
 linker.ia32.ld: linker.ia32.ld.S
 	$(CPP_MESSAGE)

@@ -13,11 +13,11 @@
 
 #include <CPUID.h>
 
-#include <SegmentDescriptor.h>
-
 #include <Paging.h>
 #include <PagingLegacy.h>
 #include <PagingPAE.h>
+
+#include <GDT.h>
 
 #include <fatal.h>
 
@@ -77,10 +77,10 @@ void systemStartup()
     paging = PagingLegacy::instance();
   paging->setup();
 
-  // Try to setup new GDT
-  printf("Before new GDT\n");
-//   SetupGDT();
-  printf("After new GDT :)\n");
+  // Setup the new GDT
+  GDT * gdt = GDT::instance();
+  gdt->setup();
+
 
   // Call the constructors
 //   callCtors();

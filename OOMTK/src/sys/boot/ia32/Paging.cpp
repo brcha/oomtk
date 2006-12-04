@@ -23,7 +23,7 @@ class Paging
 };
 
 /**
- * @brief Enable debuging messages or not
+ * @brief Enable debugging messages or not
  */
 #define DEBUG_PAGING DEBUG_ENABLE
 
