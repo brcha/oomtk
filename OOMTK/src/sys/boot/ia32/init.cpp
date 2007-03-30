@@ -3,7 +3,10 @@
  *
  *  This file is part of OOMTK
  */
-/** \file
+/*
+ * $Id: $
+ */
+/** \file init.cpp
  * \brief Kernel initialization
  */
 

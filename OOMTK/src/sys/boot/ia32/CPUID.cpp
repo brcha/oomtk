@@ -3,6 +3,12 @@
  *
  *  This file is part of OOMTK
  */
+/*
+ * $Id: $
+ */
+
+#include "CPUID.h"
+
 #include <stdio.h>
 #include <VgaConsole.h>
 #include <types.h>
