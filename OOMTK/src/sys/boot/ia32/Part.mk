@@ -4,8 +4,6 @@
 #  This file is part of OOMTK
 #
 
-# $Id: $
-
 VPATH += $(SYS_SOURCE_DIR)/boot/$(ARCH_CONFIG_LC)
 
 boot_ia32_SOURCES := start.S init.cc
@@ -41,6 +39,6 @@ linker.ia32.ld: linker.ia32.ld.S
 	$(CPP_MESSAGE)
 	$(CPP_BUILD)
 
-oomtk: linker.ia32.ld $(boot_ia32_OBJECTS) minilibc.a supc++.a libc++.a Devices.a Kernel.a
+oomtk: linker.ia32.ld $(boot_ia32_OBJECTS) minilibc.a supc++.a libc++.a Devices.a Kernel.a $(LIBGCC)
 	$(LD_MESSAGE)
 	$(LD) -N -o $@ -T $< -gc-sections $(filter-out $<,$^)

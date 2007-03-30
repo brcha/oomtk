@@ -3,11 +3,8 @@
  *
  *  This file is part of OOMTK
  */
-/*
- * $Id: linker.ia32.ld 196 2006-10-23 13:29:52Z brcha $
- */
-/** @file
- * @brief Linker script
+/** \file
+ * \brief Linker script
  */
 ENTRY(_start)
 OUTPUT_FORMAT("elf32-i386")

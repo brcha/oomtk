@@ -4,8 +4,8 @@ INTERFACE:
  *
  *  This file is part of OOMTK
  */
-/** @file
- * @brief VGA Console
+/** \file
+ * \brief VGA Console
  */
 
 #include <types.h>
@@ -60,7 +60,7 @@ IMPLEMENTATION:
 #include <PortIO.h>
 
 /**
- * @brief One instance of VgaConsole
+ * \brief One instance of VgaConsole
  * @returns the instance
  */
 PUBLIC static VgaConsole * VgaConsole::instance()
@@ -71,7 +71,7 @@ PUBLIC static VgaConsole * VgaConsole::instance()
 };
 
 /**
- * @brief Protected constructor -- not for use by mortals
+ * \brief Protected constructor -- not for use by mortals
  */
 PROTECTED VgaConsole::VgaConsole()
 {

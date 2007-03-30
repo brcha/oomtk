@@ -4,8 +4,6 @@
 #  This file is part of OOMTK
 #
 
-# $Id: $
-
 ifndef OOMTK_TARGET_MK
 OOMTK_TARGET_MK := 1
 
@@ -36,7 +34,7 @@ Makefile : ;
 %.mk :: ;
 
 # Anything we don't know how to build will depend on this rule
-% :: $(PREP_DIR) $(BUILD_DIR)
+% :: $(PREP_DIR) $(BUILD_DIR) ;
 
 .PHONY: clean
 clean:

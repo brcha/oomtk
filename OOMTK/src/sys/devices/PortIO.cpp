@@ -4,11 +4,8 @@ INTERFACE:
  *
  *  This file is part of OOMTK
  */
-/*
- * $Id: PortIO.cpp 196 2006-10-23 13:29:52Z brcha $
- */
-/** @file
- * @brief Port I/O API
+/** \file
+ * \brief Port I/O API
  *
  * NOTE: This file must have architecture specific implementations!
  */
@@ -28,7 +25,7 @@ class PortIO
 
     /**
      * @defgroup Normal
-     * @brief Regular port i/o operations
+     * \brief Regular port i/o operations
      * @{
      */
     /**
@@ -63,8 +60,8 @@ class PortIO
     /** @} */
 
     /**
-     * @defgroup Delayed
-     * @brief Delayed port i/o operations
+     * \defgroup Delayed
+     * \brief Delayed port i/o operations
      * @{
      */
     /**

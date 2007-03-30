@@ -4,11 +4,8 @@ INTERFACE:
  *
  *  This file is part of OOMTK
  */
-/*
- * $Id: Console.cpp 196 2006-10-23 13:29:52Z brcha $
- */
-/** @file
- * @brief Abstract Console class
+/** \file
+ * \brief Abstract Console class
  */
 
 #include <cstddef>
@@ -71,7 +68,7 @@ PUBLIC static void Console::disableAll()
 
 /**
  * Get current console state
- * @returns current console state
+ * \returns current console state
  */
 PUBLIC inline word_t Console::state() const
 {
@@ -80,7 +77,7 @@ PUBLIC inline word_t Console::state() const
 
 /**
  * Set current console state
- * @param newState new state
+ * \param newState new state
  */
 PUBLIC virtual void Console::state(word_t newState)
 {
@@ -89,7 +86,7 @@ PUBLIC virtual void Console::state(word_t newState)
 
 /**
  * Get console attributes
- * @returns console attributes
+ * \returns console attributes
  *
  * NOTE: There is no setter command, since console attributes are not to be set by
  * users. Console attributes are properties of the console.
@@ -101,9 +98,9 @@ PUBLIC virtual word_t Console::attributes() const
 
 /**
  * Write a string to the output.
- * @param string the string to be written (non-zero terminated)
- * @param length the length of the string
- * @returns 1 on success, 0 else.
+ * \param string the string to be written (non-zero terminated)
+ * \param length the length of the string
+ * \returns 1 on success, 0 else.
  *
  * NOTE: This method should be implemented in the implementations of the Console.
  * NOTE: This method is used to connect the console with the libc glue.
@@ -115,8 +112,8 @@ PUBLIC virtual int Console::write(char const * string, size_t length)
 
 /**
  * Get a character from the input stream.
- * @param blocking true if this method should block until character is available.
- * @returns -1 if not implemented, or character unavailable.
+ * \param blocking true if this method should block until character is available.
+ * \returns -1 if not implemented, or character unavailable.
  *
  * NOTE: This method should be implemented in the implementations of the Console.
  * NOTE: This method is used to connect the console with the libc glue.
@@ -128,7 +125,7 @@ PUBLIC virtual int Console::getchar(bool blocking = true)
 
 /**
  * Is the character available for reading?
- * @returns -1 if not implemented, 0 if no character is available and 1 if at least one character is available
+ * \returns -1 if not implemented, 0 if no character is available and 1 if at least one character is available
  *
  * NOTE: This metod should be implemented in the implementations of the Console.
  */
@@ -138,7 +135,7 @@ PUBLIC virtual int Console::charAvailable() const
 }
 
 /**
- * @brief Don't construct this class!
+ * \brief Don't construct this class!
  */
 PROTECTED Console::Console()
 {

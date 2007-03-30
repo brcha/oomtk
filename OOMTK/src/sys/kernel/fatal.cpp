@@ -4,14 +4,14 @@ INTERFACE:
  *
  *  This file is part of OOMTK
  */
-/** @file
- * @brief Print the message and exit
+/** \file
+ * \brief Print the message and exit
  */
 
 extern "C" {
   /**
-   * @brief Prints out the message and halts the CPU
-   * @param message a message to be printed - printf formated
+   * \brief Prints out the message and halts the CPU
+   * \param message a message to be printed - printf formated
    */
   void fatal(const char * message, ...) NORETURN;
 };

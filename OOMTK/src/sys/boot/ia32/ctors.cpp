@@ -7,8 +7,8 @@ INTERFACE:
 /*
  * $Id: ctors.cpp 196 2006-10-23 13:29:52Z brcha $
  */
-/** @file
- * @brief Static constructors and destructors
+/** \file
+ * \brief Static constructors and destructors
  */
 
 extern "C" {
@@ -22,11 +22,8 @@ IMPLEMENTATION:
  *
  *  This file is part of OOMTK
  */
-/*
- * $Id: ctors.cpp 196 2006-10-23 13:29:52Z brcha $
- */
-/** @file
- * @brief Static constructors and destructors
+/** \file
+ * \brief Static constructors and destructors
  */
 
 // Function pointer helper type
@@ -37,7 +34,7 @@ extern func_ptr __ctors__[];
 extern func_ptr __dtors__[];
 
 /**
- * @brief Calls all constructors
+ * \brief Calls all constructors
  */
 void callCtors()
 {
@@ -46,7 +43,7 @@ void callCtors()
 }
 
 /**
- * @brief Calls all destructors
+ * \brief Calls all destructors
  */
 void callDtors()
 {

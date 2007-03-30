@@ -3,8 +3,8 @@
  *
  *  This file is part of OOMTK
  */
-/** @file
- * @brief Kernel initialization
+/** \file
+ * \brief Kernel initialization
  */
 
 #include <stdio.h>
@@ -27,13 +27,13 @@ using namespace std;
 
 #ifdef __cplusplus
 extern "C" {
-    /// Multiboot signature (loaded from start.S)
+    /// \brief Multiboot signature (loaded from start.S)
     u32_t multibootSignature;
-    /// Multiboot info (loaded from start.S)
+    /// \brief Multiboot info (loaded from start.S)
     u32_t multibootInfo;
-    /// THE C++ Startup Code
+    /// \brief THE C++ Startup Code
     void systemStartup();
-    /// The Assembly Halt function (from start.S)
+    /// \brief The Assembly Halt function (from start.S)
     extern void halt();
 }
 #endif
@@ -80,6 +80,8 @@ void systemStartup()
   // Setup the new GDT
   GDT * gdt = GDT::instance();
   gdt->setup();
+
+  printf("Typeid(gdt).name() = %s\n", typeid(gdt).name());
 
 
   // Call the constructors

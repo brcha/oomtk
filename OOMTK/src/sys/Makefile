@@ -4,8 +4,6 @@
 #  This file is part of OOMTK
 #
 
-# $Id: Makefile 200 2006-11-09 08:07:28Z brcha $
-
 ifeq (,$(filter _%,$(notdir $(CURDIR))))
 	include Mk/target.mk
 else
@@ -13,14 +11,67 @@ else
 all::
 .PHONY: all
 
+help:
+	@echo "OOMTK Build System"
+	@echo ""
+	@echo "Possible build targets are:"
+	@echo " menuconfig        - configure kernel (curses interface)"
+	@echo " config            - the same as menuconfig"
+	@echo " xconfig           - configure kernel (tk interface)"
+	@echo " all               - build the kernel"
+	@echo " clean             - delete all built files"
+.PHONY: help
+
 OOMTK_ROOT = $(SYS_SOURCE_DIR)/../..
 
 VPATH	= $(SYS_SOURCE_DIR)
+
+# Include the configured options
+-include $(SYS_SOURCE_DIR)/globalconfig.out
 
 # Include building rules
 include $(SYS_SOURCE_DIR)/Mk/variables.mk
 include $(SYS_SOURCE_DIR)/Mk/commands.mk
 include $(SYS_SOURCE_DIR)/Mk/rules.mk
+
+# If not configuring
+#ifeq ($(filter config xconfig menuconfig oldconfig,$(MAKECMDGOALS)),)
+
+ifeq ("$(CONFIG_ARCH)","")
+
+all:: menuconfig
+	@echo "Run make again to build!!!"
+	@exit 1
+
+endif
+
+$(SYS_SOURCE_DIR)/rules.out: $(SYS_SOURCE_DIR)/rules.cml
+	@echo "+---------------------------------------------------+"
+	@echo "| rules.out are out-of-date. Do \'make menuconfig\' |"
+	@echo "+---------------------------------------------------+"
+	$(CML2_COMPILE) -o $@ $<
+
+$(SYS_SOURCE_DIR)/globalconfig.out: $(SYS_SOURCE_DIR)/rules.out
+	$(CML2_CONFIGURE) -b -B $(CML2_BANNER) -c -i $(SYS_SOURCE_DIR)/globalconfig.out -o $(SYS_SOURCE_DIR)/globalconfig.out $<
+
+$(SYS_SOURCE_DIR)/globalconfig.h: $(SYS_SOURCE_DIR)/globalconfig.out
+	$(CML2_CONFIGTRANS) -h $@ $<
+
+config menuconfig: $(SYS_SOURCE_DIR)/rules.out
+	$(CML2_CONFIGURE) -B $(CML2_BANNER) -c -i $(SYS_SOURCE_DIR)/globalconfig.out -o $(SYS_SOURCE_DIR)/globalconfig.out $<
+.PHONY: config menuconfig
+
+oldconfig: $(SYS_SOURCE_DIR)/rules.out
+	$(CML2_CONFIGURE) -B $(CML2_BANNER) -t -I $(SYS_SOURCE_DIR)/globalconfig.out -o $(SYS_SOURCE_DIR)/globalconfig.out $<
+.PHONY: oldconfig
+
+regenconfig: $(SYS_SOURCE_DIR)/rules.out
+	$(CML2_CONFIGURE) -B $(CML2_BANNER) -b -I $(SYS_SOURCE_DIR)/globalconfig.out -o $(SYS_SOURCE_DIR)/globalconfig.out $<
+.PHONY: regenconfig
+
+xconfig: $(SYS_SOURCE_DIR)/rules.out
+	$(CML2_CONFIGURE) -x -i $(SYS_SOURCE_DIR)/globalconfig.out -o $(SYS_SOURCE_DIR)/globalconfig.out $<
+.PHONY: xconfig
 
 # Define directories where are the sources
 SUBDIRECTORIES  = boot/$(ARCH_CONFIG_LC)
@@ -60,7 +111,7 @@ else
 # We have preprocessed everything, now we build
 VPATH += $(PREP_DIR)
 
-all:: prepUpdate oomtk updateBuildNumber
+all:: $(SYS_SOURCE_DIR)/globalconfig.h prepUpdate oomtk updateBuildNumber
 
 .PHONY: prepUpdate
 prepUpdate:
@@ -76,3 +127,5 @@ updateBuildNumber:
 
 endif
 endif
+
+

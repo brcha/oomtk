@@ -38,4 +38,8 @@ void __cxa_guard_release(guard_t * g)
   *(char*)(g) = 1;  // guard set
 };
 
+void _Unwind_Resume()
+{
+}
+
 };

@@ -4,8 +4,6 @@
 #  This file is part of OOMTK
 #
 
-# $Id: $
-
 ifndef OOMTK_RULES_MK
 OOMTK_RULES_MK := 1
 

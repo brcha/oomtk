@@ -4,8 +4,6 @@
 #  This file is part of OOMTK
 #
 
-# $Id: $
-
 VPATH += $(SYS_SOURCE_DIR)/devices $(SYS_SOURCE_DIR)/devices/$(ARCH_CONFIG_LC)
 
 devices_PortIO_SOURCES		:= PortIO.cpp PortIO-$(ARCH_CONFIG_LC).cpp

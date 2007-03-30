@@ -3,8 +3,8 @@
  *
  *  This file is part of OOMTK
  */
-/** @file
- * @brief Assembly start code
+/** \file
+ * \brief Assembly start code
  */
 
 /* Standard assembly macros */
@@ -90,7 +90,7 @@ nextLine:
 
     /* Setup the stack right */
     movl    $kstack_hi, %esp
-    
+
     /* Welcome to C++ */
     call    EXT(systemStartup)
     /* We should never come here... but just in case */

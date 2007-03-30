@@ -3,11 +3,8 @@
  *
  *  This file is part of OOMTK
  */
-/*
- * $Id: $
- */
-/** @file
- * @brief Glue for the LibC
+/** \file
+ * \brief Glue for the LibC
  */
 
 #include <libc_backend.h>

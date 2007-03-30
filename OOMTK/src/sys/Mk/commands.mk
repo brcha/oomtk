@@ -4,8 +4,6 @@
 #  This file is part of OOMTK
 #
 
-# $Id: $
-
 ifndef OOMTK_COMMANDS_MK
 OOMTK_COMMANDS_MK := 1
 
@@ -22,7 +20,8 @@ KERNEL_CONFIG	?= RELEASE
 #  Arch config = IA32, ARM, PPC  #
 #  (note: currently only ia32)   #
 ##                              ##
-ARCH_CONFIG	?= IA32
+# read arch from globalconfig.out
+ARCH_CONFIG	:= $(patsubst "%",%,$(CONFIG_ARCH))
 ARCH_CONFIG	:= $(shell echo -n $(ARCH_CONFIG) | tr a-z A-Z)
 ARCH_CONFIG_LC	:= $(shell echo -n $(ARCH_CONFIG) | tr A-Z a-z)
 
@@ -41,15 +40,10 @@ ifeq ($(ARCH_CONFIG),IA32)
 	TARGET := i386-unknown-oomtk
 else ifeq ($(ARCH_CONFIG),AMD64)
 	TARGET := x86_64-unknown-oomtk
-	$(error AMD64 is not supported at the moment.)
 else ifeq ($(ARCH_CONFIG),ARM)
 	TARGET := arm-unknown-oomtk
-	$(error ARM is not supported at the moment.)
 else ifeq ($(ARCH_CONFIG),PPC)
 	TARGET := powerpc-unknown-oomtk
-	$(error PowerPC is not supported at the moment.)
-else
-	$(error Unsupported architecture!)
 endif
 
 
@@ -64,6 +58,12 @@ LD	:= $(V)$(OOMTK_TOOLCHAIN_PREFIX)ld
 PREP    := $(V)perl $(OOMTK_ROOT)/tools/preprocess/src/preprocess
 MOVE_IF_CHANGE	:= sh $(OOMTK_ROOT)/tools/move-if-change
 
+CML2_ROOT 	:= $(OOMTK_ROOT)/tools/cml2-2.3.0/
+CML2_COMPILE 	:= $(V)$(CML2_ROOT)cmlcompile.py
+CML2_CONFIGURE	:= $(V)$(CML2_ROOT)cmlconfigure.py
+CML2_CONFIGTRANS:= $(V)$(CML2_ROOT)configtrans.py
+CML2_BANNER	:= "OOMTK v.$(OOMTK_VERSION) for $(ARCH_CONFIG)"
+
 LIBGCC	:= $(shell $(OOMTK_TOOLCHAIN_PREFIX)g++ -print-libgcc-file-name)
 LIBSUPCPP	:= $(shell $(OOMTK_TOOLCHAIN_PREFIX)g++ -print-file-name=libsupc++.a)
 
@@ -73,7 +73,8 @@ LIBSUPCPP	:= $(shell $(OOMTK_TOOLCHAIN_PREFIX)g++ -print-file-name=libsupc++.a)
 
 # Generic flags
 CFLAGS_GEN	:= -static -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs -include $(SYS_SOURCE_DIR)/include/macros.h -include $(SYS_SOURCE_DIR)/include/config.h -I$(wildcard $(dir $(LIBGCC))/include $(dir $(LIBGCC))/../include)
-CXXFLAGS_ADDONS	:= -fno-exceptions -fno-rtti
+#CXXFLAGS_ADDONS	:= -fno-exceptions -fno-rtti
+CXXFLAGS_ADDONS	:= -fno-exceptions
 ASMFLAGS_ADDONS	:= -D__ASSEMBLER__
 
 CFLAGS_RELEASE	:=

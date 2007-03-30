@@ -4,23 +4,29 @@ INTERFACE:
  *
  *  This file is part of OOMTK
  */
-/** @file
- * @brief CPU Identification
+/** \file
+ * \brief CPU Identification
  */
 
 #include <types.h>
 
 /**
- * @brief CPUID class identifies the CPU
+ * \brief CPUID class identifies the CPU
  *
- * Supported CPU's are Intel's until 15th November 2006 and AMD's until 1st
- * September 2006 (those are the dates of their documentations... hope that's
- * accurate).
+ * For more info on CPUID for Intel and AMD see
+ * \ref ia32v2a "Intel's instruction set reference",
+ * \ref ia32v3a "Intel's system programming guide",
+ * \ref ia32ap485 "Intel's processor identification note",
+ * \ref amd64v1 "AMD's application programming guide",
+ * \ref amd64v2 "AMD's system programming guide",
+ * \ref amd64v3 "AMD's general purpose instructions",
+ * \ref AMDrecognition "AMD's processor recognition note" and
+ * \ref AMDcpuid "AMD's CPUID specification".
  */
 class CPUID {
   public:
     /**
-     * @brief CPU Vendor
+     * \brief CPU Vendor
      *
      * These values should form a bitfield, so they should be 2^n
      */
@@ -31,92 +37,94 @@ class CPUID {
     };
 
     /**
-     * @brief CPU Features
+     * \brief CPU Features
      *
      * Names of the features are the same as in IA-32 manual (with excluded '-'
      * in some names and with 'a' added in front of AMD's 3DNow features).
      *
-     * For Intel see AP-485, Intel Processor Identicifation and the CPUID Instruction
-     * and Intel64 and IA-32 Intel Architecture Software Developer's
-     * Manual, Volume 2A: Instruction Set Reference, A-M, pages 160-188.
+     * For Intel see \ref ia32ap485 "AP-485, Intel Processor Identicifation and the
+     * CPUID Instruction" and \ref ia32v2a "Intel64 and IA-32 Intel Architecture
+     * Software Developer's Manual, Volume 2A: Instruction Set Reference, A-M, pages
+     * 160-188".
      *
-     * For AMD see AMD's CPUID Specification and AMD64 Architecture Programmer's
-     * Manual, Volume 3: General-Purpose and System Instructions, pages 102-103.
+     * For AMD see \ref AMDcpuid "AMD's CPUID Specification" and \ref amd64v3 "AMD64
+     * Architecture Programmer's Manual, Volume 3: General-Purpose and System
+     * Instructions, pages 102-103".
      */
     enum cpuFeature_t {
       // eax = 1, ecx features
-      SSE3 = 0,   ///< @brief Streaming SIMD Extensions 3 (SSE3)
-      MONITOR,    ///< @brief Monitor/MWait support
-      DSCPL,      ///< @brief CPL Qualified Debug Store
-      VMX,        ///< @brief Virtual Machine Extensions
-      EST,        ///< @brief Enhanced Intel SpeedStep technology
-      TM2,        ///< @brief Thermal Monitor 2
-      SSSE3,      ///< @brief Supplemental Streaming SIMD Extensions 3
-      CID,        ///< @brief L1 Context ID
-      CX16,       ///< @brief CMPXCHG16B instruction supported
-      xTPR,       ///< @brief Send Task Priority Messages
-      DCA,        ///< @brief Direct Cache Access
-      RAZ,        ///< @brief AMD64 64-bit register parts access
+      SSE3 = 0,   ///< \brief Streaming SIMD Extensions 3 (SSE3)
+      MONITOR,    ///< \brief Monitor/MWait support
+      DSCPL,      ///< \brief CPL Qualified Debug Store
+      VMX,        ///< \brief Virtual Machine Extensions
+      EST,        ///< \brief Enhanced Intel SpeedStep technology
+      TM2,        ///< \brief Thermal Monitor 2
+      SSSE3,      ///< \brief Supplemental Streaming SIMD Extensions 3
+      CID,        ///< \brief L1 Context ID
+      CX16,       ///< \brief CMPXCHG16B instruction supported
+      xTPR,       ///< \brief Send Task Priority Messages
+      DCA,        ///< \brief Direct Cache Access
+      RAZ,        ///< \brief AMD64 64-bit register parts access
       // eax = 1, edx features
-      FPU,        ///< @brief Floating Point Unit On-Chip
-      VME,        ///< @brief Virtual 8086 Mode Enhancements
-      DE,         ///< @brief Debugging Extensions - I/O breakpoints, CR4.DE, ...
-      PSE,        ///< @brief Page Size Extension - large 4 MB pages
-      TSC,        ///< @brief Time Stamp Counter - CR4.TSD & RDTSC instruction
-      MSR,        ///< @brief Model Specific Registers - {RD,WR}MSR
-      PAE,        ///< @brief Physical Address Extension - address > 32bits
-      MCE,        ///< @brief Machine Check Exception - exc.18
-      CX8,        ///< @brief CMPXCHG8B instruction supported
-      APIC,       ///< @brief APIC On-Chip (Advanced PIC)
-      SEP,        ///< @brief SYSENTER & SYSEXIT instructions
-      MTRR,       ///< @brief Memory Type Range Registers
-      PGE,        ///< @brief PTE Global Bit
-      MCA,        ///< @brief Machine Check Architecture
-      CMOV,       ///< @brief Conditional Move instruction supported
-      PAT,        ///< @brief Page Attribute Table
-      PSE36,      ///< @brief 36bit Page Size Extension - 4 MB pages beyond 4 GB
-      PSN,        ///< @brief Processor Serial Number (96bit)
-      CLFSH,      ///< @brief CLFLUSH instruction
-      DS,         ///< @brief Debug Store
-      ACPI,       ///< @brief Thermal Monitor and Software Controlled Clock Facilities
-      MMX,        ///< @brief Intel MMX Technology
-      FXSR,       ///< @brief FXSAVE and FXRSTOR instructions (for FPU context)
-      SSE,        ///< @brief SSE extensions
-      SSE2,       ///< @brief SSE2 extensions
-      SS,         ///< @brief Self Snoop
-      HTT,        ///< @brief Multi-Threading - more than one logical processor
-      iTM,        ///< @brief Thermal Monitor (Intel)
-      IA64,       ///< @brief Intel IA-64 capabilities (=> this is IA32e mode)
-      PBE,        ///< @brief Pending Break Enable
+      FPU,        ///< \brief Floating Point Unit On-Chip
+      VME,        ///< \brief Virtual 8086 Mode Enhancements
+      DE,         ///< \brief Debugging Extensions - I/O breakpoints, CR4.DE, ...
+      PSE,        ///< \brief Page Size Extension - large 4 MB pages
+      TSC,        ///< \brief Time Stamp Counter - CR4.TSD & RDTSC instruction
+      MSR,        ///< \brief Model Specific Registers - {RD,WR}MSR
+      PAE,        ///< \brief Physical Address Extension - address > 32bits
+      MCE,        ///< \brief Machine Check Exception - exc.18
+      CX8,        ///< \brief CMPXCHG8B instruction supported
+      APIC,       ///< \brief APIC On-Chip (Advanced PIC)
+      SEP,        ///< \brief SYSENTER & SYSEXIT instructions
+      MTRR,       ///< \brief Memory Type Range Registers
+      PGE,        ///< \brief PTE Global Bit
+      MCA,        ///< \brief Machine Check Architecture
+      CMOV,       ///< \brief Conditional Move instruction supported
+      PAT,        ///< \brief Page Attribute Table
+      PSE36,      ///< \brief 36bit Page Size Extension - 4 MB pages beyond 4 GB
+      PSN,        ///< \brief Processor Serial Number (96bit)
+      CLFSH,      ///< \brief CLFLUSH instruction
+      DS,         ///< \brief Debug Store
+      ACPI,       ///< \brief Thermal Monitor and Software Controlled Clock Facilities
+      MMX,        ///< \brief Intel MMX Technology
+      FXSR,       ///< \brief FXSAVE and FXRSTOR instructions (for FPU context)
+      SSE,        ///< \brief SSE extensions
+      SSE2,       ///< \brief SSE2 extensions
+      SS,         ///< \brief Self Snoop
+      HTT,        ///< \brief Multi-Threading - more than one logical processor
+      iTM,        ///< \brief Thermal Monitor (Intel)
+      IA64,       ///< \brief Intel IA-64 capabilities (=> this is IA32e mode)
+      PBE,        ///< \brief Pending Break Enable
       // eax = 80000001, ecx features
-      LahfSahf,   ///< @brief LAHF/SAHF available in 64bit mode
-      CmpLegacy,  ///< @brief CMPLEGACY available (Athlon64 and Opteron)
-      SVM,        ///< @brief AMD's Secure Virtual Machine feature
-      AltMovCr8,  ///< @brief LOCK MOV CR0 means MOV CR8
+      LahfSahf,   ///< \brief LAHF/SAHF available in 64bit mode
+      CmpLegacy,  ///< \brief CMPLEGACY available (Athlon64 and Opteron)
+      SVM,        ///< \brief AMD's Secure Virtual Machine feature
+      AltMovCr8,  ///< \brief LOCK MOV CR0 means MOV CR8
       // eax = 80000001, edx features
-      SYSCALL,    ///< @brief SYSCALL and SYSRET instructions
-      NX,         ///< @brief No-eXecute page protection (AMD)
-      XD,         ///< @brief eXecution Disable bit (Intel)
-      MmxExt,     ///< @brief AMD's extensions to MMX instructions
-      FFXSR,      ///< @brief FXSAVE and FXRSTOR instruction optimizations
-      RDTSCP,     ///< @brief RDTSCP instruction
-      LM,         ///< @brief AMD's Long Mode (64-bit mode)
-      Intel64,    ///< @brief Intel's EM64T mode (64-bit mode)
-      a3DNowExt,  ///< @brief AMD's extensions for 3DNow! instructions
-      a3DNow,     ///< @brief 3DNow! instructions
+      SYSCALL,    ///< \brief SYSCALL and SYSRET instructions
+      NX,         ///< \brief No-eXecute page protection (AMD)
+      XD,         ///< \brief eXecution Disable bit (Intel)
+      MmxExt,     ///< \brief AMD's extensions to MMX instructions
+      FFXSR,      ///< \brief FXSAVE and FXRSTOR instruction optimizations
+      RDTSCP,     ///< \brief RDTSCP instruction
+      LM,         ///< \brief AMD's Long Mode (64-bit mode)
+      Intel64,    ///< \brief Intel's EM64T mode (64-bit mode)
+      a3DNowExt,  ///< \brief AMD's extensions for 3DNow! instructions
+      a3DNow,     ///< \brief 3DNow! instructions
       // eax = 80000007, edx features (APM information on AMD)
-      TS,         ///< @brief Temperature sensor
-      FID,        ///< @brief Frequency ID control
-      VID,        ///< @brief Voltage ID control
-      TTP,        ///< @brief THERMTRIP is supported
-      aTM,        ///< @brief Hardware thermal control is supported (AMD)
-      STC,        ///< @brief Software thermal control is supported
-      TscInvariant, ///< @brief TSC rate is ensured to be invariant across all P,C-States and stop-grant transitions (such as STPCLK Throttling) => TSC is good as a time source.
-      NUM_FEATURES  ///< @brief This is for size of features list
+      TS,         ///< \brief Temperature sensor
+      FID,        ///< \brief Frequency ID control
+      VID,        ///< \brief Voltage ID control
+      TTP,        ///< \brief THERMTRIP is supported
+      aTM,        ///< \brief Hardware thermal control is supported (AMD)
+      STC,        ///< \brief Software thermal control is supported
+      TscInvariant, ///< \brief TSC rate is ensured to be invariant across all P,C-States and stop-grant transitions (such as STPCLK Throttling) => TSC is good as a time source.
+      NUM_FEATURES  ///< \brief This is for size of features list
     };
 
   protected:
-    /// @brief Some constants used in the code
+    /// \brief Some constants used in the code
     enum {
       // Registers used in features definition list
       EAX   = 0,
@@ -126,7 +134,7 @@ class CPUID {
     };
 
     /**
-     * @brief Structure that defines the features of this CPU
+     * \brief Structure that defines the features of this CPU
      */
     struct features_t {
       uint32_t  code;
@@ -138,11 +146,11 @@ class CPUID {
     };
 
     /**
-     * @brief Features of this CPU
+     * \brief Features of this CPU
      */
     features_t features[NUM_FEATURES];
 
-    /// @brief Registers for the cpuid() function
+    /// \brief Registers for the cpuid() function
     struct cpuidRegisters {
       uint32_t eax;
       uint32_t ebx;
@@ -150,11 +158,11 @@ class CPUID {
       uint32_t edx;
     };
 
-    /// @brief CPU Vendor String ("GenuineIntel" or "AuthenticAMD")
+    /// \brief CPU Vendor String ("GenuineIntel" or "AuthenticAMD")
     char _cpuVendor[13];
-    /// @brief CPU Name String (functions 0x8000000[4:2], eax, ebx, ecx & edx)
+    /// \brief CPU Name String (functions 0x8000000[4:2], eax, ebx, ecx & edx)
     char _cpuName[49];
-    /// @brief CPU Vendor ID (from cpuVendor_t enum)
+    /// \brief CPU Vendor ID (from cpuVendor_t enum)
     cpuVendor_t _cpuVendorID;
 
     // eax = 1, eax fields
@@ -164,15 +172,15 @@ class CPUID {
     // eax = 1, ebx fields
     uint32_t _nLogicalProcessors;
 
-    /// @brief Print to console or not?
+    /// \brief Print to console or not?
     bool _printOut;
 
-    /// @brief Maximum function
+    /// \brief Maximum function
     uint32_t maximumFunction;
-    /// @brief Maximum extended function
+    /// \brief Maximum extended function
     uint32_t maximumExtendedFunction;
 
-    /// @brief True when CPU has been identified
+    /// \brief True when CPU has been identified
     bool _identified;
 };
 
@@ -186,8 +194,8 @@ IMPLEMENTATION:
 #include <string.h>
 
 /**
- * @brief Make only one instance of this class
- * @returns the instance
+ * \brief Make only one instance of this class
+ * \returns the instance
  */
 PUBLIC static CPUID * CPUID::instance(bool printOut = true)
 {
@@ -197,7 +205,7 @@ PUBLIC static CPUID * CPUID::instance(bool printOut = true)
 };
 
 /**
- * @brief Do the identification
+ * \brief Do the identification
  */
 PUBLIC void CPUID::identify()
 {
@@ -258,9 +266,9 @@ PUBLIC void CPUID::identify()
       _nLogicalProcessors = 1;
 
     /**
-     * @todo Somebody should read data from the documents and encode the models,
-     * @todo families, steppings and so on as regular strings, not as these pure
-     * @todo values...
+     * \todo Somebody should read data from the documents and encode the models,
+     * \todo families, steppings and so on as regular strings, not as these pure
+     * \todo values...
      */
 //     printf("CPU0: family %d, model %d, stepping %d, brand %d, clflush %d\n",
 //            _cpuFamily,
@@ -420,10 +428,10 @@ PROTECTED bool CPUID::supportsCPUID()
 };
 
 /**
- * @brief Calls the CPUID function
- * @param code cpuid code (-> eax)
- * @param regs returned cpuid registers
- * @returns contents of eax
+ * \brief Calls the CPUID function
+ * \param code cpuid code (-> eax)
+ * \param regs returned cpuid registers
+ * \returns contents of eax
  */
 PROTECTED inline uint32_t CPUID::cpuid(uint32_t code, cpuidRegisters & regs)
 {
@@ -442,8 +450,8 @@ PROTECTED inline uint32_t CPUID::cpuid(uint32_t code, cpuidRegisters & regs)
 };
 
 /**
- * @brief CPUID Constructor
- * @param printOut print the messages on screen or not
+ * \brief CPUID Constructor
+ * \param printOut print the messages on screen or not
  */
 PROTECTED CPUID::CPUID(bool printOut = true)
 {
@@ -529,10 +537,10 @@ PROTECTED CPUID::CPUID(bool printOut = true)
 #include <stdarg.h>
 
 /**
- * @brief Printf replacement that checks _printOut flag
- * @param message the printf format of message
- * @param ... the remaining arguments to printf
- * @returns the same int that printf returns
+ * \brief Printf replacement that checks _printOut flag
+ * \param message the printf format of message
+ * \param ... the remaining arguments to printf
+ * \returns the same int that printf returns
  */
 PROTECTED int CPUID::printf(const char * message, ...)
 {
@@ -550,11 +558,11 @@ PROTECTED int CPUID::printf(const char * message, ...)
 }
 
 /**
- * @brief Extract the fields from the word
- * @param word input word
- * @param hi upper field limit
- * @param lo lower field limit
- * @returns word[hi:lo] bits
+ * \brief Extract the fields from the word
+ * \param word input word
+ * \param hi upper field limit
+ * \param lo lower field limit
+ * \returns word[hi:lo] bits
  */
 PROTECTED inline uint32_t CPUID::fields(uint32_t word, uint8_t hi, uint8_t lo)
 {
@@ -562,13 +570,13 @@ PROTECTED inline uint32_t CPUID::fields(uint32_t word, uint8_t hi, uint8_t lo)
 }
 
 /**
- * @brief Add the feature to the feature list
- * @param id id of the feature (hopefully less then sizeof(features) :) )
- * @param code the cpuid code that goes to eax
- * @param reg the register index (EAX, EBX, ECX or EDX)
- * @param name the name that should be printed on screen (sizeof(name) < 20)
- * @param bit the bit that defines the feature
- * @param vendor the bitfield of vendors that support this feature
+ * \brief Add the feature to the feature list
+ * \param id id of the feature (hopefully less then sizeof(features) :) )
+ * \param code the cpuid code that goes to eax
+ * \param reg the register index (EAX, EBX, ECX or EDX)
+ * \param name the name that should be printed on screen (sizeof(name) < 20)
+ * \param bit the bit that defines the feature
+ * \param vendor the bitfield of vendors that support this feature
  */
 PROTECTED inline NEEDS [<string.h>]
 void CPUID::addFeature(uint32_t id, uint32_t code, uint32_t reg, const char * name,
@@ -585,9 +593,9 @@ void CPUID::addFeature(uint32_t id, uint32_t code, uint32_t reg, const char * na
 // Get-set methods
 
 /**
- * @brief Does the CPU have the feature?
- * @param feature CPU Feature in question
- * @returns true if CPU supports the feature
+ * \brief Does the CPU have the feature?
+ * \param feature CPU Feature in question
+ * \returns true if CPU supports the feature
  */
 PUBLIC bool CPUID::has(cpuFeature_t feature)
 {
@@ -597,7 +605,7 @@ PUBLIC bool CPUID::has(cpuFeature_t feature)
 }
 
 /**
- * @brief Is CPU identified?
+ * \brief Is CPU identified?
  */
 PUBLIC bool CPUID::isIdentified()
 {
@@ -605,8 +613,8 @@ PUBLIC bool CPUID::isIdentified()
 }
 
 /**
- * @brief What is the CPU name?
- * @return CPU name
+ * \brief What is the CPU name?
+ * \returns CPU name
  */
 PUBLIC const char * CPUID::name()
 {
@@ -616,8 +624,8 @@ PUBLIC const char * CPUID::name()
 }
 
 /**
- * @brief What is the CPU vendor?
- * @returns vendor string
+ * \brief What is the CPU vendor?
+ * \returns vendor string
  */
 PUBLIC const char * CPUID::vendor()
 {
@@ -627,8 +635,8 @@ PUBLIC const char * CPUID::vendor()
 }
 
 /**
- * @brief What is the CPU vendor?
- * @returns vendor id
+ * \brief What is the CPU vendor?
+ * \returns vendor id
  */
 PUBLIC uint32_t CPUID::vendorId()
 {

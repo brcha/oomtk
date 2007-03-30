@@ -7,8 +7,8 @@ IMPLEMENTATION [ia32]:
 /*
  * $Id: PortIO-ia32.cpp 196 2006-10-23 13:29:52Z brcha $
  */
-/** @file
- * @brief Port I/O API - ia32 implementation
+/** \file
+ * \brief Port I/O API - ia32 implementation
  */
 
 /* Linux, L4, Coyotos uses this for iodelay, so I guess, I can too */
