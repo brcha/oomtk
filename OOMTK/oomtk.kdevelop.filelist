@@ -1,0 +1,18 @@
+# KDevelop Custom Project File List
+CMakeLists.txt
+src/CMakeLists.txt
+cmake/generate_findpackage_file
+cmake/README
+cmake/modules/UseLATEX.cmake
+doc/oomtk-logo.png
+doc/oomtk-logo.svg
+src/templates/c.tpl
+src/templates/h.tpl
+src/templates/Makefile.tpl
+src/sys/CMakeLists.txt
+src/sys/COPYING
+src/sys/AUTHORS
+src/sys/boot/CMakeLists.txt
+src/sys/boot/ia32/CMakeLists.txt
+src/sys/boot/ia32/CPUID.h
+src/sys/boot/ia32/CPUID.cpp

@@ -4,6 +4,8 @@
 #  This file is part of OOMTK
 #
 
+# $Id$
+
 project(OOMTK)
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked

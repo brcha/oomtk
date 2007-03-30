@@ -1,0 +1,15 @@
+#ifndef __$MODULE$_H__
+#define __$MODULE$_H__
+/*
+ *  Copyright (C) $YEAR$ by $AUTHOR$ <$EMAIL$>
+ *
+ *  This file is part of OOMTK
+ */
+/** \file $MODULE$.h
+ * \brief description
+ */
+/*
+ * $Id: $
+ */
+
+#endif /* __$MODULE$_H__ */

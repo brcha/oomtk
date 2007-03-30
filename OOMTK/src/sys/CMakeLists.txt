@@ -4,6 +4,8 @@
 #  This file is part of OOMTK
 #
 
+# $Id$
+
 set(SYS_SOURCE_DIR "${OOMTK_SOURCE_DIR}/src/sys")
 set(SYS_BINARY_DIR "${OOMTK_BINARY_DIR}/src/sys")
 
@@ -12,11 +14,9 @@ set(OOMTK_VERSION "0.80.1")
 
 # OOMTK Architecture (set in the main CMakeLists.txt file)
 # supported archs = ia32
-#set(ARCH "ia32")
+#set(OOMTK_ARCH "ia32")
 
 # Cross-gcc prefix
-# This will be changed when the xenv is built with cmake
-#set(GCCPREFIX "/oomtk/xenv/bin/i386-pc-oomtk0.2-")
 set(CROSS_BIN_PREFIX "${CMAKE_INSTALL_PREFIX}/host/bin")
 if(OOMTK_ARCH STREQUAL "ia32")
   set(GCCPREFIX "${CROSS_BIN_PREFIX}/i386-unknown-oomtk-")
@@ -120,23 +120,6 @@ set(CMAKE_C_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH
 set(CMAKE_CXX_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}} ${CXXFLAGS_ADDONS}")
 set(CMAKE_ASM_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}} ${ASMFLAGS_ADDONS}")
 
-# # PREP_FLAGS	:= -t -L
-# # CPPFLAGS	:= -include $(TOP)/include/macros.h -include $(TOP)/include/config.h -nostdinc
-# # CFLAGS		:= $(CPPFLAGS) -O2 -fno-builtin -fomit-frame-pointer -MD -Wall -Wno-format -ggdb
-# # CXXFLAGS	:= $(CFLAGS) -fno-exceptions
-# #
-# # ARFLAGS		:= crs
-# #
-# # INCS		:= $(TOP) $(TOP)/include
-# # DEFS		:= __ARCH__=$(ARCH)
-#
-# # Flags
-# # set(PREP_FLAGS -t -L)
-# set(CPPFLAGS "-include ${SYS_SOURCE_DIR}/include/macros.h -include ${SYS_SOURCE_DIR}/include/config.h -DOOMTK_VERSION=${OOMTK_VERSION} -D__ARCH__=${ARCH} -nostdinc")
-# set(CMAKE_C_FLAGS "${CPPFLAGS} -O2 -fno-builtin -fomit-frame-pointer -Wall -Wno-format -ggdb -nostdlib -nostartfiles -nodefaultlibs")
-# set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fno-exceptions")
-# # set(CMAKE_GnuAssembler_FLAGS "${CMAKE_C_FLAGS}")
-#
 # include_directories( ${SYS_SOURCE_DIR} ${SYS_SOURCE_DIR}/include )
 #
 # # Add the include directories and libraries

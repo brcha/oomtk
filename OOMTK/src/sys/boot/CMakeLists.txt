@@ -6,4 +6,4 @@
 
 # $Id$
 
-add_subdirectory(sys)
+add_subdirectory(ia32)

@@ -8,5 +8,7 @@
 /** \file
  * \brief description
  */
+/* $Id$
+ */
 
 #endif /* __TEMPLATE_H__ */
