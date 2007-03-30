@@ -6,6 +6,9 @@
 /** \file
  * \brief Assembly start code
  */
+/*
+ * $Id: $
+ */
 
 /* Standard assembly macros */
 #include INC_ARCH(asm.h)

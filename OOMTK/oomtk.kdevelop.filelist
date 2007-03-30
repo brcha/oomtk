@@ -19,3 +19,4 @@ src/sys/boot/ia32/CPUID.cpp
 src/sys/boot/ia32/ctors.h
 src/sys/boot/ia32/ctors.cpp
 src/sys/boot/ia32/init.cpp
+src/sys/boot/ia32/start.S
