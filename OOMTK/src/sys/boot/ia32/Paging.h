@@ -1,7 +1,7 @@
 #ifndef __Paging_H__
 #define __Paging_H__
 /*
- *  Copyright (C) 2007 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006-2007 by Filip Brcic <brcha@users.sourceforge.net>
  *
  *  This file is part of OOMTK
  */

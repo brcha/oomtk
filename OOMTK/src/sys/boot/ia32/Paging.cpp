@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006-2007 by Filip Brcic <brcha@users.sourceforge.net>
  *
  *  This file is part of OOMTK
  */
@@ -7,6 +7,9 @@
  * \brief Paging support
  *
  * \todo Is this file IA32 specific or generic???
+ */
+/*
+ * $Id$
  */
 
 #include "Paging.h"

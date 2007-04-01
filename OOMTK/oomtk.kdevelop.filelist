@@ -20,3 +20,8 @@ src/sys/boot/ia32/ctors.h
 src/sys/boot/ia32/ctors.cpp
 src/sys/boot/ia32/init.cpp
 src/sys/boot/ia32/start.S
+src/sys/boot/ia32/GDT.h
+src/sys/boot/ia32/GDT.cpp
+src/sys/boot/ia32/Paging.h
+src/sys/boot/ia32/Paging.cpp
+src/sys/boot/ia32/PagingLegacy.h
