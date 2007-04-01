@@ -7,7 +7,7 @@
  * \brief Assembly start code
  */
 /*
- * $Id: $
+ * $Id$
  */
 
 /* Standard assembly macros */

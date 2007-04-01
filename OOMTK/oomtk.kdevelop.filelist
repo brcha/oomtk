@@ -25,3 +25,7 @@ src/sys/boot/ia32/GDT.cpp
 src/sys/boot/ia32/Paging.h
 src/sys/boot/ia32/Paging.cpp
 src/sys/boot/ia32/PagingLegacy.h
+src/sys/boot/ia32/PagingLegacy.cpp
+src/sys/boot/ia32/PagingPAE.h
+src/sys/boot/ia32/PagingPAE.cpp
+src/sys/boot/ia32/linker.ia32.ld.S
