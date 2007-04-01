@@ -29,3 +29,7 @@ src/sys/boot/ia32/PagingLegacy.cpp
 src/sys/boot/ia32/PagingPAE.h
 src/sys/boot/ia32/PagingPAE.cpp
 src/sys/boot/ia32/linker.ia32.ld.S
+cmake/modules/CMakeDetermineGnuAssemblerCompiler.cmake
+cmake/modules/CMakeGnuAssemblerCompiler.cmake.in
+cmake/modules/CMakeGnuAssemblerInformation.cmake
+cmake/modules/CMakeTestGnuAssemblerCompiler.cmake

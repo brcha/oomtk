@@ -35,6 +35,8 @@ set(CMAKE_C_COMPILER "${GCCPREFIX}gcc")
 set(CMAKE_COMPILER_IS_GNUCC 1)
 set(CMAKE_CXX_COMPILER "${GCCPREFIX}g++")
 set(CMAKE_COMPILER_IS_GNUCXX 1)
+set(CMAKE_GnuAssembler_COMPILER "${GCCPREFIX}gcc")
+set(CMAKE_GnuAssembler_IS_GNUGAS 1)
 set(CMAKE_AR "${GCCPREFIX}ar")
 set(CMAKE_RANLIB "${GCCPREFIX}ranlib")
 
@@ -97,10 +99,10 @@ if(IA32_p4)
   set(CFLAGS_ia32_subarch "-march=pentium4 -D__SUBARCH__=Pentium4")
 endif(IA32_p4)
 if(IA32_sse3)
-  set(CFLAGS_ia32_subarch "-march=pentium4 -msse3 -D__SUBARCH__=Pentium4 -DSSE3 -D__SSE3__")
+  set(CFLAGS_ia32_subarch "-march=pentium4 -msse3 -D__SUBARCH__=Pentium4 -D__SSE3__")
 endif(IA32_sse3)
 
-set(CFLAGS_ia32 "-DIA32 -D__IA32__ -D__ARCH__=ia32 -mprefered-stack-boundary=2 -falign-functions=4 ${CFLAGS_ia32_subarch}")
+set(CFLAGS_ia32 "-DIA32 -D__IA32__ -D__ARCH__=ia32 -mpreferred-stack-boundary=2 -falign-functions=4 ${CFLAGS_ia32_subarch}")
 
 endif(OOMTK_ARCH STREQUAL "ia32")
 # End of ia32 flags
@@ -108,19 +110,24 @@ endif(OOMTK_ARCH STREQUAL "ia32")
 # Now generate the real C/C++ flags used by CMake
 set(CMAKE_C_FLAGS "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}}")
 set(CMAKE_CXX_FLAGS "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}} ${CXXFLAGS_ADDONS}")
-set(CMAKE_ASM_FLAGS "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}} ${ASMFLAGS_ADDONS}")
+set(CMAKE_GnuAssembler_FLAGS "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}} ${ASMFLAGS_ADDONS}")
 
 # Release:
 set(CMAKE_C_FLAGS_RELEASE "${CFLAGS_GENERIC} ${CFLAGS_RELEASE} ${CFLAGS_${OOMTK_ARCH}}")
 set(CMAKE_CXX_FLAGS_RELEASE "${CFLAGS_GENERIC} ${CFLAGS_RELEASE} ${CFLAGS_${OOMTK_ARCH}} ${CXXFLAGS_ADDONS}")
-set(CMAKE_ASM_FLAGS_RELEASE "${CFLAGS_GENERIC} ${CFLAGS_RELEASE} ${CFLAGS_${OOMTK_ARCH}} ${ASMFLAGS_ADDONS}")
+set(CMAKE_GnuAssembler_FLAGS_RELEASE "${CFLAGS_GENERIC} ${CFLAGS_RELEASE} ${CFLAGS_${OOMTK_ARCH}} ${ASMFLAGS_ADDONS}")
 
 # Debug:
 set(CMAKE_C_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}}")
 set(CMAKE_CXX_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}} ${CXXFLAGS_ADDONS}")
-set(CMAKE_ASM_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}} ${ASMFLAGS_ADDONS}")
+set(CMAKE_GnuAssembler_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}} ${ASMFLAGS_ADDONS}")
 
-# include_directories( ${SYS_SOURCE_DIR} ${SYS_SOURCE_DIR}/include )
+# Ok, finished configuring, go build!
+include_directories( ${SYS_SOURCE_DIR} ${SYS_SOURCE_DIR}/include )
+
+add_subdirectory(boot) # this doesn't work if you don't compile the libraries first!!!
+
+
 #
 # # Add the include directories and libraries
 # # libDisplay:

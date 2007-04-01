@@ -6,22 +6,28 @@
 
 # $Id$
 
-include(UsePreprocess)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-
-set(boot__SOURCES
+set(boot_ia32_SOURCES
       start.S
-      init.cc
-   )
-set(boot_PREP
+      init.cpp
       ctors.cpp
+      CPUID.cpp
+      Paging.cpp
+      PagingLegacy.cpp
+      PagingPAE.cpp
+      GDT.cpp
    )
-# set(oomtk_LIBRARIES
-#        Display
-#    )
 
-prep_wrap_cpp(boot_PREPROCESSED ${boot_PREP})
+add_executable(oomtk ${boot_ia32_SOURCES})
+set_target_properties(oomtk PROPERTIES LINKER_LANGUAGE CXX)
+
+# Make custom commands for start.S & for linker.ia32.ld.S
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/linker.ia32.ld
+                   COMMAND ${CMAKE_C_COMPILER} -E -P ${CMAKE_C_FLAGS} -c ${CMAKE_CURRENT_SOURCE_DIR}/linker.ia32.ld.S -o ${CMAKE_CURRENT_BINARY_DIR}/linker.ia32.ld
+                   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/linker.ia32.ld.S
+                  )
 
 #set(CMAKE_CXX_LINK_EXECUTABLE
 #  "<CMAKE_CXX_COMPILER> <FLAGS> -nostdlib -nostartfiles -nodefaultlibs -fno-rtti -fno-builtin -fno-exceptions -fomit-frame-pointer -Xlinker -T -Xlinker ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld <OBJECTS> -o <TARGET> <LINK_LIBRARIES>"
@@ -34,8 +40,3 @@ prep_wrap_cpp(boot_PREPROCESSED ${boot_PREP})
 #   PROPERTIES LINK_FLAGS "-Xlinker -T -Xlinker ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld"
 #              LINKER_LANGUAGE  CXX
 #   )
-
-set(boot_SOURCES
-      ${boot__SOURCES}
-      ${boot_PREPROCESSED}
-   )

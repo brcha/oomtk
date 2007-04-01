@@ -10,7 +10,7 @@ project(OOMTK)
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
-# enable_language(C CXX)
+enable_language(C CXX GnuAssembler)
 
 # Setup some basic build information
 
