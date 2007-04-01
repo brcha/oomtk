@@ -4,7 +4,7 @@
  *  This file is part of OOMTK
  */
 /*
- * $Id: $
+ * $Id$
  */
 
 #include "CPUID.h"

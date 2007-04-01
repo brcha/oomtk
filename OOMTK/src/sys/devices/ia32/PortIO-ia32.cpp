@@ -5,7 +5,7 @@ IMPLEMENTATION [ia32]:
  *  This file is part of OOMTK
  */
 /*
- * $Id: PortIO-ia32.cpp 196 2006-10-23 13:29:52Z brcha $
+ * $Id$
  */
 /** \file
  * \brief Port I/O API - ia32 implementation

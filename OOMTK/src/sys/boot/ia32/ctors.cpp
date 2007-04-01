@@ -7,7 +7,7 @@
  * \brief Static constructors and destructors
  */
 /*
- * $Id: $
+ * $Id$
  */
 
 #include "ctors.h"

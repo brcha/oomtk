@@ -7,7 +7,7 @@
  * \brief Global Descriptor Table
  */
 /*
- * $Id: $
+ * $Id$
  */
 
 #include "GDT.h"

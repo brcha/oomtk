@@ -4,7 +4,7 @@
  *  This file is part of OOMTK
  */
 /*
- * $Id: $
+ * $Id$
  */
 /** \file init.cpp
  * \brief Kernel initialization
