@@ -16,6 +16,9 @@ set(OOMTK_VERSION "0.80.1")
 # supported archs = ia32
 #set(OOMTK_ARCH "ia32")
 
+# include stddef.h & similar files
+include_directories(${CMAKE_INSTALL_PREFIX}/host/lib/gcc/i386-unknown-oomtk/4.1.1/include/)
+
 # Cross-gcc prefix
 set(CROSS_BIN_PREFIX "${CMAKE_INSTALL_PREFIX}/host/bin")
 if(OOMTK_ARCH STREQUAL "ia32")
@@ -125,8 +128,17 @@ set(CMAKE_GnuAssembler_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_$
 # Ok, finished configuring, go build!
 include_directories( ${SYS_SOURCE_DIR} ${SYS_SOURCE_DIR}/include )
 
-add_subdirectory(boot) # this doesn't work if you don't compile the libraries first!!!
+# minilibc
+include_directories( ${SYS_SOURCE_DIR}/libs/minilibc/include
+                     ${SYS_SOURCE_DIR}/libs/minilibc/${OOMTK_ARCH}/include
+                   )
+# libc++
+include_directories( ${SYS_SOURCE_DIR}/libs/libc++/include )
 
+add_subdirectory(boot) # this doesn't work if you don't compile the libraries first!!!
+add_subdirectory(devices)
+add_subdirectory(kernel)
+add_subdirectory(libs)
 
 #
 # # Add the include directories and libraries
