@@ -1,4 +1,3 @@
-INTERFACE:
 /*
  *  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
  *
@@ -7,52 +6,11 @@ INTERFACE:
 /** \file
  * \brief VGA Console
  */
-
-#include <types.h>
-#include <Console.h>
-#include <ansi.h>
-
-/**
- * VGA Console
- *
- * This class implements an output-only console for VGA device.
- * It implements some ANSI Escape codes, too.
+/*
+ * $Id$
  */
-class VgaConsole : public Console
-{
-  public:
-    enum {
-      Black         =  0,
-      Blue          =  1,
-      Green         =  2,
-      Cyan          =  3,
-      Red           =  4,
-      Magenta       =  5,
-      Brown         =  6,
-      LightGrey     =  7,
-      DarkGrey      =  8,
-      LightBlue     =  9,
-      LightGreen    = 10,
-      LightCyan     = 11,
-      LightRed      = 12,
-      LightMagenta  = 13,
-      LightBrown    = 14,
-      White         = 15,
-    };
 
-  private:
-    u16_t * m_display;    ///< The display
-    u8_t    m_x;          ///< Current X coordinate
-    u8_t    m_y;          ///< Current Y coordinate
-    u8_t    m_color;      ///< Current color
-    u8_t    m_newColor;   ///< New color (ANSI Escape)
-    u8_t    m_esc;        ///< Is escape parsed?
-    u8_t    m_escArg;     ///< Argument for escape
-    u8_t    m_columns;    ///< Number of columns
-    u8_t    m_lines;      ///< Number of lines
-};
-
-IMPLEMENTATION:
+#include "Console.h"
 
 #include <cstring>
 #include <cctype>
@@ -63,7 +21,7 @@ IMPLEMENTATION:
  * \brief One instance of VgaConsole
  * @returns the instance
  */
-PUBLIC static VgaConsole * VgaConsole::instance()
+static VgaConsole * VgaConsole::instance()
 {
   static VgaConsole _instance = VgaConsole();
 
@@ -73,7 +31,7 @@ PUBLIC static VgaConsole * VgaConsole::instance()
 /**
  * \brief Protected constructor -- not for use by mortals
  */
-PROTECTED VgaConsole::VgaConsole()
+VgaConsole::VgaConsole()
 {
   m_display = (u16_t *) (KVA + 0xB8000); //0xF00B8000;
   m_x = 0;
@@ -86,7 +44,7 @@ PROTECTED VgaConsole::VgaConsole()
   m_lines = 25;
 }
 
-PUBLIC void VgaConsole::putchar(char c)
+void VgaConsole::putchar(char c)
 {
   static const u8_t colors[] = {0, 4, 2, 14, 1, 5, 3, 15};
 
@@ -205,7 +163,7 @@ PUBLIC void VgaConsole::putchar(char c)
   moveCursor();
 }
 
-PROTECTED void VgaConsole::scroll()
+void VgaConsole::scroll()
 {
   u8_t blank;
 
@@ -223,7 +181,7 @@ PROTECTED void VgaConsole::scroll()
   }
 }
 
-PROTECTED void VgaConsole::moveCursor()
+void VgaConsole::moveCursor()
 {
   u8_t temp;
 
@@ -242,7 +200,7 @@ PROTECTED void VgaConsole::moveCursor()
 /**
  * Clear the screen
  */
-PUBLIC void VgaConsole::clear()
+void VgaConsole::clear()
 {
   u8_t blank;
 
@@ -255,19 +213,19 @@ PUBLIC void VgaConsole::clear()
   moveCursor();
 }
 
-PUBLIC virtual word_t VgaConsole::attributes() const
+virtual word_t VgaConsole::attributes() const
 {
   return OUT | DIRECT;
 }
 
-PUBLIC virtual int VgaConsole::write(const char * string, size_t length)
+virtual int VgaConsole::write(const char * string, size_t length)
 {
   for (size_t i = 0; i < length; i++)
     putchar(string[i]);
   return 1;
 }
 
-PUBLIC void VgaConsole::setColor(u8_t color)
+void VgaConsole::setColor(u8_t color)
 {
   m_color = color;
 };

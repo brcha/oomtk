@@ -35,3 +35,4 @@ cmake/modules/CMakeGnuAssemblerInformation.cmake
 cmake/modules/CMakeTestGnuAssemblerCompiler.cmake
 src/sys/devices/Console.h
 src/sys/devices/Console.cpp
+src/sys/devices/VgaConsole.h
