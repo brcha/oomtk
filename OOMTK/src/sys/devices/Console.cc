@@ -23,7 +23,7 @@ Console * Console::stderr = 0;
  *
  * NOTE:
  */
-static void Console::disableAll()
+void Console::disableAll()
 {
   stdout = 0;
   stdin  = 0;
@@ -34,7 +34,7 @@ static void Console::disableAll()
  * Set current console state
  * \param newState new state
  */
-virtual void Console::state(word_t newState)
+void Console::state(word_t newState)
 {
   m_state = newState;
 }
@@ -46,7 +46,7 @@ virtual void Console::state(word_t newState)
  * NOTE: There is no setter command, since console attributes are not to be set by
  * users. Console attributes are properties of the console.
  */
-virtual word_t Console::attributes() const
+word_t Console::attributes() const
 {
   return INVALID;
 }
@@ -60,7 +60,7 @@ virtual word_t Console::attributes() const
  * NOTE: This method should be implemented in the implementations of the Console.
  * NOTE: This method is used to connect the console with the libc glue.
  */
-virtual int Console::write(char const * string, size_t length)
+int Console::write(char const * string, size_t length)
 {
   return 0;
 }
@@ -73,7 +73,7 @@ virtual int Console::write(char const * string, size_t length)
  * NOTE: This method should be implemented in the implementations of the Console.
  * NOTE: This method is used to connect the console with the libc glue.
  */
-virtual int Console::getchar(bool blocking = true)
+int Console::getchar(bool blocking)
 {
   return -1;
 }
@@ -84,7 +84,7 @@ virtual int Console::getchar(bool blocking = true)
  *
  * NOTE: This metod should be implemented in the implementations of the Console.
  */
-virtual int Console::charAvailable() const
+int Console::charAvailable() const
 {
   return -1;
 }

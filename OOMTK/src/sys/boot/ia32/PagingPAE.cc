@@ -22,7 +22,7 @@
  * \brief Get the one instance of paging class
  * \returns the instance
  */
-static PagingPAE * PagingPAE::instance()
+PagingPAE * PagingPAE::instance()
 {
   static PagingPAE paging = PagingPAE();
 
@@ -57,7 +57,7 @@ extern void * TransMap;       ///< \brief Transient mappings page
 /**
  * \brief Protected constructor
  */
-PROTECTED PagingPAE::PagingPAE() :
+PagingPAE::PagingPAE() :
     Paging()
 {
   KernelPDPT        = reinterpret_cast<PDPTE_t*>(&KernPDPT);
@@ -77,7 +77,7 @@ PROTECTED PagingPAE::PagingPAE() :
  *
  * PT and PD have 512 entries.
  */
-virtual void PagingPAE::setup()
+void PagingPAE::setup()
 {
   DEBUG_PAGING
       printf("Starting IA32 PAE paging ... ");

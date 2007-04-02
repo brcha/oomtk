@@ -61,11 +61,10 @@ void systemStartup()
   Console::stderr = vga;
 
   // Colored Hello World :)
-  printf(ANSI_FG_WHITE "OOMTK version %s build %s (built %s by %s)\n" ANSI_NORMAL,
-              ANSI_FG_CYAN OOMTK_VERSION ANSI_FG_WHITE,
-              ANSI_FG_CYAN OOMTK_BUILD ANSI_FG_WHITE,
-              ANSI_FG_CYAN OOMTK_BUILD_DATE ANSI_FG_WHITE,
-              ANSI_FG_CYAN OOMTK_BUILD_USER ANSI_FG_WHITE
+  printf(ANSI_FG_WHITE "OOMTK version %s (built %s by %s)\n" ANSI_NORMAL,
+              ANSI_FG_CYAN MKSTR(OOMTK_VERSION) ANSI_FG_WHITE,
+              ANSI_FG_CYAN MKSTR(OOMTK_BUILD_DATE) ANSI_FG_WHITE,
+              ANSI_FG_CYAN MKSTR(OOMTK_BUILD_USER) ANSI_FG_WHITE
         );
 
   CPUID * cpuid = CPUID::instance();

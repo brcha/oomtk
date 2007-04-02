@@ -21,7 +21,7 @@
  * \brief Get the one instance of paging class
  * \returns the instance
  */
-static PagingLegacy * PagingLegacy::instance()
+PagingLegacy * PagingLegacy::instance()
 {
   static PagingLegacy paging = PagingLegacy();
 
@@ -60,7 +60,7 @@ PagingLegacy::PagingLegacy() :
  *
  * PageDirectory has 1024 PDEs that map 1024*4M = 4G memory
  */
-virtual void PagingLegacy::setup()
+void PagingLegacy::setup()
 {
   DEBUG_PAGING
       printf("Starting IA32 legacy paging ... ");

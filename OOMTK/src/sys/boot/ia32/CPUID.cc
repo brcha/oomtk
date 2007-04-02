@@ -20,7 +20,7 @@
  * \brief Make only one instance of this class
  * \returns the instance
  */
-static CPUID * CPUID::instance(bool printOut)
+CPUID * CPUID::instance(bool printOut)
 {
   static CPUID _instance = CPUID(printOut);
 

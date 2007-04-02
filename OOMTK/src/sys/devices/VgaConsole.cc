@@ -10,7 +10,7 @@
  * $Id$
  */
 
-#include "Console.h"
+#include "VgaConsole.h"
 
 #include <cstring>
 #include <cctype>
@@ -21,7 +21,7 @@
  * \brief One instance of VgaConsole
  * @returns the instance
  */
-static VgaConsole * VgaConsole::instance()
+VgaConsole * VgaConsole::instance()
 {
   static VgaConsole _instance = VgaConsole();
 
@@ -213,12 +213,12 @@ void VgaConsole::clear()
   moveCursor();
 }
 
-virtual word_t VgaConsole::attributes() const
+word_t VgaConsole::attributes() const
 {
   return OUT | DIRECT;
 }
 
-virtual int VgaConsole::write(const char * string, size_t length)
+int VgaConsole::write(const char * string, size_t length)
 {
   for (size_t i = 0; i < length; i++)
     putchar(string[i]);

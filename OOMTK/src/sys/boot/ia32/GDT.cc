@@ -24,7 +24,7 @@
  * \brief Get one instance of this class
  * \returns the instance
  */
-static GDT * GDT::instance()
+GDT * GDT::instance()
 {
   static GDT instance = GDT();
 

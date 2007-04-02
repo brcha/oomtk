@@ -60,7 +60,7 @@ set(OOMTK_DEFINES "-DOOMTK -DOOMTK_VERSION=\"${OOMTK_VERSION}\" -DOOMTK_BUILD_DA
 
 # Generic flags
 
-set(CFLAGS_GENERIC "-static -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs -include ${SYS_SOURCE_DIR}/include/macros.h -include ${SYS_SOURCE_DIR}/include/config.h")
+set(CFLAGS_GENERIC "-static -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs -include ${SYS_SOURCE_DIR}/include/macros.h -include ${SYS_SOURCE_DIR}/include/config.h ${OOMTK_DEFINES}")
 set(CXXFLAGS_ADDONS "-fno-exceptions")
 set(ASMFLAGS_ADDONS "-D__ASSEMBLER__")
 
@@ -135,15 +135,42 @@ include_directories( ${SYS_SOURCE_DIR}/libs/minilibc/include
 # libc++
 include_directories( ${SYS_SOURCE_DIR}/libs/libc++/include )
 
+# supc++
+include_directories( ${SYS_SOURCE_DIR}/libs/supc++/include )
+
+# Kernel headers
+include_directories( ${SYS_SOURCE_DIR}/kernel )
+
+# Devices headers
+include_directories( ${SYS_SOURCE_DIR}/devices )
+
 add_subdirectory(boot) # this doesn't work if you don't compile the libraries first!!!
 add_subdirectory(devices)
 add_subdirectory(kernel)
 add_subdirectory(libs)
 
+
+# set(oomtk_LIBRARIES
+#     ${SYS_BINARY_DIR}/boot/${OOMTK_ARCH}/liboomtkBoot.a
+#     ${SYS_BINARY_DIR}/devices/libDevices.a
+#     ${SYS_BINARY_DIR}/kernel/libKernel.a
+#     ${SYS_BINARY_DIR}/libs/minilibc/libminilibc.a
+#     ${SYS_BINARY_DIR}/libs/libc++/libc++.a
+#     ${SYS_BINARY_DIR}/libs/supc++/libsupc++.a
+#    )
+# 
+# add_executable(oomtk ${oomtk_LIBRARIES})
+# add_dependencies(oomtk ${SYS_BINARY_DIR}/boot/${OOMTK_ARCH}/linker.${OOMTK_ARCH}.ld)
+# 
+# set_target_properties(oomtk
+#   PROPERTIES LINK_FLAGS "-Xlinker -T -Xlinker ${SYS_BINARY_DIR}/boot/${OOMTK_ARCH}/linker.${OOMTK_ARCH}.ld"
+#              LINKER_LANGUAGE  CXX
+#   )
+# 
+
 #
 # # Add the include directories and libraries
-# # libDisplay:
-# # include_directories(${SYS_SOURCE_DIR}/libs/libDisplay/include
+# # libDisplay:# # include_directories(${SYS_SOURCE_DIR}/libs/libDisplay/include
 # #                     ${SYS_BINARY_DIR}/libs/libDisplay)
 # # set(libDisplay "-L${SYS_BINARY_DIR}/libs/libDisplay -lDisplay")
 #

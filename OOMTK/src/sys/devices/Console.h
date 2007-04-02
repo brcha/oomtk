@@ -17,6 +17,7 @@
 
 class Console
 {
+  public:
     /**
      * Disable stdin, stdout and stderr console.
      */

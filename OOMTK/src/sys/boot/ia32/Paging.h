@@ -15,6 +15,8 @@
  */
 
 #include <types.h>
+#include <fatal.h>
+#include <ansi.h>
 
 /**
  * \brief Paging base class

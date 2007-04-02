@@ -39,7 +39,7 @@ class PagingLegacy : public Paging
      *
      * PageDirectory has 1024 PDEs that map 1024*4M = 4G memory
      */
-    virtual void PagingLegacy::setup();
+    virtual void setup();
 
   protected:
     /**

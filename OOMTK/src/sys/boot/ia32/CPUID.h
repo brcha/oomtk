@@ -130,6 +130,44 @@ class CPUID
       NUM_FEATURES  ///< \brief This is for size of features list
     };
 
+  protected:
+    /// \brief Some constants used in the code
+    enum
+    {
+      // Registers used in features definition list
+      EAX   = 0,
+      EBX   = 1,
+      ECX   = 2,
+      EDX   = 3,
+    };
+
+    /**
+     * \brief Structure that defines the features of this CPU
+     */
+    struct features_t
+    {
+      uint32_t  code;
+      uint32_t  reg;
+      char name[20]; // maximum name of feature is 19 characters ( + '\0')
+      uint32_t  bit;
+      uint32_t  vendor;
+      bool      has;
+    };
+
+    /**
+     * \brief Features of this CPU
+     */
+    features_t features[NUM_FEATURES];
+
+    /// \brief Registers for the cpuid() function
+    struct cpuidRegisters
+    {
+      uint32_t eax;
+      uint32_t ebx;
+      uint32_t ecx;
+      uint32_t edx;
+    };
+
   public:
     /**
      * \brief Make only one instance of this class
@@ -244,43 +282,6 @@ class CPUID
                     uint32_t bit, uint32_t vendor);
 
   protected:
-    /// \brief Some constants used in the code
-    enum
-    {
-      // Registers used in features definition list
-      EAX   = 0,
-      EBX   = 1,
-      ECX   = 2,
-      EDX   = 3,
-    };
-
-    /**
-     * \brief Structure that defines the features of this CPU
-     */
-    struct features_t
-    {
-      uint32_t  code;
-      uint32_t  reg;
-      char name[20]; // maximum name of feature is 19 characters ( + '\0')
-      uint32_t  bit;
-      uint32_t  vendor;
-      bool      has;
-    };
-
-    /**
-     * \brief Features of this CPU
-     */
-    features_t features[NUM_FEATURES];
-
-    /// \brief Registers for the cpuid() function
-    struct cpuidRegisters
-    {
-      uint32_t eax;
-      uint32_t ebx;
-      uint32_t ecx;
-      uint32_t edx;
-    };
-
     /// \brief CPU Vendor String ("GenuineIntel" or "AuthenticAMD")
     char _cpuVendor[13];
 

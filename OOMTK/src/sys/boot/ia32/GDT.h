@@ -45,7 +45,7 @@ class GDT
      * \param rpl privilege level
      * \returns segment selector
      */
-    inline word_t GDT::selector(word_t seg, word_t rpl)
+    inline word_t selector(word_t seg, word_t rpl)
     {
       // selector = (index<<3) + (ti << 2) + rpl, but ti=0 since this is GDT
       return (seg << 3) + rpl;
@@ -54,7 +54,7 @@ class GDT
     /**
     * \returns NULL segment selector
      */
-    inline word_t GDT::selNull()
+    inline word_t selNull()
     {
       return selector(seg_NULL, 0);
     };
@@ -62,7 +62,7 @@ class GDT
     /**
      * \returns Kernel code segment selector
      */
-    inline word_t GDT::selKernelCS()
+    inline word_t selKernelCS()
     {
       return selector(seg_KernelCS, 0);
     };
@@ -70,7 +70,7 @@ class GDT
     /**
      * \returns TSS segment selector
      */
-    inline word_t GDT::selTSS()
+    inline word_t selTSS()
     {
       return selector(seg_TSS, 0);
     };
@@ -78,7 +78,7 @@ class GDT
     /**
      * \returns Kernel data segment selector
      */
-    inline word_t GDT::selKernelDS()
+    inline word_t selKernelDS()
     {
       return selector(seg_KernelDS, 0);
     };
@@ -86,7 +86,7 @@ class GDT
     /**
      * \returns User's code segment selector
      */
-    inline word_t GDT::selUserCS()
+    inline word_t selUserCS()
     {
       return selector(seg_UserCS, 3);
     };
@@ -94,7 +94,7 @@ class GDT
     /**
      * \returns User's data segment selector
      */
-    inline word_t GDT::selUserDS()
+    inline word_t selUserDS()
     {
       return selector(seg_UserDS, 3);
     };
@@ -102,7 +102,7 @@ class GDT
     /**
      * \returns User's thread-local storage segment selector
      */
-    inline word_t GDT::selUserTLS()
+    inline word_t selUserTLS()
     {
       return selector(seg_UserTLS, 3);
     };
@@ -111,7 +111,7 @@ class GDT
      * \brief Setup the segment limit and base
      * \param seg segment index
      */
-    inline void GDT::setupLimitBase(word_t seg, uint32_t limit, uint32_t base)
+    inline void setupLimitBase(word_t seg, uint32_t limit, uint32_t base)
     {
       // Setup the limit
       gdt[seg].bits.limit_lo  = limit & 0x0000ffff;
