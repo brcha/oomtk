@@ -1,13 +1,17 @@
-INTERFACE:
+#ifndef __PortIO_H__
+#define __PortIO_H__
 /*
  *  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
  *
  *  This file is part of OOMTK
  */
-/** \file
- * \brief Port I/O API
+/** \file PortIO.h
+ * \brief Abstract Port I/O API
  *
- * NOTE: This file must have architecture specific implementations!
+ * NOTE: This class must have architecture specific implementations!
+ */
+/*
+ * $Id$
  */
 
 #include <types.h>
@@ -96,44 +100,4 @@ class PortIO
     /** @} */
 };
 
-IMPLEMENTATION:
-
-// Only the delayed versions are implemented here
-IMPLEMENT inline u8_t PortIO::in8_d(word_t port)
-{
-  u8_t tmp = in8(port);
-  iodelay();
-  return tmp;
-}
-
-IMPLEMENT inline u16_t PortIO::in16_d(word_t port)
-{
-  u16_t tmp = in16(port);
-  iodelay();
-  return tmp;
-}
-
-IMPLEMENT inline u32_t PortIO::in32_d(word_t port)
-{
-  u32_t tmp = in32(port);
-  iodelay();
-  return tmp;
-}
-
-IMPLEMENT inline void PortIO::out8_d(word_t port, u8_t value)
-{
-  out8(port,value);
-  iodelay();
-}
-
-IMPLEMENT inline void PortIO::out16_d(word_t port, u16_t value)
-{
-  out16(port,value);
-  iodelay();
-}
-
-IMPLEMENT inline void PortIO::out32_d(word_t port, u32_t value)
-{
-  out32(port,value);
-  iodelay();
-}
+#endif /* __PortIO_H__ */

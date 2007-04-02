@@ -10,13 +10,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(boot_ia32_SOURCES
       start.S
-      init.cpp
-      ctors.cpp
-      CPUID.cpp
-      Paging.cpp
-      PagingLegacy.cpp
-      PagingPAE.cpp
-      GDT.cpp
+      init.cc
+      ctors.cc
+      CPUID.cc
+      Paging.cc
+      PagingLegacy.cc
+      PagingPAE.cc
+      GDT.cc
    )
 
 add_executable(oomtk ${boot_ia32_SOURCES})
