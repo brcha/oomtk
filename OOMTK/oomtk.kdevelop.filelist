@@ -33,3 +33,5 @@ cmake/modules/CMakeDetermineGnuAssemblerCompiler.cmake
 cmake/modules/CMakeGnuAssemblerCompiler.cmake.in
 cmake/modules/CMakeGnuAssemblerInformation.cmake
 cmake/modules/CMakeTestGnuAssemblerCompiler.cmake
+src/sys/devices/Console.h
+src/sys/devices/Console.cpp

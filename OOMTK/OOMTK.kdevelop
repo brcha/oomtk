@@ -45,6 +45,9 @@
         <default/>
       </environments>
     </make>
+    <general>
+      <activedir>src/sys/boot/ia32</activedir>
+    </general>
   </kdevcustomproject>
   <kdevdebugger>
     <general>
@@ -111,16 +114,16 @@
   </kdevdoctreeview>
   <kdevfilecreate>
     <filetypes>
-      <type icon="source_cpp" ext="cpp" name="C++ Source" create="template" >
+      <type icon="source_cpp" ext="cpp" create="template" name="C++ Source" >
         <descr>A new empty C++ file.</descr>
       </type>
-      <type icon="source_h" ext="h" name="C/C++ Header" create="template" >
+      <type icon="source_h" ext="h" create="template" name="C/C++ Header" >
         <descr>A new empty header file for C or C++.</descr>
       </type>
-      <type icon="" ext="txt" name="CMakeLists" create="template" >
+      <type icon="" ext="txt" create="template" name="CMakeLists" >
         <descr>CMake configuration file</descr>
       </type>
-      <type icon="document" ext="dox" name="Doxygen Documentation Page" create="template" >
+      <type icon="document" ext="dox" create="template" name="Doxygen Documentation Page" >
         <descr>A new empty Doxygen documentation page.</descr>
       </type>
     </filetypes>
@@ -189,7 +192,7 @@
       <hidenonlocation>false</hidenonlocation>
     </groups>
     <tree>
-      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
+      <hidepatterns>*.o,*.lo,CVS,*~</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
     </tree>
   </kdevfileview>
