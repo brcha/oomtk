@@ -40,3 +40,11 @@ src/sys/devices/PortIO.h
 src/sys/devices/CMakeLists.txt
 src/sys/devices/ia32/PortIO-ia32.cc
 src/sys/devices/PortIO.cc
+src/sys/devices/libc_backend.cc
+src/sys/kernel/fatal.h
+src/sys/kernel/CMakeLists.txt
+src/sys/kernel/fatal.cc
+src/sys/libs/cxxlib/paranoia.h
+src/sys/libs/cxxlib/paranoia.cc
+src/sys/libs/cxxlib/s_cruft.cc
+src/sys/libs/cxxlib/s_cruft.h

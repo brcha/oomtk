@@ -9,4 +9,6 @@
 /*
  * $Id: $
  */
- 
+#include "$MODULE$.h"
+
+
