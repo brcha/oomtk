@@ -24,8 +24,11 @@ set(oomtk_LIBRARIES
     minilibc
     Devices
     Kernel
-    libc++
     supc++
+    gcc
+    glue
+#     libc++
+#     supc++
    )
 
 add_executable(oomtk ${boot_ia32_SOURCES})

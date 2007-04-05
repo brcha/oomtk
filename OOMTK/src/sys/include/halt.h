@@ -8,14 +8,22 @@
 /** @file
  * @brief Halt the CPU
  */
+/*
+ * $Id: $
+ */
 
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
+#endif
   /**
    * @brief Halt the CPU
    *
    * This function is defined in boot/<arch>/startup.S file
    */
   extern void halt() NORETURN;
-};
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __HALT_H__ */

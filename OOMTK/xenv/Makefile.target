@@ -219,6 +219,28 @@ gcc:
 	  $(MAKE) -C BUILD/build-gcc-$(CROSSARCH) \
 	    gcc_tooldir=$(CROSSHOSTROOT) install-gcc
 
+libsupcpp: | BUILD/gcc-$(GCC_VERSION)
+libsupcpp:
+	rm -rf BUILD/build-libstdc++-v3-$(CROSSARCH)
+	mkdir BUILD/build-libstdc++-v3-$(CROSSARCH)
+	(cd BUILD/build-libstdc++-v3-$(CROSSARCH); \
+	  PATH=$(CROSSHOSTROOT)/bin:$(PATH) CC="$(CCACHE) gcc" \
+	    ../gcc-$(GCC_VERSION)/libstdc++-v3/configure \
+	       $(CONFIGDIRS) \
+	       --with-local-prefix=$(CROSSSYSROOT) \
+	       --with-newlib \
+	       --with-sysroot=$(CROSSSYSROOT) \
+	       --disable-hosted-libstdcxx \
+	       --disable-multilib \
+	       --target $(CROSSTARGET) \
+	       --host $(CROSSTARGET))
+	PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
+	  $(MAKE) -C BUILD/build-libstdc++-v3-$(CROSSARCH)/libsupc++ \
+	    gcc_tooldir=$(CROSSHOSTROOT) all
+	PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
+	  $(MAKE) -C BUILD/build-libstdc++-v3-$(CROSSARCH)/libsupc++ \
+	    gcc_tooldir=$(CROSSHOSTROOT) install
+
 gcc-links:
 	@for tool in ld nm strip; do \
 	  echo ln -s ../../../../bin/$(CROSSTARGET)-$${tool} $(CROSSHOSTROOT)/libexec/gcc/$(CROSSTARGET)/$(GCC_VERSION)/$${tool}; \
@@ -233,6 +255,7 @@ build:
 	$(MAKE) -f $(THISMAKEFILE) newlib
 	$(MAKE) -f $(THISMAKEFILE) gcc
 	$(MAKE) -f $(THISMAKEFILE) gcc-links
+	$(MAKE) -f $(THISMAKEFILE) libsupcpp
 
 clean:
 	-rm -rf BUILD

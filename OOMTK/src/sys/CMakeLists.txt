@@ -18,6 +18,7 @@ set(OOMTK_VERSION "0.80.1")
 
 # include stddef.h & similar files
 include_directories(${CMAKE_INSTALL_PREFIX}/host/lib/gcc/i386-unknown-oomtk/4.1.1/include/)
+include_directories(${CMAKE_INSTALL_PREFIX}/host/include/c++/4.1.1)
 
 # Cross-gcc prefix
 set(CROSS_BIN_PREFIX "${CMAKE_INSTALL_PREFIX}/host/bin")
@@ -60,7 +61,7 @@ set(OOMTK_DEFINES "-DOOMTK -DOOMTK_VERSION=\"${OOMTK_VERSION}\" -DOOMTK_BUILD_DA
 
 # Generic flags
 
-set(CFLAGS_GENERIC "-static -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs -include ${SYS_SOURCE_DIR}/include/macros.h -include ${SYS_SOURCE_DIR}/include/config.h ${OOMTK_DEFINES}")
+set(CFLAGS_GENERIC "-static -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs -include ${SYS_SOURCE_DIR}/include/macros.h -include ${SYS_SOURCE_DIR}/include/config.h ${OOMTK_DEFINES} -L ${CMAKE_INSTALL_PREFIX}/host/lib -L ${CMAKE_INSTALL_PREFIX}/host/lib/gcc/i386-unknown-oomtk/4.1.1")
 set(CXXFLAGS_ADDONS "-fno-exceptions")
 set(ASMFLAGS_ADDONS "-D__ASSEMBLER__")
 
@@ -132,11 +133,15 @@ include_directories( ${SYS_SOURCE_DIR} ${SYS_SOURCE_DIR}/include )
 include_directories( ${SYS_SOURCE_DIR}/libs/minilibc/include
                      ${SYS_SOURCE_DIR}/libs/minilibc/${OOMTK_ARCH}/include
                    )
+
+# libglue
+include_directories( ${SYS_SOURCE_DIR}/libs/libglue )
+
 # libc++
-include_directories( ${SYS_SOURCE_DIR}/libs/libc++/include )
+# include_directories( ${SYS_SOURCE_DIR}/libs/libc++/include )
 
 # supc++
-include_directories( ${SYS_SOURCE_DIR}/libs/supc++/include )
+# include_directories( ${SYS_SOURCE_DIR}/libs/supc++/include )
 
 # Kernel headers
 include_directories( ${SYS_SOURCE_DIR}/kernel )

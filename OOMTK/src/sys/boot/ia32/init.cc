@@ -12,7 +12,7 @@
 
 #include <stdio.h>
 #include <VgaConsole.h>
-#include <KernelOutputStream.h>
+// #include <KernelOutputStream.h>
 
 #include <CPUID.h>
 
@@ -24,7 +24,9 @@
 
 #include <fatal.h>
 
-#include <c++abi.h>
+// #include <cxxabi.h>
+
+#include <typeinfo>
 
 using namespace std;
 
@@ -46,13 +48,13 @@ void systemStartup()
   // Static constructed console
   VgaConsole * vga = VgaConsole::instance();
 
-  KernelOutputStream<char> kcout = KernelOutputStream<char>(ANSI_NORMAL);
-  KernelOutputStream<char> kcerr = KernelOutputStream<char>(ANSI_FG_RED);
-  KernelOutputStream<char> kclog = KernelOutputStream<char>(ANSI_FG_WHITE);
+//   KernelOutputStream<char> kcout = KernelOutputStream<char>(ANSI_NORMAL);
+//   KernelOutputStream<char> kcerr = KernelOutputStream<char>(ANSI_FG_RED);
+//   KernelOutputStream<char> kclog = KernelOutputStream<char>(ANSI_FG_WHITE);
 
-  basic_ostream<char> & cout = kcout;
-  basic_ostream<char> & cerr = kcerr;
-  basic_ostream<char> & clog = kclog;
+//   basic_ostream<char> & cout = kcout;
+//   basic_ostream<char> & cerr = kcerr;
+//   basic_ostream<char> & clog = kclog;
 
   vga->clear();
   // Say hello to make sure we're really in the higher half...

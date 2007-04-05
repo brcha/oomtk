@@ -21,7 +21,7 @@ default: build
 #
 ##################################################################
 
-filesystem binutils pregcc newlib gcc gcc-links:
+filesystem binutils pregcc newlib gcc gcc-links libsupcpp:
 	@for buildtarget in $(TARGETS); do\
 	  echo $(MAKE) -f Makefile.target BUILDTARGET=$${buildtarget} $@; \
 	  $(MAKE) -f Makefile.target BUILDTARGET=$${buildtarget} $@; \
@@ -45,6 +45,7 @@ build:
 	$(MAKE) -f $(THISMAKEFILE) newlib
 	$(MAKE) -f $(THISMAKEFILE) gcc
 	$(MAKE) -f $(THISMAKEFILE) gcc-links
+	$(MAKE) -f $(THISMAKEFILE) libsupcpp
 
 clean:
 	-rm -rf BUILD
