@@ -1,3 +1,9 @@
+2007-04-06 Filip Brcic <brcha@users.sourceforge.net>
+
+	* changelog.sh: Adapted for svk
+	* src/sys/include/malloc.h: Removed
+	* templates/c: Added
+
 2007-04-05 Filip Brcic <brcha@users.sourceforge.net>
 
 	* trunk: Merged the libgcc-libsupc++-from-gcc branch

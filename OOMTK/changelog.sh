@@ -12,7 +12,7 @@
 infile=/tmp/oomtk.diff
 outfile=entry.txt
 
-svn diff > $infile
+svk diff > $infile
 
 declare -a files
 
@@ -23,9 +23,9 @@ email="<$USER@$HOST>"
 header="$now  $name   $email"
 
 # get the files
-count=`grep -c "^Index:" ${infile}`
+count=`grep -c "^=== " ${infile}`
 
-entries=`grep "^Index:" ${infile} | sed -e 's/Index: //'`
+entries=`grep "^=== " ${infile} | sed -e 's/=== //'`
 idx=0
 for i in ${entries}; do
   lines[$idx]=`grep -n "$i" ${infile} | cut -d : -f 1 | head -n 1`
