@@ -11,6 +11,7 @@
  */
 
 #include "GDT.h"
+#include "Selectors.h"
 
 #include <stdio.h>
 #include <ansi.h>
@@ -31,7 +32,7 @@ GDT * GDT::instance()
   return &instance;
 };
 
-DEFINE_PER_CPU(uint64_t[GDT::seg_Count], myGdt);
+DEFINE_PER_CPU(uint64_t[seg_Count], myGdt);
 DEFINE_PER_CPU(uint64_t, myGdtr);
 
 /**
@@ -140,7 +141,7 @@ void GDT::setup()
       "1: xorl  %%eax, %%eax  \n"
       "   lldt  %%ax          \n" // Null the LDT
   : /* no output */
-  : [gdtr] "m" (myGdtr), [kcs] "i" (selKernelCS()), [kds] "i" (selKernelDS())
+  : [gdtr] "m" (myGdtr), [kcs] "i" (sel_KernelCS), [kds] "i" (sel_KernelDS)
   : "memory", "ax"
          );
 

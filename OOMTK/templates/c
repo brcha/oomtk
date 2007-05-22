@@ -3,10 +3,12 @@
  *
  *  This file is part of OOMTK
  */
-/** \file $MODULE$.cpp
+/** \file $MODULE$.c
  * \brief Description
  */
 /*
  * $Id: $
  */
- 
+#include "$MODULE$.h"
+
+

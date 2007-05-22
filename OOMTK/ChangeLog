@@ -1,5 +1,11 @@
 2007-05-22 Filip Brcic <brcha@users.sourceforge.net>
 
+	* src/sys/boot/ia32/GDT.{h,cc}: moved selectors from class to defines
+	* src/sys/boot/ia32/Selectors.h: the selectors are now defined here
+	* templates/{c,cpp,h,S}: changed old templates a bit
+
+2007-05-22 Filip Brcic <brcha@users.sourceforge.net>
+
 	* src/Templates/TEMPLATE.*.tpl: Added Emacs templates
 
 2007-04-06 Filip Brcic <brcha@users.sourceforge.net>

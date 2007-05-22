@@ -40,74 +40,6 @@ class GDT
     GDT();
 
     /**
-     * \brief Get the segment selector from the segment index
-     * \param seg segment index
-     * \param rpl privilege level
-     * \returns segment selector
-     */
-    inline word_t selector(word_t seg, word_t rpl)
-    {
-      // selector = (index<<3) + (ti << 2) + rpl, but ti=0 since this is GDT
-      return (seg << 3) + rpl;
-    };
-
-    /**
-    * \returns NULL segment selector
-     */
-    inline word_t selNull()
-    {
-      return selector(seg_NULL, 0);
-    };
-
-    /**
-     * \returns Kernel code segment selector
-     */
-    inline word_t selKernelCS()
-    {
-      return selector(seg_KernelCS, 0);
-    };
-
-    /**
-     * \returns TSS segment selector
-     */
-    inline word_t selTSS()
-    {
-      return selector(seg_TSS, 0);
-    };
-
-    /**
-     * \returns Kernel data segment selector
-     */
-    inline word_t selKernelDS()
-    {
-      return selector(seg_KernelDS, 0);
-    };
-
-    /**
-     * \returns User's code segment selector
-     */
-    inline word_t selUserCS()
-    {
-      return selector(seg_UserCS, 3);
-    };
-
-    /**
-     * \returns User's data segment selector
-     */
-    inline word_t selUserDS()
-    {
-      return selector(seg_UserDS, 3);
-    };
-
-    /**
-     * \returns User's thread-local storage segment selector
-     */
-    inline word_t selUserTLS()
-    {
-      return selector(seg_UserTLS, 3);
-    };
-
-    /**
      * \brief Setup the segment limit and base
      * \param seg segment index
      */
@@ -120,19 +52,6 @@ class GDT
       gdt[seg].bits.base_lo   = base & 0x00ffffff;
       gdt[seg].bits.base_hi   = (base & 0xff000000) >> 24;
     };
-
-  public:
-    enum
-    {
-      seg_NULL = 0,         ///< \brief Null segment
-      seg_KernelCS,         ///< \brief Kernel's code segment
-      seg_KernelDS,         ///< \brief Kernel's data segment
-      seg_UserCS,           ///< \brief User's code segment
-      seg_UserDS,           ///< \brief User's data segment
-      seg_UserTLS,          ///< \brief User's thread-local storage
-      seg_TSS,              ///< \brief Task-switch segment
-      seg_Count             ///< \brief Number of segments + 1
-  };
 
   protected:
     union SegmentDescriptor_t
