@@ -12,6 +12,11 @@ project(OOMTK)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 enable_language(C CXX GnuAssembler)
 
+# Find some utility programs
+find_package(UnixCommands REQUIRED)
+find_package(Grep REQUIRED)
+find_package(Sed REQUIRED)
+
 # Setup some basic build information
 
 set(CMAKE_INSTALL_PREFIX "/oomtk" CACHE PATH "Where is the root directory of the OOMTK installation? Please note that the cross-compilers don't build using CMake, so you have to install them yourself. Makefiles are provided and they install cross-compilers into /oomtk." FORCE)

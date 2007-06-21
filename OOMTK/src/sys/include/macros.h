@@ -163,4 +163,9 @@
  */
 #define DEBUG_DISABLE if(0)
 
+/**
+ * @brief Declare the class friendly to the function that determines offsets of members
+ */
+#define OFFSET_FRIENDLY friend void __generateOffsets__(void)
+
 #endif /* __MACROS_H__ */

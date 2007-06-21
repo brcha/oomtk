@@ -1,3 +1,19 @@
+2007-06-21 Filip Brcic <brcha@users.sourceforge.net>
+
+	* CMakeLists.txt: Added lines 12-17.
+	* cmake/modules/Find{Sed,Grep}.cmake: Added for __generateOffsets__.cc
+	* src/sys/boot/ia32/CMakeLists.txt: changed to meet new files
+	* src/sys/boot/ia32/InterruptsManager.{h,cc}: classes to manage IRQs
+	* src/sys/boot/ia32/__generateOffsets__.cc: generate offsets for
+	    various structures.
+	* src/sys/boot/ia32/interrupts.S: low-level interrupt handling
+	* src/sys/include/arch/ia32/Context.h: process context
+	* src/sys/include/macros.h: Added lines 163-168.
+	* src/sys/include/Context.h: arch-dependent wrapper
+	* src/sys/include/ContextInterface.h: context interface class
+	* src/sys/include/asm.h: arch-dependent wrapper
+	* src/sys/kernel/Process.{h,cpp}: process class
+
 2007-05-22 Filip Brcic <brcha@users.sourceforge.net>
 
 	* src/sys/boot/ia32/GDT.{h,cc}: moved selectors from class to defines
