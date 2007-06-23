@@ -10,7 +10,9 @@ set(SYS_SOURCE_DIR "${OOMTK_SOURCE_DIR}/src/sys")
 set(SYS_BINARY_DIR "${OOMTK_BINARY_DIR}/src/sys")
 
 # OOMTK Version
-set(OOMTK_VERSION "0.80.1")
+set(OOMTK_BASE_VERSION "0.80.1")
+set(OOMTK_REVISION "`bzr revno ${OOMTK_SOURCE_DIR}`")
+set(OOMTK_VERSION "${OOMTK_BASE_VERSION}-r${OOMTK_REVISION}")
 
 # OOMTK Architecture (set in the main CMakeLists.txt file)
 # supported archs = ia32
@@ -127,7 +129,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_AR
 set(CMAKE_GnuAssembler_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}} ${ASMFLAGS_ADDONS}")
 
 # Ok, finished configuring, go build!
-include_directories( ${SYS_SOURCE_DIR} ${SYS_SOURCE_DIR}/include )
+include_directories( ${SYS_SOURCE_DIR} ${SYS_BINARY_DIR} ${SYS_SOURCE_DIR}/include )
 
 # minilibc
 include_directories( ${SYS_SOURCE_DIR}/libs/minilibc/include
@@ -154,47 +156,5 @@ add_subdirectory(devices)
 add_subdirectory(kernel)
 add_subdirectory(libs)
 
-
-# set(oomtk_LIBRARIES
-#     ${SYS_BINARY_DIR}/boot/${OOMTK_ARCH}/liboomtkBoot.a
-#     ${SYS_BINARY_DIR}/devices/libDevices.a
-#     ${SYS_BINARY_DIR}/kernel/libKernel.a
-#     ${SYS_BINARY_DIR}/libs/minilibc/libminilibc.a
-#     ${SYS_BINARY_DIR}/libs/libc++/libc++.a
-#     ${SYS_BINARY_DIR}/libs/supc++/libsupc++.a
-#    )
-# 
-# add_executable(oomtk ${oomtk_LIBRARIES})
-# add_dependencies(oomtk ${SYS_BINARY_DIR}/boot/${OOMTK_ARCH}/linker.${OOMTK_ARCH}.ld)
-# 
-# set_target_properties(oomtk
-#   PROPERTIES LINK_FLAGS "-Xlinker -T -Xlinker ${SYS_BINARY_DIR}/boot/${OOMTK_ARCH}/linker.${OOMTK_ARCH}.ld"
-#              LINKER_LANGUAGE  CXX
-#   )
-# 
-
-#
-# # Add the include directories and libraries
-# # libDisplay:# # include_directories(${SYS_SOURCE_DIR}/libs/libDisplay/include
-# #                     ${SYS_BINARY_DIR}/libs/libDisplay)
-# # set(libDisplay "-L${SYS_BINARY_DIR}/libs/libDisplay -lDisplay")
-#
-# # Libraries
-# # add_subdirectory(libs)
-#
-# # Bootstrap
-# # add_subdirectory(boot)
-#
-# # set(CMAKE_CXX_LINK_EXECUTABLE
-# #  "<CMAKE_CXX_COMPILER> <FLAGS> -nostdlib -nostartfiles -nodefaultlibs -fno-rtti -fno-builtin -fno-exceptions -fomit-frame-pointer -Xlinker -T -Xlinker ${SYS_SOURCE_DIR}/boot/${ARCH}/linker.ld <OBJECTS> -o <TARGET>"
-# # )
-#
-# # set(oomtk_SOURCES
-# #       ${boot_SOURCES}
-# #       ${libDisplay_SOURCES}
-# #    )
-#
-# # add_executable(oomtk ${oomtk_SOURCES})
-# # set_target_properties(oomtk PROPERTIES LINK_LANGUAGE CXX)
-#
-#
+# add_custom_target(VersionInfo bzr version-info | awk -f ${OOMTK_SOURCE_DIR}/tools/versionInfoProc.awk > ${SYS_BINARY_DIR}/version.h
+#                   VERBATIM)
