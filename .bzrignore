@@ -1,3 +1,7 @@
 *.kdevelop
 *.kdevelop.filelist
 *.kdevses
+OOMTK.tag
+*.kdevelop.pcs
+Doxyfile
+doc/apidox
