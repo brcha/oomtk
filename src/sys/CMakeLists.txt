@@ -58,7 +58,7 @@ set(CMAKE_AR "${GCCPREFIX}ar")
 set(CMAKE_RANLIB "${GCCPREFIX}ranlib")
 
 # Find out the date
-execute_process(COMMAND "date"
+execute_process(COMMAND "date -R"
   OUTPUT_VARIABLE OOMTK_BUILD_DATE
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )

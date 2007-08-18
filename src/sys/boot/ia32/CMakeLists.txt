@@ -28,6 +28,10 @@ set(boot_ia32_SOURCES
       PagingLegacy.cc
       PagingPAE.cc
       GDT.cc
+      IDT.cc
+      InterruptHandler.cc
+      InterruptManager.cc
+      interrupts.S
    )
 
 
@@ -45,7 +49,7 @@ set(oomtk_LIBRARIES
 add_executable(oomtk ${boot_ia32_SOURCES})
 target_link_libraries(oomtk ${oomtk_LIBRARIES})
 add_dependencies(oomtk ${SYS_BINARY_DIR}/boot/${OOMTK_ARCH}/linker.${OOMTK_ARCH}.ld
-                       OffsetGeneration)
+                       OffsetGeneration IdtGeneration)
 
 set_target_properties(oomtk
   PROPERTIES LINK_FLAGS "-Xlinker -T -Xlinker ${SYS_BINARY_DIR}/boot/${OOMTK_ARCH}/linker.${OOMTK_ARCH}.ld"
@@ -65,6 +69,11 @@ add_custom_target(OffsetGeneration ${CMAKE_CXX_COMPILER} -S -DIA32 -D__IA32__ -D
                    COMMAND echo "\#endif /* __ARCH_OFFSETS_H__ */" >> ${CMAKE_CURRENT_BINARY_DIR}/offsets.h
                    VERBATIM
                  )
+
+add_custom_target(IdtGeneration python ${CMAKE_CURRENT_SOURCE_DIR}/IdtInitialization.py > ${CMAKE_CURRENT_BINARY_DIR}/__generatedIdtInitializationCode__.cc
+                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/IdtDeclaration.py > ${CMAKE_CURRENT_BINARY_DIR}/__generatedIdtDeclarationCode__.h
+		  VERBATIM
+		 )
 
 # add_custom_command(OUTPUT offsets.h __generateOffsets.s
 #                    COMMAND ${CMAKE_CXX_COMPILER} -S -DIA32 -D__IA32__ -D__ARCH__=ia32 -I ${SYS_SOURCE_DIR}/include -I ${SYS_SOURCE_DIR}/kernel -include ${SYS_SOURCE_DIR}/include/macros.h -include ${SYS_SOURCE_DIR}/include/config.h -o ${CMAKE_CURRENT_BINARY_DIR}/__generateOffsets.s ${CMAKE_CURRENT_SOURCE_DIR}/__generateOffsets.cpp

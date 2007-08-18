@@ -22,6 +22,7 @@ set(libglue_SOURCES
       malloc.c
       memset.c
       abort.c
+      _exit.c
    )
 
 add_library(glue STATIC ${libglue_SOURCES})

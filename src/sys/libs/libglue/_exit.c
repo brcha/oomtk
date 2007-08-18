@@ -3,21 +3,17 @@
  *
  *  This file is part of OOMTK
  */
-/** \file abort.cc
+/** \file _exit.c
  * \brief Description
  */
 /*
  * $Id$
  */
-#include "abort.h"
+#include "_exit.h"
 
 #include <halt.h>
-#include <stdio.h>
 
-void abort(void)
+void _exit(void)
 {
-  printf("abort called...");
-  int i;
-  for (i=0; i < 2147483647; i++);
   halt();
 }

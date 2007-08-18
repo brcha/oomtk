@@ -31,6 +31,7 @@
 #include <PagingPAE.h>
 
 #include <GDT.h>
+#include <IDT.h>
 
 #include <fatal.h>
 
@@ -97,6 +98,12 @@ void systemStartup()
 
   printf("Typeid(gdt).name() = %s\n", typeid(gdt).name());
 
+  // Setup the new IDT
+  IDT * idt = IDT::instance();
+  idt->setup();
+
+  // Test the #BP interrupt (int 3, breakpoint)
+  //asm volatile("int $3");
 
   // Call the constructors
 //   callCtors();

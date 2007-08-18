@@ -5,3 +5,6 @@ OOMTK.tag
 *.kdevelop.pcs
 Doxyfile
 doc/apidox
+xenv/BUILD
+xenv/SOURCES/*.tar.gz
+xenv/SOURCES/*.tar.bz2

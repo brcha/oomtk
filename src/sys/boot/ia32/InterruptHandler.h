@@ -1,7 +1,5 @@
-#ifndef __IA32_ASM_H__
-#define __IA32_ASM_H__
 /*
- *  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2007 by Filip Brčić <brcha@users.sourceforge.net>
  *
  *  This file is part of OOMTK (http://launchpad.net/oomtk)
  *
@@ -18,20 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** @file
- * @brief Assembly macros
+/** \file InterruptHandler.h
+ * \brief C Interrupt handling routine
  */
+#ifndef __IA32_INTERRUPT_HANDLER_H__
+#define __IA32_INTERRUPT_HANDLER_H__
 
-// default alignment
-#define ALIGN 16
+#include <types.h>
 
-#define EXT(x)  x
-#define LEXT(x) x## :
-#define GEXT(x) .globl EXT(x); LEXT(x)
+extern "C" {
+  void interruptHandler(addr_t saveArea);
+};
 
-#define ALIGNEDVAR(x,al)  .globl EXT(x); .align al; LEXT(x)
-#define VAR(x)            ALIGNEDVAR(x,4)
-#define ENTRY(x)          .globl EXT(x); .type EXT(x),@function; LEXT(x)
-#define GDATA(x)          .globl EXT(x); .align ALIGN; LEXT(x)
-
-#endif /* __IA32_ASM_H__ */
+#endif /* __IA32_INTERRUPT_HANDLER_H__ */
