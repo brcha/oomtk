@@ -17,7 +17,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${SYS_BIN_DIR})
 
 set(boot_ia32_SOURCES
       start.S
@@ -49,7 +49,7 @@ set(oomtk_LIBRARIES
 add_executable(oomtk ${boot_ia32_SOURCES})
 target_link_libraries(oomtk ${oomtk_LIBRARIES})
 add_dependencies(oomtk ${SYS_BINARY_DIR}/boot/${OOMTK_ARCH}/linker.${OOMTK_ARCH}.ld
-                       OffsetGeneration IdtGeneration)
+                       OffsetGeneration IdtGeneration VersionInfo)
 
 set_target_properties(oomtk
   PROPERTIES LINK_FLAGS "-Xlinker -T -Xlinker ${SYS_BINARY_DIR}/boot/${OOMTK_ARCH}/linker.${OOMTK_ARCH}.ld"

@@ -21,9 +21,10 @@ set(SYS_SOURCE_DIR "${OOMTK_SOURCE_DIR}/src/sys")
 set(SYS_BINARY_DIR "${OOMTK_BINARY_DIR}/src/sys")
 
 # OOMTK Version
-set(OOMTK_BASE_VERSION "0.80.1")
-set(OOMTK_REVISION "`bzr revno ${OOMTK_SOURCE_DIR}`")
-set(OOMTK_VERSION "${OOMTK_BASE_VERSION}-r${OOMTK_REVISION}")
+#set(OOMTK_BASE_VERSION "0.80.1")
+set(OOMTK_VERSION "0.80.1")
+#set(OOMTK_REVISION "`bzr revno ${OOMTK_SOURCE_DIR}`")
+#set(OOMTK_VERSION "${OOMTK_BASE_VERSION}-r${OOMTK_REVISION}")
 
 # OOMTK Architecture (set in the main CMakeLists.txt file)
 # supported archs = ia32
@@ -58,17 +59,18 @@ set(CMAKE_AR "${GCCPREFIX}ar")
 set(CMAKE_RANLIB "${GCCPREFIX}ranlib")
 
 # Find out the date
-execute_process(COMMAND "date -R"
-  OUTPUT_VARIABLE OOMTK_BUILD_DATE
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-execute_process(COMMAND "whoami"
-  OUTPUT_VARIABLE OOMTK_BUILD_USER
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+#execute_process(COMMAND "date -R"
+#  OUTPUT_VARIABLE OOMTK_BUILD_DATE
+#  OUTPUT_STRIP_TRAILING_WHITESPACE
+#)
+#execute_process(COMMAND "whoami"
+#  OUTPUT_VARIABLE OOMTK_BUILD_USER
+#  OUTPUT_STRIP_TRAILING_WHITESPACE
+#)
 
 # Standard defines for OOMTK::Sys
-set(OOMTK_DEFINES "-DOOMTK -DOOMTK_VERSION=\"${OOMTK_VERSION}\" -DOOMTK_BUILD_DATE=\"${OOMTK_BUILD_DATE}\" -DOOMTK_BUILD_USER=\"${OOMTK_BUILD_USER}\"")
+#set(OOMTK_DEFINES "-DOOMTK -DOOMTK_VERSION=\"${OOMTK_VERSION}\" -DOOMTK_BUILD_DATE=\"${OOMTK_BUILD_DATE}\" -DOOMTK_BUILD_USER=\"${OOMTK_BUILD_USER}\"")
+set(OOMTK_DEFINES "-DOOMTK -DOOMTK_VERSION=\"${OOMTK_VERSION}\" -DOOMTK_BUILD_USER=\"${OOMTK_BUILD_USER}\"")
 
 # Flags
 
@@ -167,5 +169,5 @@ add_subdirectory(devices)
 add_subdirectory(kernel)
 add_subdirectory(libs)
 
-# add_custom_target(VersionInfo bzr version-info | awk -f ${OOMTK_SOURCE_DIR}/tools/versionInfoProc.awk > ${SYS_BINARY_DIR}/version.h
-#                   VERBATIM)
+ add_custom_target(VersionInfo bzr version-info ${OOMTK_SOURCE_DIR} | awk -f ${OOMTK_SOURCE_DIR}/tools/versionInfoProc.awk > ${SYS_BINARY_DIR}/version.h
+                   VERBATIM)

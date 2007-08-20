@@ -36,5 +36,14 @@ void interruptHandler(addr_t saveArea)
 
   printf("Exception occured: %d\n", ctx->ExceptNo);
 
-  for (int i=0; i < 2147483647; i++);
+  printf("EDI=%08x ESI=%08x EBP=%08x Exception address=%08x\n",
+	 ctx->EDI, ctx->ESI, ctx->EBP, ctx->ExceptAddr);
+  printf("EBX=%08x EDX=%08x ECX=%08x EAX=%08x, ExceptNo=%08x\n",
+	 ctx->EBX, ctx->EDX, ctx->ECX, ctx->EAX, ctx->ExceptNo);
+  printf("Error=%08x, EIP=%08x CS=%08x EFLAGS=%08x ESP=%08x\n",
+	 ctx->Error, ctx->EIP, ctx->CS, ctx->EFLAGS, ctx->ESP);
+  printf("SS=%08x, DS=%08x ES=%08x FS=%08x GS=%08x\n",
+	 ctx->SS, ctx->DS, ctx->ES, ctx->FS, ctx->GS);
+
+  for (;;);
 }

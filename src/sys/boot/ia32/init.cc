@@ -20,6 +20,8 @@
  * \brief Kernel initialization
  */
 
+#include <version.h>
+
 #include <stdio.h>
 #include <VgaConsole.h>
 // #include <KernelOutputStream.h>
@@ -74,9 +76,12 @@ void systemStartup()
   Console::stderr = vga;
 
   // Colored Hello World :)
-  printf(ANSI_FG_WHITE "OOMTK version %s (built %s by %s)\n" ANSI_NORMAL,
-              ANSI_FG_CYAN MKSTR(OOMTK_VERSION) ANSI_FG_WHITE,
+  printf(ANSI_FG_WHITE "OOMTK version %s%s-r%s%s (built %s%s%s by %s)\n" ANSI_NORMAL,
+	 ANSI_FG_CYAN, MKSTR(OOMTK_VERSION), VersionInfo::RevisionNo, ANSI_FG_WHITE,
+	 ANSI_FG_CYAN, VersionInfo::BuildDate, ANSI_FG_WHITE,
+	 /*              ANSI_FG_CYAN MKSTR(OOMTK_VERSION) ANSI_FG_WHITE,
               ANSI_FG_CYAN MKSTR(OOMTK_BUILD_DATE) ANSI_FG_WHITE,
+	 */
               ANSI_FG_CYAN MKSTR(OOMTK_BUILD_USER) ANSI_FG_WHITE
         );
 
@@ -103,7 +108,7 @@ void systemStartup()
   idt->setup();
 
   // Test the #BP interrupt (int 3, breakpoint)
-  //asm volatile("int $3");
+  asm volatile("sti;int $48;");
 
   // Call the constructors
 //   callCtors();

@@ -38,7 +38,7 @@
 #define INTENTRY(vecno) \
 	.text 			; \
 GEXT(intEntry_##vecno)		; \
-	call  abort		; \
+	cli			; \
 	pushl $0		; \
 	pushl $vecno		; \
 	jmp   EXT(intCommon)
@@ -47,6 +47,7 @@ GEXT(intEntry_##vecno)		; \
 #define INTENTRY_EC(vecno, label) \
 	.text 			; \
 GEXT(intEntry_##vecno)		; \
+	cli			; \
 	pushl $vecno 		; \
 	jmp   EXT(label)
 	
@@ -61,7 +62,7 @@ INTENTRY(4)			/* #OF: Overflow (INTO)			*/
 INTENTRY(5)			/* #BR: Bounds error (BOUND)		*/
 INTENTRY(6)			/* #UD: Invalid opcode (UD2 or invalid)	*/
 INTENTRY(7)			/* #NM: Device not available (fpu)	*/
-INTENTRY(8)		        /* #DF: Double fault, returns 0		*/
+INTENTRY_EC(8, intCommon)	/* #DF: Double fault, returns 0		*/
 INTENTRY(9)			/* Coprocessor segment overrun		*/
 INTENTRY_EC(10, intCommon)	/* #TS: Invalid TSS			*/
 INTENTRY_EC(11, intEC)	/* #NP: Segment not present		*/
@@ -88,8 +89,7 @@ INTENTRY(30)
 INTENTRY(31)
 	/* ^-- Intel reserved - do not use --^ */
 
-        /* v-- Hardware interrupts go here --v */
-
+        /* v-- Hardware IRQs --v */
 INTENTRY(32)
 INTENTRY(33)
 INTENTRY(34)
@@ -106,271 +106,63 @@ INTENTRY(44)
 INTENTRY(45)
 INTENTRY(46)
 INTENTRY(47)
+	/* ^-- Hardware IRQs --^ */
 INTENTRY(48)
-INTENTRY(49)
-INTENTRY(50)
-INTENTRY(51)
-INTENTRY(52)
-INTENTRY(53)
-INTENTRY(54)
-INTENTRY(55)
-INTENTRY(56)
-INTENTRY(57)
-INTENTRY(58)
-INTENTRY(59)
-INTENTRY(60)
-INTENTRY(61)
-INTENTRY(62)
-INTENTRY(63)
-INTENTRY(64)
-INTENTRY(65)
-INTENTRY(66)
-INTENTRY(67)
-INTENTRY(68)
-INTENTRY(69)
-INTENTRY(70)
-INTENTRY(71)
-INTENTRY(72)
-INTENTRY(73)
-INTENTRY(74)
-INTENTRY(75)
-INTENTRY(76)
-INTENTRY(77)
-INTENTRY(78)
-INTENTRY(79)
-INTENTRY(80)
-INTENTRY(81)
-INTENTRY(82)
-INTENTRY(83)
-INTENTRY(84)
-INTENTRY(85)
-INTENTRY(86)
-INTENTRY(87)
-INTENTRY(88)
-INTENTRY(89)
-INTENTRY(90)
-INTENTRY(91)
-INTENTRY(92)
-INTENTRY(93)
-INTENTRY(94)
-INTENTRY(95)
-INTENTRY(96)
-INTENTRY(97)
-INTENTRY(98)
-INTENTRY(99)
-INTENTRY(100)
-INTENTRY(101)
-INTENTRY(102)
-INTENTRY(103)
-INTENTRY(104)
-INTENTRY(105)
-INTENTRY(106)
-INTENTRY(107)
-INTENTRY(108)
-INTENTRY(109)
-INTENTRY(110)
-INTENTRY(111)
-INTENTRY(112)
-INTENTRY(113)
-INTENTRY(114)
-INTENTRY(115)
-INTENTRY(116)
-INTENTRY(117)
-INTENTRY(118)
-INTENTRY(119)
-INTENTRY(120)
-INTENTRY(121)
-INTENTRY(122)
-INTENTRY(123)
-INTENTRY(124)
-INTENTRY(125)
-INTENTRY(126)
-INTENTRY(127)
-INTENTRY(128)
-INTENTRY(129)
-INTENTRY(130)
-INTENTRY(131)
-INTENTRY(132)
-INTENTRY(133)
-INTENTRY(134)
-INTENTRY(135)
-INTENTRY(136)
-INTENTRY(137)
-INTENTRY(138)
-INTENTRY(139)
-INTENTRY(140)
-INTENTRY(141)
-INTENTRY(142)
-INTENTRY(143)
-INTENTRY(144)
-INTENTRY(145)
-INTENTRY(146)
-INTENTRY(147)
-INTENTRY(148)
-INTENTRY(149)
-INTENTRY(150)
-INTENTRY(151)
-INTENTRY(152)
-INTENTRY(153)
-INTENTRY(154)
-INTENTRY(155)
-INTENTRY(156)
-INTENTRY(157)
-INTENTRY(158)
-INTENTRY(159)
-INTENTRY(160)
-INTENTRY(161)
-INTENTRY(162)
-INTENTRY(163)
-INTENTRY(164)
-INTENTRY(165)
-INTENTRY(166)
-INTENTRY(167)
-INTENTRY(168)
-INTENTRY(169)
-INTENTRY(170)
-INTENTRY(171)
-INTENTRY(172)
-INTENTRY(173)
-INTENTRY(174)
-INTENTRY(175)
-INTENTRY(176)
-INTENTRY(177)
-INTENTRY(178)
-INTENTRY(179)
-INTENTRY(180)
-INTENTRY(181)
-INTENTRY(182)
-INTENTRY(183)
-INTENTRY(184)
-INTENTRY(185)
-INTENTRY(186)
-INTENTRY(187)
-INTENTRY(188)
-INTENTRY(189)
-INTENTRY(190)
-INTENTRY(191)
-INTENTRY(192)
-INTENTRY(193)
-INTENTRY(194)
-INTENTRY(195)
-INTENTRY(196)
-INTENTRY(197)
-INTENTRY(198)
-INTENTRY(199)
-INTENTRY(200)
-INTENTRY(201)
-INTENTRY(202)
-INTENTRY(203)
-INTENTRY(204)
-INTENTRY(205)
-INTENTRY(206)
-INTENTRY(207)
-INTENTRY(208)
-INTENTRY(209)
-INTENTRY(210)
-INTENTRY(211)
-INTENTRY(212)
-INTENTRY(213)
-INTENTRY(214)
-INTENTRY(215)
-INTENTRY(216)
-INTENTRY(217)
-INTENTRY(218)
-INTENTRY(219)
-INTENTRY(220)
-INTENTRY(221)
-INTENTRY(222)
-INTENTRY(223)
-INTENTRY(224)
-INTENTRY(225)
-INTENTRY(226)
-INTENTRY(227)
-INTENTRY(228)
-INTENTRY(229)
-INTENTRY(230)
-INTENTRY(231)
-INTENTRY(232)
-INTENTRY(233)
-INTENTRY(234)
-INTENTRY(235)
-INTENTRY(236)
-INTENTRY(237)
-INTENTRY(238)
-INTENTRY(239)
-INTENTRY(240)
-INTENTRY(241)
-INTENTRY(242)
-INTENTRY(243)
-INTENTRY(244)
-INTENTRY(245)
-INTENTRY(246)
-INTENTRY(247)
-INTENTRY(248)
-INTENTRY(249)
-INTENTRY(250)
-INTENTRY(251)
-INTENTRY(252)
-INTENTRY(253)
-INTENTRY(254)
-
-        /* ^-- Hardware interrupts go here --^ */
-INTENTRY(255)                   /* Set the syscall to the last interrupt */
 
 
-    /** Common entry for interrupts
-     *
-     * Hardware resets SS & CS (change of GDT entry)
-     * We have to reset the rest of the segment registers
-     */
-    .text
-    .align ALIGN
+	/** Common entry for interrupts
+	 *
+	 * Hardware resets SS & CS (change of GDT entry)
+	 * We have to reset the rest of the segment registers
+	 */
+	.text
+	.align ALIGN
 GEXT(intCommon)
-    pusha               /* In the following order: EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI */
-    movl    %esp, %ebp  /* Move the stack pointer (context) into ebp  */
-    /* Check if we are in kernel already... */
-    testl   $sel_KernelCS, OFFSET_CONTEXT_CS(%ebp)
-    /* If so, skip saving segment registers */
-    jz      _inKernel
+	pusha	/* In the following order: EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI */
+	movl	%esp, %ebp	/* Move the stack pointer (context) into ebp  */
+	/* Check if we are in kernel already... */
+	testl	$sel_KernelCS, OFFSET_CONTEXT_CS(%ebp)
+	/* If so, skip saving segment registers */
+	jz	_inKernel
 
-    /* If not so, save the segment registers into the context (ebp)   */
-    mov     %gs, OFFSET_CONTEXT_GS(%ebp)
-    mov     %fs, OFFSET_CONTEXT_FS(%ebp)
-    mov     %es, OFFSET_CONTEXT_ES(%ebp)
-    mov     %ds, OFFSET_CONTEXT_DS(%ebp)
+	/* If not so, save the segment registers into the context (ebp)   */
+	mov	%gs, OFFSET_CONTEXT_GS(%ebp)
+	mov	%fs, OFFSET_CONTEXT_FS(%ebp)
+	mov	%es, OFFSET_CONTEXT_ES(%ebp)
+	mov	%ds, OFFSET_CONTEXT_DS(%ebp)
 
-    /* Load kernel data segment */
-    mov     $sel_KernelDS, %ax
-    mov     %ax, %ds
-    mov     %ax, %es
+	/* Load kernel data segment */
+	mov     $sel_KernelDS, %ax
+	mov     %ax, %ds
+	mov	%ax, %es
+	mov	%ax, %fs
+	mov	%ax, %gs
 
-    /* Load kernel stack */
-    movl    $kstack_hi, %esp
+	/* Load kernel stack */
+	movl	$kstack_hi, %esp
 
-    /* If kernel was interrupted, routine skips until here */
+	/* If kernel was interrupted, routine skips until here */
 _inKernel:
-    /* Just call interruptHandler(context save area = %ebp) */
-    pushl   %ebp
-    call    EXT(interruptHandler)
+	/* Just call interruptHandler(context save area = %ebp) */
+	pushl	%ebp
+	call	EXT(interruptHandler)
 
-    /* This shouldn't return, so assume some error if this returns */
-    call    EXT(halt)
-
-    /** Entry for PageFault exception
-     */
-     .text
-     .align ALIGN
-GEXT(intPgFault)
-    /* Non at the moment... just go to common interrupt entry */
-    jmp     intCommon
-
-    /** Entry for error-code returning exceptions
-     */
-     .text
-     .align ALIGN
-GEXT(intEC)
-      /* Nothing to do for now... */
-      jmp     intCommon
-
-/* kate: indent-mode normal; */
+	/* This shouldn't return, so assume some error if this returns */
+	call	EXT(halt) 
 	
+	/** Entry for PageFault exception
+	 */
+	.text
+	.align	ALIGN
+GEXT(intPgFault)
+	/* Non at the moment... just go to common interrupt entry */
+	jmp	intCommon
+
+	/** Entry for error-code returning exceptions
+	 */
+	.text
+	.align	ALIGN
+GEXT(intEC)
+	/* Nothing to do for now... */
+	jmp	intCommon
+
