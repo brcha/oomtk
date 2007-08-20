@@ -107,9 +107,6 @@ void systemStartup()
   IDT * idt = IDT::instance();
   idt->setup();
 
-  // Test the #BP interrupt (int 3, breakpoint)
-  asm volatile("sti;int $48;");
-
   // Call the constructors
 //   callCtors();
 
