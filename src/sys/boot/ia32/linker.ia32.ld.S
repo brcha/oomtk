@@ -57,7 +57,7 @@ SECTIONS
 	_end_text = .;
     } = 0x9090
 
-    /* Page aligned data, such as IDT */
+    /* Page aligned data	*/
     . = ALIGN(PAGE_SIZE);
     _pagedata = .;
     .pagedata : AT(ADDR(.pagedata) - KVA)
@@ -66,7 +66,24 @@ SECTIONS
     }
     _end_pagedata = .;
 
-    /* The rest of the data */
+    /* Traps & interrupts	*/
+    . = ALIGN(PAGE_SIZE);
+    _traps_data = .;
+    .traps.data : AT(ADDR(.traps.data) - KVA)
+    {
+	*(.traps.data)
+    }
+    _end_traps_data = .;
+
+    . = ALIGN(PAGE_SIZE);
+    _traps_text = .;
+    .traps.text : AT(ADDR(.traps.text) - KVA)
+    {
+	*(.traps.text)
+    }
+    _end_traps_text = .;
+
+    /* The rest of the data	*/
     _data = .;
     .data : AT(ADDR(.data) - KVA)
     {

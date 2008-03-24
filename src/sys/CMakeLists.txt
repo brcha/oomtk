@@ -25,6 +25,7 @@ set(SYS_BINARY_DIR "${OOMTK_BINARY_DIR}/src/sys")
 set(OOMTK_VERSION "0.80.2")
 #set(OOMTK_REVISION "`bzr revno ${OOMTK_SOURCE_DIR}`")
 #set(OOMTK_VERSION "${OOMTK_BASE_VERSION}-r${OOMTK_REVISION}")
+set(OOMTK_SUBTARGET "-brcha-oomtk${OOMTK_VERSION}-gnu")
 
 # OOMTK Architecture (set in the main CMakeLists.txt file)
 # supported archs = ia32
@@ -33,7 +34,8 @@ set(OOMTK_VERSION "0.80.2")
 # Cross-gcc prefix
 set(CROSS_BIN_PREFIX "${CMAKE_INSTALL_PREFIX}/host/bin")
 if(OOMTK_ARCH STREQUAL "ia32")
-  set(GCCPREFIX "${CROSS_BIN_PREFIX}/i386-brcha-oomtk${OOMTK_VERSION}-gnu-")
+  set(OOMTK_TARGET "i386${OOMTK_SUBTARGET}")
+  set(GCCPREFIX "${CROSS_BIN_PREFIX}/${OOMTK_TARGET}-")
 # elseif(OOMTK_ARCH STREQUAL "amd64")
 #   set(GCCPREFIX "${CROSS_BIN_PREFIX}/x86_64-brcha-oomtk${OOMTK_VERSION}-gnu-")
 # elseif(OOMTK_ARCH STREQUAL "arm")

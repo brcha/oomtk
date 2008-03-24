@@ -43,6 +43,11 @@
 /// \brief Number of segments
 #define seg_Count     0x7
 
+/// \brief Kernel's privilege level
+#define pl_Kernel     0x0
+/// \brief User's privilege level
+#define pl_User       0x3
+
 /**
  * \brief Get the segment selector from the segment index
  * \param seg segment index
@@ -52,18 +57,18 @@
 #define SELECTOR(seg,rpl) (((seg) << 3) + (rpl))
 
 /// \brief Null segment selector
-#define sel_NULL       SELECTOR(seg_NULL, 0)
+#define sel_NULL       SELECTOR(seg_NULL, pl_Kernel)
 /// \brief Kernel code segment selector
-#define sel_KernelCS   SELECTOR(seg_KernelCS, 0)
+#define sel_KernelCS   SELECTOR(seg_KernelCS, pl_Kernel)
 /// \brief Kernel data segment selector
-#define sel_KernelDS   SELECTOR(seg_KernelDS, 0)
+#define sel_KernelDS   SELECTOR(seg_KernelDS, pl_Kernel)
 /// \brief User code segment selector
-#define sel_UserCS     SELECTOR(seg_UserCS, 3)
+#define sel_UserCS     SELECTOR(seg_UserCS, pl_User)
 /// \brief User data segment selector
-#define sel_UserDS     SELECTOR(seg_UserDS, 3)
+#define sel_UserDS     SELECTOR(seg_UserDS, pl_User)
 /// \brief User thread-local storage selector
-#define sel_UserTLS    SELECTOR(seg_UserTLS, 3)
+#define sel_UserTLS    SELECTOR(seg_UserTLS, pl_User)
 /// \brief TSS segment selector
-#define sel_TSS        SELECTOR(seg_TSS, 0)
+#define sel_TSS        SELECTOR(seg_TSS, pl_Kernel)
 
 #endif /* __SELECTORS_H__ */
