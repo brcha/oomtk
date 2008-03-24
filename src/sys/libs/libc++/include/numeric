@@ -1,0 +1,20 @@
+#ifndef LIBCPP_NUMERIC
+#define LIBCPP_NUMERIC
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+namespace std
+{
+	/*!\todo doc */
+	template<class InputIterator, class T>
+	T accumulate(InputIterator first, InputIterator last, T init);
+	{
+		for (;first != last;first++)init += *first;
+		return init;
+	}
+}
+
+/*@}*/
+
+#endif

@@ -1,0 +1,84 @@
+#ifndef LIBCPP_OSTREAM
+#define LIBCPP_OSTREAM
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+#include <ios>
+#include <cstdlib>
+
+namespace std
+{
+	/*! Standard basic_ostream class template */
+	template<class charT, class traits=char_traits<charT> >
+	class basic_ostream : virtual public std::basic_ios<charT, traits>
+	{
+		public:
+			inline virtual ~basic_ostream(){}
+			inline basic_ostream &operator << (short n)
+				{return *this << static_cast<long>(n);}
+			inline basic_ostream &operator << (unsigned short n)
+				{return *this << static_cast<unsigned long>(n);}
+			inline basic_ostream &operator << (int n)
+				{return *this << static_cast<long>(n);}
+			inline basic_ostream &operator << (unsigned int n)
+				{return *this << static_cast<unsigned long>(n);}
+			inline basic_ostream &operator << (long n)
+			{
+				unsigned int base = 10;
+				if ((ios_base::flags() & ios_base::dec) == ios_base::dec)base = 10;
+				else if ((ios_base::flags() & ios_base::hex) == ios_base::hex)base = 16;
+				else if ((ios_base::flags() & ios_base::oct) == ios_base::oct)base = 8;
+				charT value[32];
+				itoa(n, value, base);
+				return *this << value;
+			}
+			inline basic_ostream &operator << (unsigned long n)
+			{
+				unsigned int base = 10;
+				if ((ios_base::flags() & ios_base::dec) == ios_base::dec)base = 10;
+				else if ((ios_base::flags() & ios_base::hex) == ios_base::hex)base = 16;
+				else if ((ios_base::flags() & ios_base::oct) == ios_base::oct)base = 8;
+				charT value[32];
+				itoa(n, value, base);
+				return *this << value;
+			}
+			virtual basic_ostream &operator << (const char c)=0;
+			virtual basic_ostream &operator << (const unsigned char c)
+				{return (*this << static_cast<const char>(c));}
+			virtual basic_ostream &operator << (const char *s)=0;
+			virtual basic_ostream &operator << (const unsigned char *s)
+				{return (*this << reinterpret_cast<const char *>(s));}
+			inline basic_ostream &operator << (ios_base &(*pf)(ios_base &))
+			{
+				pf(*this);
+				return *this;
+			}
+			inline basic_ostream &operator << (basic_ostream &(*pf)(basic_ostream &))
+			{
+				return pf(*this);
+			}
+	};
+	
+	/*! Define the standard ostream class */
+	typedef basic_ostream<char> ostream;
+	
+	/*! Define the standard wostream class */
+	typedef basic_ostream<wchar_t> wostream;
+	
+	/*!\todo flush */
+	inline ostream &endl(ostream &os)
+	{
+		return os << '\n';
+	}
+	
+	/*!\todo flush
+	inline wostream &endl(wostream &wos)
+	{
+		return wos << L'\n';
+	}*/
+};
+
+/*@}*/
+
+#endif

@@ -1,0 +1,17 @@
+#ifndef LIBCPP_CSTDINT
+#define LIBCPP_CSTDINT
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+namespace std
+{
+	extern "C"
+	{
+		#include <stdint.h>
+	};
+};
+
+/*@}*/
+
+#endif

@@ -20,5 +20,5 @@
 #add_subdirectory(cxxlib)
 # add_subdirectory(libc++)
 add_subdirectory(minilibc)
-# add_subdirectory(supc++)
+add_subdirectory(supc++)
 add_subdirectory(libglue)

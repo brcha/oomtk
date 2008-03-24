@@ -1,0 +1,17 @@
+#ifndef LIBCPP_CFLOAT
+#define LIBCPP_CFLOAT
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+namespace std
+{
+	extern "C"
+	{
+		#include <float.h>
+	};
+}
+
+/*@}*/
+
+#endif

@@ -1,0 +1,216 @@
+#ifndef LIBCPP_VECTOR
+#define LIBCPP_VECTOR
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+#include <cstddef>
+#include <memory>
+
+namespace std
+{
+	template<class T, class Container>
+	class const_sequential_iterator;
+	template<class T, class Container>
+	class sequential_iterator;
+	
+	/*! Standard vector class
+	 * \todo Use allocators */
+	template<class T, class Allocator = allocator<T> >
+	class vector
+	{
+		public:
+			typedef typename Allocator::reference								reference;
+			typedef typename Allocator::const_reference							const_reference;
+			typedef sequential_iterator<T, vector<T, Allocator> >				iterator;
+			typedef const_sequential_iterator<T, vector<T, Allocator> >			const_iterator;
+			typedef size_t														size_type;
+			typedef T															value_type;
+			typedef Allocator													allocator_type;
+			typedef typename Allocator::pointer									pointer;
+			typedef typename Allocator::const_pointer							const_pointer;
+			
+			/*! The constructor */
+			explicit vector()
+			{
+				_n = 0;
+				_s = 0;
+				_obj = 0;
+			}
+			/*! The constructor
+			 *\param[in] n number of elements of value
+			 *\param[in] value elements value */
+			explicit vector(size_type n, const T &value = T())
+			{
+				_n = n;
+				_obj = new T[n];
+				for (_s = 0;_s < n;_s++)_obj[_s] = value;
+			}
+			/*! The constructor
+			 *\param[in] first iterator pointing to the first object
+			 *\param[in] last iterator pointing to the last object */
+			template<class InputIterator>
+			inline vector(InputIterator first, InputIterator last)
+				: _s(0), _n(0), _obj(0)
+			{
+				assign<InputIterator>(first, last);
+			}
+			/*!\todo doc */
+			template<class InputIterator>
+			void assign(InputIterator first, InputIterator last)
+			{
+				//TODO: Find a more generic but fast solution
+				_n = last.getOffset() - first.getOffset();
+				if (_s < _n)
+				{
+					if (_obj != 0)delete []_obj;
+					_s = _n;
+					_obj = new T[_n];
+				}
+				for (unsigned int i=0;i < _n;i++)
+				{
+					_obj[i] = *first;
+					++first;
+				}
+			}
+			/*!\todo doc */
+			void assign(size_type n, const T& t)
+			{
+				_n = n;
+				if (_s < _n)
+				{
+					if (_obj != 0)delete []_obj;
+					_s = _n;
+					_obj = new T[_n];
+				}
+				for (unsigned int i=0;i < _n;i++)
+					_obj[i] = t;
+			}
+			/*! Get an iterator for the vector's beginning */
+			inline iterator begin(){return iterator(*this, 0);}
+			/*! Get a const iterator for the vector's beginning */
+			inline const_iterator begin() const{return const_iterator(*this, 0);}
+			/*! Get an iterator for the vector's end */
+			inline iterator end(){return iterator(*this, _n);}
+			/*! Get a const iterator for the vector's end */
+			inline const_iterator end() const{return const_iterator(*this, _n);}
+			/*! \return Reference to the first object */
+			inline reference front(){return _obj[0];}
+			/*! \return Constant reference to the first object */
+			inline const_reference front() const{return _obj[0];}
+			/*! \return Reference to the last object */
+			inline reference back(){return _obj[_n-1];}
+			/*! \return Constant reference to the last object */
+			inline const_reference back() const{return _obj[_n-1];}
+			/*! Get the number of objects in the vector
+			 *\return number of objects in the vector */
+			inline size_type size() const{return _n;}
+			/*! Get the capacity
+			 *\return the vector's capacity */
+			inline size_type capacity() const{return _s;}
+			/*! Is the container empty? */
+			inline bool empty() const{return (_s == 0);}
+			/*! Reserve
+			 *\param[in] n number of objects to reserve space for */
+			void reserve(size_type n)
+			{
+				if (n > _s)
+				{
+					pointer tmp = _obj;
+					/*TODO*/
+					_obj = new T[n];
+					_s = n;
+					
+					for (unsigned int i=0;i < _n;i++)
+					{
+						_obj[i] = tmp[i];
+					}
+					if (tmp != 0)delete []tmp;
+				}
+			}
+			/*! Insert an object at the end
+			 *\param[in] x the object */
+			inline void push_back(const T &x)
+			{
+				reserve(_n + 1);
+				_obj[_n] = x;
+				++_n;
+			}
+			/*! Delete the object at the end of the container */
+			inline void pop_back()
+			{
+				--_n;
+			}
+			/*! Remove an element from the vector
+			 *\param[in] pos the position in the vector */
+			void erase(iterator pos)
+			{
+				unsigned int off = pos.getOffset();
+				for (unsigned int i=(off + 1);i < _n;i++)
+				{
+					_obj[i-1] = _obj[i];
+				}
+				--_n;
+			}
+			/*! Remove the elements between first and last
+			 *\param[in] first first element to remove
+			 *\param[in] last last element to remove */
+			void erase(iterator first, iterator last)
+			{
+				unsigned int off1 = first.getOffset();
+				unsigned int off2 = last.getOffset();
+				unsigned int move = _n - off2 - 1;
+				for (unsigned int i=off1;(i <= off2) && ((i - off1) < move);i++)
+				{
+					_obj[i] = _obj[off2 + i - off1];
+				}
+				_n -= off2 - off1 + 1;
+			}
+			/*! Remove all elements */
+			inline void clear()
+			{
+				_n = 0;
+			}
+			/*! Swap two vectors
+			 *\param[in] x the other vector */
+			void swap(vector<T, Allocator> &x)
+			{
+				size_type tmpn = _n;
+				size_type tmps = _s;
+				pointer tmpobj = _obj;
+				_n = x._n;
+				_s = x._s;
+				_obj = x._obj;
+				x._n = tmpn;
+				x._s = tmps;
+				x._obj = tmpobj;
+			}
+			/*! Return the element at position n
+			 *\todo throw an exception if (n >= _n) */
+			inline reference at(size_type n){return _obj[n];}
+			/*! Return the element at position n
+			 *\todo throw an exception if (n >= _n) */
+			inline const_reference at(size_type n) const{return _obj[n];}
+			/*! Destructor */
+			~vector()
+			{
+				if (_obj != 0)delete []_obj;
+			}
+			
+			/*! The [] operator */
+			inline reference operator [] (size_type n){return _obj[n];}
+			/*! The [] operator */
+			inline const_reference operator [] (size_type n) const{return _obj[n];}
+		private:
+			/*! The number of objects in the vector */
+			size_type _n;
+			/*! The vectors size */
+			size_type _s;
+			/*! Pointer to the array of objects */
+			pointer _obj;
+	};
+};
+
+/*@}*/
+
+#endif

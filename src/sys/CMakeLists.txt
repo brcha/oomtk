@@ -22,17 +22,13 @@ set(SYS_BINARY_DIR "${OOMTK_BINARY_DIR}/src/sys")
 
 # OOMTK Version
 #set(OOMTK_BASE_VERSION "0.80.1")
-set(OOMTK_VERSION "0.80.1")
+set(OOMTK_VERSION "0.80.2")
 #set(OOMTK_REVISION "`bzr revno ${OOMTK_SOURCE_DIR}`")
 #set(OOMTK_VERSION "${OOMTK_BASE_VERSION}-r${OOMTK_REVISION}")
 
 # OOMTK Architecture (set in the main CMakeLists.txt file)
 # supported archs = ia32
 #set(OOMTK_ARCH "ia32")
-
-# include stddef.h & similar files
-include_directories(${CMAKE_INSTALL_PREFIX}/host/lib/gcc/i386-unknown-oomtk/4.1.1/include/)
-include_directories(${CMAKE_INSTALL_PREFIX}/host/include/c++/4.1.1)
 
 # Cross-gcc prefix
 set(CROSS_BIN_PREFIX "${CMAKE_INSTALL_PREFIX}/host/bin")
@@ -76,7 +72,7 @@ set(OOMTK_DEFINES "-DOOMTK -DOOMTK_VERSION=\"${OOMTK_VERSION}\" -DOOMTK_BUILD_US
 
 # Generic flags
 
-set(CFLAGS_GENERIC "-static -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs -include ${SYS_SOURCE_DIR}/include/macros.h -include ${SYS_SOURCE_DIR}/include/config.h ${OOMTK_DEFINES} -L ${CMAKE_INSTALL_PREFIX}/host/lib -L ${CMAKE_INSTALL_PREFIX}/host/lib/gcc/i386-unknown-oomtk/4.1.1")
+set(CFLAGS_GENERIC "-static -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs -include ${SYS_SOURCE_DIR}/include/macros.h -include ${SYS_SOURCE_DIR}/include/config.h ${OOMTK_DEFINES}")
 set(CXXFLAGS_ADDONS "-fno-exceptions")
 set(ASMFLAGS_ADDONS "-D__ASSEMBLER__")
 
@@ -142,6 +138,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_AR
 set(CMAKE_GnuAssembler_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMTK_ARCH}} ${ASMFLAGS_ADDONS}")
 
 # Ok, finished configuring, go build!
+include_directories(
+  ${CMAKE_INSTALL_PREFIX}/host/lib/gcc/i386-brcha-oomtk0.80.2-gnu/4.1.2/include
+)
+
 include_directories( ${SYS_SOURCE_DIR} ${SYS_BINARY_DIR} ${SYS_SOURCE_DIR}/include )
 
 # minilibc
@@ -153,10 +153,10 @@ include_directories( ${SYS_SOURCE_DIR}/libs/minilibc/include
 include_directories( ${SYS_SOURCE_DIR}/libs/libglue )
 
 # libc++
-# include_directories( ${SYS_SOURCE_DIR}/libs/libc++/include )
+include_directories( ${SYS_SOURCE_DIR}/libs/libc++/include )
 
 # supc++
-# include_directories( ${SYS_SOURCE_DIR}/libs/supc++/include )
+include_directories( ${SYS_SOURCE_DIR}/libs/supc++/include )
 
 # Kernel headers
 include_directories( ${SYS_SOURCE_DIR}/kernel )
@@ -171,3 +171,4 @@ add_subdirectory(libs)
 
  add_custom_target(VersionInfo bzr version-info ${OOMTK_SOURCE_DIR} | awk -f ${OOMTK_SOURCE_DIR}/tools/versionInfoProc.awk > ${SYS_BINARY_DIR}/version.h
                    VERBATIM)
+

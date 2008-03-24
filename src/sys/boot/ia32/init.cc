@@ -22,6 +22,8 @@
 
 #include <version.h>
 
+#include <typeinfo>
+
 #include <stdio.h>
 #include <VgaConsole.h>
 // #include <KernelOutputStream.h>

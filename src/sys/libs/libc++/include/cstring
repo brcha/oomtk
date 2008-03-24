@@ -1,0 +1,17 @@
+#ifndef LIBCPP_CSTRING
+#define LIBCPP_CSTRING
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+namespace std
+{
+	extern "C"
+	{
+		#include <string.h>
+	};
+};
+
+/*@}*/
+
+#endif

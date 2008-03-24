@@ -1,0 +1,17 @@
+#ifndef LIBCPP_CLIMITS
+#define LIBCPP_CLIMITS
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+namespace std
+{
+	extern "C"
+	{
+		#include <limits.h>
+	};
+};
+
+/*@}*/
+
+#endif

@@ -1,0 +1,17 @@
+#ifndef LIBCPP_CASSERT
+#define LIBCPP_CASSERT
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+namespace std
+{
+	extern "C"
+	{
+		#include <assert.h>
+	};
+};
+
+/*@}*/
+
+#endif

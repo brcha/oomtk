@@ -1,0 +1,73 @@
+#ifndef LIBCPP_TYPE_TRAITS
+#define LIBCPP_TYPE_TRAITS
+
+/*! \addtogroup libcpp libc++ */
+/*@{*/
+
+#include <cstring>
+#include <memory>
+
+#define LIBCPP_CHAR_EOF 0xFFFFFFFF
+
+namespace std
+{
+	typedef long streamoff;
+	typedef unsigned long streampos;
+	
+	/*! Standard char_traits class */
+	template<class charT>
+	class char_traits{};
+	
+	/*! Standard char_traits class for char */
+	template<>
+	class char_traits<char>
+	{
+		public:
+			typedef char					char_type;
+			typedef int						int_type;
+			typedef streamoff				off_type;
+			typedef streampos				pos_type;
+			
+			static int_type eof()
+			{
+				return LIBCPP_CHAR_EOF;
+			}
+			static int_type not_eof()
+			{
+				return ~LIBCPP_CHAR_EOF;
+			}
+			static size_t length(const char_type *s)
+			{
+				return strlen(s);
+			}
+			static char_type to_char_type(const int_type &c)
+			{
+				return static_cast<char_type>(c);
+			}
+			static int_type to_int_type(const char_type &c)
+			{
+				return static_cast<int_type>(c);
+			}
+			static char_type *copy(char_type *dst, const char_type *src, size_t n)
+			{
+				return strncpy(dst, src, n);
+			}
+			static int compare(const char_type *s1, const char *s2, size_t n)
+			{
+				return strncmp(s1, s2, n);
+			}
+	};
+	
+	/*! Standard char_traits class for wchar_t
+	 *\todo char_traits for wchar_t */
+	template<>
+	class char_traits<wchar_t>
+	{
+		public:
+			typedef wchar_t					char_type;
+	};
+}
+
+/*@}*/
+
+#endif
