@@ -1,5 +1,5 @@
 #
-#  Copyright (C) 2006-2007 by Filip Brcic <brcha@users.sourceforge.net>
+#  Copyright (C) 2006-2008 by Filip Brcic <brcha@gna.org>
 #
 #  This file is part of OOMTK (http://launchpad.net/oomtk)
 #

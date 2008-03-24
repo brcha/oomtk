@@ -103,6 +103,10 @@ void IDT::setup()
   printf("widt = %08x\n", widt);
   printf("&IdtTable = %08x\n", &IdtTable);
   printf("IdtDescriptor = 0x%08x,0x%08x\n", IdtDescriptor[1], IdtDescriptor[0]);
+  printf("sizeof(GateDescriptor_t) = 0x%08x\n", sizeof(GateDescriptor_t));
+
+  asm("sti\n");
+  asm("int $49\n");
 }
 
 void IDT::SetHardwareVector(int entry, void (*handlerPtr)(void), bool user)
@@ -119,5 +123,4 @@ void IDT::SetHardwareVector(int entry, void (*handlerPtr)(void), bool user)
   IdtTable[entry].bits.present    = 1;
   IdtTable[entry].bits.offset_hi  = (uint16_t) (intHandlerPtr >> 16);
 }
-
 

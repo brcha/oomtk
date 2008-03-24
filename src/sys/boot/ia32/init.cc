@@ -39,22 +39,20 @@
 
 #include <fatal.h>
 
-// #include <cxxabi.h>
-
-#include <typeinfo>
+#include <c++abi.h>
 
 using namespace std;
 
 #ifdef __cplusplus
 extern "C" {
-    /// \brief Multiboot signature (loaded from start.S)
-    u32_t multibootSignature;
-    /// \brief Multiboot info (loaded from start.S)
-    u32_t multibootInfo;
-    /// \brief THE C++ Startup Code
-    void systemStartup();
-    /// \brief The Assembly Halt function (from start.S)
-    extern void halt();
+  /// \brief Multiboot signature (loaded from start.S)
+  u32_t multibootSignature;
+  /// \brief Multiboot info (loaded from start.S)
+  u32_t multibootInfo;
+  /// \brief THE C++ Startup Code
+  void systemStartup();
+  /// \brief The Assembly Halt function (from start.S)
+  extern void halt();
 }
 #endif
 
@@ -110,11 +108,8 @@ void systemStartup()
   idt->setup();
 
   // Call the constructors
-//   callCtors();
+  //  __cxxabiv1::__cxa_initialize();
 
-  for (;;);
-
-  // Call destructors
-//   callDtors();
+  for (;;); // do nothing
 }
 

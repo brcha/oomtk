@@ -30,6 +30,8 @@ void interruptHandler(addr_t saveArea)
 {
   static InterruptManager * intManager = InterruptManager::instance();
 
+  asm("cli\n");
+
   Context * ctx = reinterpret_cast<Context*>(saveArea);
 
   // intManager->handle() or something like that

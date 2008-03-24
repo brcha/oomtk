@@ -22,7 +22,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${SY
 set(boot_ia32_SOURCES
       start.S
       init.cc
-#       ctors.cc
       CPUID.cc
       Paging.cc
       PagingLegacy.cc
@@ -38,12 +37,11 @@ set(boot_ia32_SOURCES
 set(oomtk_LIBRARIES
     minilibc
     Devices
-    Kernel
     supc++
+    Kernel
     gcc
     glue
 #     libc++
-#     supc++
    )
 
 add_executable(oomtk ${boot_ia32_SOURCES})
