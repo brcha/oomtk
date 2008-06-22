@@ -200,10 +200,12 @@ newlib:
 	      --target $(CROSSTARGET))
 	PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
 	  $(MAKE) -j2 -C BUILD/build-newlib-$(CROSSARCH) \
-	    tooldir=$(CROSSSYSROOT) STAGE_CC_WRAPPER="$(CCACHE)" all
+	    tooldir=$(CROSSSYSROOT) STAGE_CC_WRAPPER="$(CCACHE)" \
+	     MAKEINFO=/usr/bin/makeinfo all
 	PATH=$(CROSSHOSTROOT)/bin:$(PATH) \
 	  $(MAKE) -C BUILD/build-newlib-$(CROSSARCH) \
-	    tooldir=$(CROSSSYSROOT) STAGE_CC_WRAPPER="$(CCACHE)" install
+	    tooldir=$(CROSSSYSROOT) STAGE_CC_WRAPPER="$(CCACHE)" \
+	    MAKEINFO=/usr/bin/makeinfo install
 
 ##################################################################
 #
