@@ -58,73 +58,86 @@ multiboot_header:
     .long MB_CHECKSUM
 
 over_multiboot_stuff:
-    /* First of all, save EAX to some other register. It holds
-     * Multiboot Info, but it is used by any other instruction (duh)
-     */
-    movl    %eax, %edx
+	/* Reset EFlags */
+	pushl	$0
+	popf
+	
+	/* First of all, save EAX to some other register. It holds
+	 * Multiboot Info flags, but it is used by any other instruction (duh)
+	 */
+	movl    %eax, %edx
 
-    cld
+	cld
 
-    /* Clear the BSS Section und die Mapping Directories */
-    movl    $EXT(_bss_start), %edi  /* Load destination */
-    movl    $EXT(_end_maps), %ecx   /* Count revision 1 */
-    subl    $EXT(_bss_start), %ecx  /* Count revision 2 */
-    xorl    %eax, %eax		    /* Fill with NULL	*/
-    subl    $KVA, %edi		    /* No paging set up yet! */
+	/* Clear the BSS Section und die Mapping Directories */
+	movl    $EXT(_bss_start), %edi  /* Load destination */
+	movl    $EXT(_end_maps), %ecx   /* Count revision 1 */
+	subl    $EXT(_bss_start), %ecx  /* Count revision 2 */
+	xorl    %eax, %eax		    /* Fill with NULL	*/
+	subl    $KVA, %edi		    /* No paging set up yet! */
 
-    /* Do the clear loop */
-    rep
-    stosb
+	/* Do the clear loop */
+	rep
+	stosb
 
-    /* BSS & Mappings cleared :) */
+	/* BSS & Mappings cleared :) */
 
-    /* Now save the multiboot informations into kernel (in init.cc) */
-    movl    $EXT(multibootSignature)-KVA, %esi
-    movl    %edx, (%esi)    /* Signature */
-    movl    $EXT(multibootInfo)-KVA, %esi
-    movl    %ebx, (%esi)    /* Multiboot info (pointer) */
+	/* Turn the motors of any floppies off. This is taken from OSkit and
+	 * serves if the kernel has been booted of the floppy.
+	 */
+	xorb	%al, %al
+	movw	$0x3f2, %dx	/* all the floppies on the primary adapter */
+	outb	%al, %dx
+	movw	$0x372, %dx	/* all the floppies on the secondary adapter */
+	outb	%al, %dx
 
-    /* Now, setup the Stack (preallocated in the linker script */
-    movl    $kstack_hi - KVA, %esp
+	/* Now save the multiboot informations into kernel (in init.cc) */
+	movl    $EXT(multibootSignature)-KVA, %esi
+	movl    %edx, (%esi)    /* Signature */
+	movl    $EXT(multibootInfo)-KVA, %esi
+	movl    %ebx, (%esi)    /* Multiboot info (pointer) */
 
-    /* Setup temporary GDT */
-    lgdt    trickGDTptr - KVA
+	/* Now, setup the Stack (preallocated in the linker script */
+	movl    $kstack_hi - KVA, %esp
 
-    /* Reload the segment registers with the new ones */
-    movl    $0x10, %eax	    /* Data segment selector */
-    movw    %ax, %ds
-    movw    %ax, %es
-    movw    %ax, %ss
+	/* Setup temporary GDT */
+	lgdt    trickGDTptr - KVA
 
-    ljmp    $0x8, $nextLine  /* Code segment selector */
+	/* Reload the segment registers with the new ones */
+	movl    $0x10, %eax	    /* Data segment selector */
+	movw    %ax, %ds
+	movw    %ax, %es
+	movw    %ax, %ss
+
+	ljmp    $0x8, $nextLine  /* Code segment selector */
 nextLine:
-    /* Clear the frame pointer */
-    movl    $0x0, %ebp
+	/* Clear the frame pointer */
+	movl    $0x0, %ebp
 
-    /* Setup the stack right */
-    movl    $kstack_hi, %esp
+	/* Setup the stack right */
+	movl    $kstack_hi, %esp
 
-    /* Welcome to C++ */
-    call    EXT(systemStartup)
-    /* We should never come here... but just in case */
-    jmp	    halt
+	/* Welcome to C++ */
+	call    EXT(systemStartup)
+	/* We should never come here... but just in case */
+	jmp	    halt
 
 
-    /* Global function halt() for halting the kernel... (what else) */
+	/* Global function halt() for halting the kernel... (what else) */
 GEXT(halt)
 1:
-    cli		    /* Stop interrupts		*/
-    hlt		    /* Halt			*/
-    jmp	    1b	    /* And jump to halt again	*/
+	cli		    /* Stop interrupts		*/
+	hlt		    /* Halt			*/
+	jmp	    1b	    /* And jump to halt again	*/
 
 /* Define scripts for GDT */
-#define SEG_NULL            \
-          .word 0, 0;       \
-          .byte 0, 0, 0, 0
-#define SEG(type,base,limit)                                    \
-          .word (((limit)>>12)&0xffff), ((base)&0xffff);        \
-          .byte (((base)>>16)&0xff), (0x90|(type)),             \
-                (0xc0|(((limit)>>28)&0xf)), (((base)>>24)&0xff)
+#define SEG_NULL	\
+        .word 0, 0;	\
+        .byte 0, 0, 0, 0
+#define SEG(type,base,limit)				\
+        .word (((limit)>>12)&0xffff), ((base)&0xffff);	\
+        .byte (((base)>>16)&0xff), (0x90|(type)),	\
+        (0xc0|(((limit)>>28)&0xf)), (((base)>>24)&0xff)
 /* Segment types are already defined in SegmentDescriptor.h */
 #define segType_A     0x1
 #define segType_W     0x2
@@ -134,15 +147,15 @@ GEXT(halt)
 #define segType_Code  0x8
 #define segType_Data  0x0
 
-.data
-    /* Many thanx to Tim Robinson for this GDT trick :) */
+	.data
+	/* Many thanx to Tim Robinson for this GDT trick :) */
 trickGDTptr:
-    .word trickGDTend - trickGDT - 1	/* sizeof(trickGDT) - 1	*/
-    .long trickGDT - KVA		/* Address of trickGDT	*/
+	.word trickGDTend - trickGDT - 1	/* sizeof(trickGDT) - 1	*/
+	.long trickGDT - KVA			/* Address of trickGDT	*/
 
-    .p2align	2			/* 4byte alignment	*/
+	.p2align	2			/* 4byte alignment	*/
 trickGDT:
-    SEG_NULL					    /* Null segment */
-    SEG(segType_Code | segType_R, -KVA, 0xffffffff) /* Code segment */
-    SEG(segType_Data | segType_W, -KVA, 0xffffffff) /* Data segment */
+	SEG_NULL					    /* Null segment */
+	SEG(segType_Code | segType_R, -KVA, 0xffffffff) /* Code segment */
+	SEG(segType_Data | segType_W, -KVA, 0xffffffff) /* Data segment */
 trickGDTend:

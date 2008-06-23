@@ -1,5 +1,5 @@
 #
-#  Copyright (C) 2007 by Filip Brcic <brcha@users.sourceforge.net>
+#  Copyright (C) 2007,2008 by Filip Brcic <brcha@gna.org>
 #
 #  This file is part of OOMTK (http://launchpad.net/oomtk)
 #
@@ -17,10 +17,14 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Generate oomtkversion.h
+configure_file(oomtkversion.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/oomtkversion.h)
 
 set(kernel_SOURCES
-    fatal.cc
-   )
+  oomtkversion.cpp
+  fatal.cpp
+  )
 
 add_library(Kernel STATIC ${kernel_SOURCES})

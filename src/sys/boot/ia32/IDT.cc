@@ -71,7 +71,7 @@ void IDT::setup()
   # include "__generatedIdtInitializationCode__.cc"
   //memset(&IdtTable, 0, sizeof(GateDescriptor_t)*NUM_IRQ);
   //// END INSERTED CODE ////
-  
+
   // Set all interrupt handlers to point to some stub (or do that in constructor)
   // And of course those that do point somethere to wherever they point to...
 
@@ -105,8 +105,8 @@ void IDT::setup()
   printf("IdtDescriptor = 0x%08x,0x%08x\n", IdtDescriptor[1], IdtDescriptor[0]);
   printf("sizeof(GateDescriptor_t) = 0x%08x\n", sizeof(GateDescriptor_t));
 
-  asm("sti\n");
-  asm("int $49\n");
+//   asm("sti\n");
+//   asm("int $49\n");
 }
 
 void IDT::SetHardwareVector(int entry, void (*handlerPtr)(void), bool user)

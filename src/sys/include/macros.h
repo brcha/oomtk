@@ -178,4 +178,11 @@
  */
 #define OFFSET_FRIENDLY friend void __generateOffsets__(void)
 
+/**
+ * @brief Declare exported function
+ */
+#ifndef OOMTKSYS_EXPORT
+#define OOMTKSYS_EXPORT
+#endif
+
 #endif /* __MACROS_H__ */

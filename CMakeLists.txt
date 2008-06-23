@@ -1,7 +1,7 @@
 #
-#  Copyright (C) 2006-2007 by Filip Brcic <brcha@users.sourceforge.net>
+#  Copyright (C) 2006,2007,2008 by Filip Brcic <brcha@gna.org>
 #
-#  This file is part of OOMTK (http://launchpad.net/oomtk)
+#  This file is part of OOMTK
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,11 +17,12 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+
 project(OOMTK)
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
-enable_language(C CXX GnuAssembler)
 
 # Find some utility programs
 find_package(UnixCommands REQUIRED)

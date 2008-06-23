@@ -20,7 +20,7 @@
  * \brief Kernel initialization
  */
 
-#include <version.h>
+#include <oomtkversion.h>
 
 #include <typeinfo>
 
@@ -76,13 +76,8 @@ void systemStartup()
   Console::stderr = vga;
 
   // Colored Hello World :)
-  printf(ANSI_FG_WHITE "OOMTK version %s%s-r%s%s (built %s%s%s by %s)\n" ANSI_NORMAL,
-	 ANSI_FG_CYAN, MKSTR(OOMTK_VERSION), VersionInfo::RevisionNo, ANSI_FG_WHITE,
-	 ANSI_FG_CYAN, VersionInfo::BuildDate, ANSI_FG_WHITE,
-	 /*              ANSI_FG_CYAN MKSTR(OOMTK_VERSION) ANSI_FG_WHITE,
-              ANSI_FG_CYAN MKSTR(OOMTK_BUILD_DATE) ANSI_FG_WHITE,
-	 */
-              ANSI_FG_CYAN MKSTR(OOMTK_BUILD_USER) ANSI_FG_WHITE
+  printf(ANSI_FG_WHITE "OOMTK version %s%s%s\n" ANSI_NORMAL,
+	 ANSI_FG_CYAN, OOMTK::versionString(), ANSI_FG_WHITE
         );
 
   CPUID * cpuid = CPUID::instance();

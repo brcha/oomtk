@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006 by Filip Brcic <brcha@gna.org>
  *
  *  This file is part of OOMTK (http://launchpad.net/oomtk)
  *
@@ -15,9 +15,6 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/** \file fatal.h
- * \brief Print the message and exit
  */
 #include "fatal.h"
 
