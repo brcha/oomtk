@@ -39,6 +39,8 @@
 
 #include <fatal.h>
 
+#include <multiboot.h>
+
 #include <c++abi.h>
 
 using namespace std;
@@ -102,6 +104,10 @@ void systemStartup()
   IDT * idt = IDT::instance();
   idt->setup();
 
+  // Try to find out multiboot memory info
+  KMultibootInfo * mbInfo = reinterpret_cast<KMultibootInfo*>(multibootInfo);
+  printf("Available memory: %ld MB", (mbInfo->memUpper+1024) >> 10);
+  
   // Call the constructors
   //  __cxxabiv1::__cxa_initialize();
 
