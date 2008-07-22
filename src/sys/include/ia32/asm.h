@@ -1,9 +1,9 @@
 #ifndef __IA32_ASM_H__
 #define __IA32_ASM_H__
 /*
- *  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

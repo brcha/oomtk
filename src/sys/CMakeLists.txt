@@ -1,7 +1,7 @@
 #
 #  Copyright (C) 2006-2008 by Filip Brcic <brcha@gna.org>
 #
-#  This file is part of OOMTK (http://launchpad.net/oomtk)
+#  This file is part of OOMTK
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -54,16 +54,16 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 # OOMTK Version
 set(OOMTK_VERSION_MAJOR 00)
-set(OOMTK_VERSION_MINOR 99)
+set(OOMTK_VERSION_MINOR 80)
 set(OOMTK_VERSION_RELEASE 10) 
 set(OOMTK_VERSION "${OOMTK_VERSION_MAJOR}.${OOMTK_VERSION_MINOR}.${OOMTK_VERSION_RELEASE}")
-set(OOMTK_VERSION_STRING "${OOMTK_VERSION} (OOMTK 0.99.10 >= 20080621)")
+set(OOMTK_VERSION_STRING "${OOMTK_VERSION} (OOMTK 0.80.10 >= 20080721) codename: Horus")
 
 # Flags
 
 # Generic flags
 
-set(CFLAGS_GENERIC "-static -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs -include ${sys_SOURCE_DIR}/include/macros.h -include ${sys_SOURCE_DIR}/include/config.h")
+set(CFLAGS_GENERIC "-static -nostdinc -nostdlib -fno-builtin -fomit-frame-pointer -Wall -Wno-format -nostartfiles -nodefaultlibs")
 set(CXXFLAGS_ADDONS "-fno-exceptions")
 set(ASMFLAGS_ADDONS "-D__ASSEMBLER__")
 
@@ -108,7 +108,7 @@ if(IA32_sse3)
   set(CFLAGS_ia32_subarch "-march=pentium4 -msse3 -D__SUBARCH__=Pentium4 -D__SSE3__")
 endif(IA32_sse3)
 
-set(CFLAGS_ia32 "-DIA32 -D__IA32__ -D__ARCH__=ia32 -mpreferred-stack-boundary=2 -falign-functions=4 ${CFLAGS_ia32_subarch}")
+set(CFLAGS_ia32 "-DOOMTK_ARCH_IA32 -mpreferred-stack-boundary=2 -falign-functions=4 ${CFLAGS_ia32_subarch}")
 
 endif(OOMTK_ARCH STREQUAL "ia32")
 # End of ia32 flags
@@ -130,37 +130,40 @@ set(CMAKE_ASM-GCC_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMT
 
 # Ok, finished configuring, go build!
 # Include gcc standard definitions
-include_directories(
-  ${CMAKE_INSTALL_PREFIX}/host/lib/gcc/i386-unknown-oomtk-gnu/4.1.2/include
-)
+# include_directories(
+#   ${CMAKE_INSTALL_PREFIX}/host/lib/gcc/i386-unknown-oomtk-gnu/4.1.2/include
+# )
 
-include_directories( ${sys_SOURCE_DIR} ${sys_BINARY_DIR} ${sys_SOURCE_DIR}/include )
+# include_directories( ${sys_SOURCE_DIR} ${sys_BINARY_DIR} ${sys_SOURCE_DIR}/include )
+# 
+# # minilibc
+# include_directories( ${sys_SOURCE_DIR}/libs/minilibc/include
+#                      ${sys_SOURCE_DIR}/libs/minilibc/${OOMTK_ARCH}/include
+#                    )
+# 
+# # libglue
+# include_directories( ${sys_SOURCE_DIR}/libs/libglue )
+# 
+# # libc++
+# include_directories( ${sys_SOURCE_DIR}/libs/libc++/include )
+# 
+# # supc++
+# include_directories( ${sys_SOURCE_DIR}/libs/supc++/include )
+# 
+# # Kernel headers
+# include_directories( ${sys_SOURCE_DIR}/kernel 
+#   ${sys_BINARY_DIR}/kernel
+#   )
+# 
+# # Devices headers
+# include_directories( ${sys_SOURCE_DIR}/devices )
 
-# minilibc
-include_directories( ${sys_SOURCE_DIR}/libs/minilibc/include
-                     ${sys_SOURCE_DIR}/libs/minilibc/${OOMTK_ARCH}/include
-                   )
+# add_subdirectory(boot) # this doesn't work if you don't compile the libraries first!!!
+# add_subdirectory(devices)
+# add_subdirectory(kernel)
+# add_subdirectory(libs)
 
-# libglue
-include_directories( ${sys_SOURCE_DIR}/libs/libglue )
+# Include directories path
+include_directories(${sys_SOURCE_DIR}/include)
 
-# libc++
-include_directories( ${sys_SOURCE_DIR}/libs/libc++/include )
-
-# supc++
-include_directories( ${sys_SOURCE_DIR}/libs/supc++/include )
-
-# Kernel headers
-include_directories( ${sys_SOURCE_DIR}/kernel 
-  ${sys_BINARY_DIR}/kernel
-  )
-
-# Devices headers
-include_directories( ${sys_SOURCE_DIR}/devices )
-
-add_subdirectory(boot) # this doesn't work if you don't compile the libraries first!!!
-add_subdirectory(devices)
-add_subdirectory(kernel)
-add_subdirectory(libs)
-
-
+add_subdirectory(arch) # This directory contains architecture dependant files

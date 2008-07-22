@@ -1,9 +1,9 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 /*
- *  Copyright (C) 1994-2006 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006-2008 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,46 +19,67 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /** @file
- * @brief Configuration defines
+ * @brief Configuration definitions
  */
 
 /* Take from arch-specific config.h first, then define what's left undefined here */
-#include INC_ARCH(config.h)
+#include <OOMTK_ARCH/config.h>
+
+#ifndef MAX_NCPU
+/** @brief Maximum number of CPUs
+ */
+#define MAX_NCPU	1
+#endif
+
+#ifndef HAVE_HUI
+/** @brief Human UI requires console i/o to be compiled.
+ */
+#define HAVE_HUI	1
+#endif
 
 /* Don't have console by default */
 #ifndef HAVE_CONSOLE
+/** @brief Is there a console?
+ */
 #define HAVE_CONSOLE 0
-#endif /* HAVE_CONSOLE */
+#endif
+
+#ifndef HIERARCHICAL_MAP
+/** @brief If 1 then using hierarchical mapping scheme
+ */
+#define HIERARCHICAL_MAP	0
+#endif
 
 #ifndef PHYSMEM_NREGIONS
-/**
- * Number of physical memory regions
+/** @brief Number of physical memory regions
  */
-#define PHYSMEM_NREGIONS 64
-#endif /* PHYSMEM_NREGIONS */
+#define PHYSMEM_NREGIONS	64
+#endif
 
 #ifndef CACHE_LINE_SIZE
-/**
- * Size of CPU Cache Line (CPU specific, so do define this in arch/__/config.h)
+/** @brief Approximate size of CPU cache line
  */
-#define CACHE_LINE_SIZE 64
-#endif /* CACHE_LINE_SIZE */
+#define CACHE_LINE_SIZE		64
+#endif
 
 #ifndef KSTACK_NPAGES
-/**
- * Number of pages for per-CPU stacks (2^n)
+/** @brief Number of pages for per-CPU stacks (2^n)
  */
-#define KSTACK_NPAGES 0x1
-#endif /* KSTACK_NPAGES */
+#define KSTACK_NPAGES		0x1
+#endif
 
-/**
- * Size of per-CPU kernel stack (in bytes)
+#ifndef MAPTABLES_PER_PROCESS
+/** @brief Number of top-level mapping pages per process.
  */
-#define KSTACK_SIZE   (KSTACK_NPAGES * PAGE_SIZE)
+#define MAPTABLES_PER_PROCESS	0x1
+#endif
 
-/**
- * Mask to strip stack offset from stack pointer
+/** @brief Size of per-CPU kernel stack (in bytes)
  */
-#define KSTACK_MASK   (~(KSTACK_NPAGES * PAGE_SIZE - 1))
+#define KSTACK_SIZE		(KSTACK_NPAGES * OOMTK_PAGE_SIZE)
+
+/** @brief Mask to strip stack offset from stack pointer
+ */
+#define KSTACK_MASK		(~(KSTACK_NPAGES * OOMTK_PAGE_SIZE - 1))
 
 #endif /* __CONFIG_H__ */
