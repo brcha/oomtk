@@ -19,327 +19,192 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /** @file
- * @brief Multiboot classes
+ * @brief Multiboot structures
  */
+
+/** @brief Multiboot header magic
+ */
+#define MULTIBOOT_HEADER_MAGIC		0x1BADB002
+
+/* Multiboot header flags */
+#define MBH_FL_PageAlign		0x1	/**< @brief Align modules to page (4k) boundary */
+#define MBH_FL_MemInfo			0x2	/**< @brief Require memory info fields		*/
+#define MBH_FL_VideoMode		0x4	/**< @brief Require video modes table		*/
+
+/** @brief Multiboot header flags
+ * 
+ * Flags = PageAlign | MemInfo | VideoMode
+ */
+#define MULTIBOOT_HEADER_FLAGS		0x7
+
+/** @brief Multiboot bootloader magic
+ */
+#define MULTIBOOT_BOOTLOADER_MAGIC	0x2BADB002
+
+/* Now the C part */
+#ifndef __ASSEMBLER__
 
 #include <types.h>
 #include <stddef.h>
 
-/**
- * Multiboot header
+/** @brief Multiboot header structure
  */
-class KMultibootHeader
+struct multiboot_header_t
 {
-public:
-  /** Some flags from multiboot standard */
-  enum {
-    /**
-     * The entire multiboot header must be contained within the first
-     * MULTIBOOT_SEARCH bytes of the kernel image
-     */
-    Search = 8192,
+  /** @brief multiboot magic */
+  uint32_t	magic;
 
-    /**
-     * Magic value identifying the multiboot header
-     */
-    Magic = 0x1badb002,
+  /** @brief multiboot feature flags */
+  uint32_t	flags;
 
-    /**
-     * Features flags for 'flags'.
-     * If a boot loader sees a flag in MULTIBOOT_MUSTKNOW set and
-     * it doesn't understand it, it must fail.
-     */
-    Mustknow = 0x0000ffff,
+  /** @brief Checksum: magic + flags + checksum == 0 */
+  uint32_t	checksum;
 
-    /**
-     * Align all boot modules on page (4KB) boundaries
-     */
-    PageAlign = 0x00000001,
-
-    /**
-     * Must be provided memory information in multiboot info structure
-     */
-    MemoryInfo = 0x00000002,
-
-    /**
-     * Use the load address fields above instead of the ones in the a.out
-     * header to figure out what to load where, and what to do afterwards.
-     * This should be needed only for a.out kernel imaged (ELF and other
-     * formats can generally provide the needed information.
-     */
-    AoutKludge = 0x00010000,
-
-    /**
-     * The boot loader passes this value in register EAX to signal the
-     * kernel that the multiboot method is being used
-     */
-    Valid = 0x2badb002,
-  };
-
-  /** MULTIBOOT_MAGIC */
-  u32_t	magic;
-
-  /** Feature flags */
-  u32_t flags;
-
-  /** Checksum: magic + flags + checksum == 0 */
-  u32_t checksum;
-
-  /* These are valid for a.out kludge */
-  addr_t headerAddr;
-  addr_t loadAddr;
-  addr_t loadEndAddr;
-  addr_t bssEndAddr;
-  addr_t entry;
-};
-
-/**
- * Multiboot VBE controller information
- */
-class KMultibootVBEController
-{
-public:
-  u8_t	signature[4];
-  u16_t	version				__attribute__((packed));
-  u32_t	oemString			__attribute__((packed));
-  u32_t	capabilities			__attribute__((packed));
-  u32_t	videoMode			__attribute__((packed));
-  u16_t	totalMemory			__attribute__((packed));
-  u16_t	oemSoftwareRev			__attribute__((packed));
-  u32_t	oemVendorName			__attribute__((packed));
-  u32_t	oemProductName			__attribute__((packed));
-  u32_t	oemProductRev			__attribute__((packed));
-  u8_t	reserved[222]			__attribute__((packed));
-  u8_t	oemData[256]			__attribute__((packed));
-};
-
-/**
- * Multiboot VBE mode information
- */
-class KMultibootVBEMode
-{
-public:
-  u16_t	modeAttributes;
-  u8_t	winAAttributes			__attribute__((packed));
-  u8_t	winBAttributes			__attribute__((packed));
-  u16_t	winGranularity			__attribute__((packed));
-  u16_t	winSize				__attribute__((packed));
-  u16_t	winASegment			__attribute__((packed));
-  u16_t	winBSegment			__attribute__((packed));
-  u32_t	winFunction			__attribute__((packed));
-  u16_t	bytesPerScanline		__attribute__((packed));
-
-  /* >= 1.2 */
-  u16_t	xResolution			__attribute__((packed));
-  u16_t	yResolution			__attribute__((packed));
-  u8_t	xCharSize			__attribute__((packed));
-  u8_t	yCharSize			__attribute__((packed));
-  u8_t	numberOfPlanes			__attribute__((packed));
-  u8_t	bitsPerPixel			__attribute__((packed));
-  u8_t	numberOfBanks			__attribute__((packed));
-  u8_t	memoryModel			__attribute__((packed));
-  u8_t	bankSize			__attribute__((packed));
-  u8_t	numberOfImagePages		__attribute__((packed));
-  u8_t	reserved0			__attribute__((packed));
+  /* The following fields are valid for a.out kludge */
+  uint32_t	header_addr;
+  uint32_t	load_addr;
+  uint32_t	load_end_addr;
+  uint32_t	bss_end_addr;
+  uint32_t	entry_addr;
   
-  /* direct color */
-  u8_t	redMaskSize			__attribute__((packed));
-  u8_t	redFieldPosition		__attribute__((packed));
-  u8_t	greenMaskSize			__attribute__((packed));
-  u8_t	greenFieldSize			__attribute__((packed));
-  u8_t	blueMaskSize			__attribute__((packed));
-  u8_t	blueFieldPosition		__attribute__((packed));
-  u8_t	reservedMaskSize		__attribute__((packed));
-  u8_t	reservedFieldPosition		__attribute__((packed));
-  u8_t	directColorModeInfo		__attribute__((packed));
-
-  /* >= 2.0 */
-  u32_t	physBase			__attribute__((packed));
-  u32_t	reserved1			__attribute__((packed));
-  u16_t	reserved2			__attribute__((packed));
-
-  /* >= 3.0 */
-  u16_t	linearBytesPerScanline		__attribute__((packed));
-  u8_t	bankedNumberOfImagePages	__attribute__((packed));
-  u8_t	linearNumberOfImagePages	__attribute__((packed));
-  u8_t	linearRedMaskSize		__attribute__((packed));
-  u8_t	linearRedFieldPosition		__attribute__((packed));
-  u8_t	linearGreenMaskSize		__attribute__((packed));
-  u8_t	linearGreenFieldPosition	__attribute__((packed));
-  u8_t	linearBlueMaskSize		__attribute__((packed));
-  u8_t	linearBlueFieldPosition		__attribute__((packed));
-  u8_t	linearReservedMaskSize		__attribute__((packed));
-  u8_t	linearReservedFieldPosition	__attribute__((packed));
-  u32_t	maxPixelClock			__attribute__((packed));
-  
-  u8_t	reserved3[189]			__attribute__((packed));
+  /* The following fields are valid if VideoMode flag is set */
+  uint32_t	mode_type;
+  uint32_t	width;
+  uint32_t	height;
+  uint32_t	depth;
 };
 
-/**
- * Multiboot info
+/* Multiboot info flags */
+#define MBI_MEMVALID  0x001	/**< @brief mem_* fields valid		*/
+#define MBI_BOOTDEV   0x002	/**< @brief boot_device fields valid	*/
+#define MBI_CMDLINE   0x004	/**< @brief cmdline valid		*/
+#define MBI_MODS      0x008	/**< @brief mods valid			*/
+#define MBI_SYMTAB    0x010	/**< @brief symtab valid		*/
+#define MBI_SECHDR    0x020	/**< @brief section header valid	*/
+#define MBI_MMAP      0x040	/**< @brief mmap_* fields valid		*/
+#define MBI_DRIVES    0x080	/**< @brief drives_* fields valid	*/
+#define MBI_CFGTBL    0x100	/**< @brief config table valid		*/
+#define MBI_BOOTLDR   0x200	/**< @brief bootloader name valid	*/
+#define MBI_APMTBL    0x400	/**< @brief APM table valid		*/
+#define MBI_GFXTBL    0x800	/**< @brief graphics table valid	*/
+
+/** @brief Multiboot info
  */
-class KMultibootInfo
+struct multiboot_info_t
 {
-public:
-  enum {
-    Memory	= (1L <<  0),
-    BootDevice	= (1L <<  1),
-    CmdLine	= (1L <<  2),
-    Modules	= (1L <<  3),
-    AoutSyms	= (1L <<  4),
-    ElfShdr	= (1L <<  5),
-    MemMap	= (1L <<  6),
-    DriveInfo	= (1L <<  7),
-    CfgTable	= (1L <<  8),
-    BootLdName	= (1L <<  9),
-    ApmTable	= (1L << 10),
-    VideoInfo	= (1L << 11),
-  };
-
-  /**
-   * These flags indicate which parts of the multiboot info are used.
-   */
-  u32_t	    flags;
-
-  /**
-   * Amount of lower memory installed in the machine.
-   * Valid only if MULTIBOOT_MEMORY flag is set.
-   */
-  size_t    memLower;
-
-  /**
-   * Amound of upper memory installed in the machine.
-   * Valid only if MULTIBOOT_MEMORY flag is set.
-   */
-  size_t    memUpper;
-
-  /**
-   * BIOS disk device the kernel was loaded from.
-   * Valid only if MULTIBOOT_BOOT_DEVICE flag is set.
-   */
-  u8_t	    bootDevice[4];
-
-  /**
-   * Command line for the OS kernel
-   * A NULL-terminated ASCII string.
-   * Valid only if MULTIBOOT_CMDLINE flag is set.
-   */
-  addr_t    cmdLine;
-
-  /**
-   * List of boot modules loaded with the kernel.
-   * Valid only if MULTIBOOT_MODS flag is set.
-   */
-  u32_t	    modulesCount;
-  addr_t    modulesAddress;
-
-  /**
-   * Symbol information for a.out or ELF executables
-   */
+  uint32_t  flags;      /**< @brief indicate which parts of the multiboot info are valid. */
+  
+  /* valid if bit 0 is set: */
+  uint32_t  mem_lower;  /**< @brief in KB, from 0 to 640 */
+  uint32_t  mem_upper;  /**< @brief in KB, from 1MB */
+  
+  /* valid if bit 1 is set: */
+  struct {
+    uint8_t drive;
+    uint8_t part1;
+    uint8_t part2;
+    uint8_t part3;
+  } boot_device;
+  
+  /* valid if bit 2 is set: */
+  uint32_t  cmdline;    /**< @brief physicall addr of the cmdline string */
+  
+  /* valid if bit 3 is set: */
+  uint32_t  mods_count; /**< @brief number of modules */
+  uint32_t  mods_addr;  /**< @brief of modules struct */
+  
+  /* valid if bit 4 or bit 5 is set (mutually exclusive): */
   union {
     struct {
-      /* a.out symbol info valid only if MULTIBOOT_AOUT_SYMS
-       * is set in the flags
-       */
-      size_t	tabSize;
-      size_t	strSize;
-      addr_t	addr;
-      u32_t	reserved;
-    } aOut;
-
+      uint32_t  tabsize;    /**< @brief number of nlist structs */
+      uint32_t  strsize;
+      uint32_t  addr;       /**< @brief of table of nlist structs */
+      uint32_t  : 32;       /* nothing */
+    } aout; /* if bit 4 is set */
     struct {
-      /* ELF section header information valid only if
-       * MULTIBOOT_ELF_SHDR flag is set
-       */
-      u32_t	num;
-      size_t	size;
-      addr_t	addr;
-      u32_t	shndx;
-    } elf;
-  } syms;
-
-  /**
-   * Memory map buffer
-   * Valid only if MULTIBOOT_MEM_MAP flag is set
-   */
-  size_t    mmapCount;
-  addr_t    mmapAddress;
-
-  /**
-   * Drive info buffer
-   */
-  u32_t	    drivesLength;
-  u32_t	    drivesAddress;
-
-  /**
-   * ROM Configuration Table
-   */
-  u32_t	    configTable;
-
-  /**
-   * Boot loader name
-   */
-  u32_t	    bootLoaderName;
-
-  /**
-   * APM table
-   */
-  u32_t	    apmTable;
-
-  /**
-   * Video
-   */
-  u32_t	    vbeControlInfo;
-  u32_t	    vbeModeInfo;
-  u16_t	    vbeMode;
-  u16_t	    vbeInterfaceSegment;
-  u16_t	    vbeInterfaceOffset;
-  u16_t	    vbeInterfaceLength;
+      uint32_t  num;        /**< @brief of elf sect. headers */
+      uint32_t  size;       /**< @brief of each entry */
+      uint32_t  addr;       /**< @brief pointer */
+      uint32_t  shndx;      /**< @brief string table */
+    } elf;  /* if bit 5 is set */
+  } u;
+  
+  /* valid if bit 6 is set: */
+  uint32_t  mmap_length;
+  uint32_t  mmap_addr;
+  
+  /* valid if bit 7 is set: */
+  uint32_t  drives_length;
+  uint32_t  drives_addr;
+  
+  /* valid if bit 8 is set: */
+  uint32_t  config_table;
+  
+  /* valid if bit 9 is set: */
+  uint32_t  boot_loader_name;
+  
+  /* valid if bit a is set: */
+  uint32_t  apm_table;
+  
+  /* valid if bit b is set: */
+  uint32_t  vbe_control_info;   /**< @brief as returned by VBE fn 0x00 */
+  uint32_t  vbe_mode_info;      /**< @brief as returned by VBE fn 0x01 */
+  uint32_t  vbe_mode;           /**< @brief current mode */
+  uint32_t  vbe_iface_segment;
+  uint32_t  vbe_iface_offset;
+  uint32_t  vbe_iface_length;
 };
 
-/**
- * Multiboot module structure
+/** @brief Multiboot modules information
  */
-class KMultibootModule
+struct multiboot_module_info_t
 {
-  public:
-    /**
-     * Physical start address of the module data
-     */
-    addr_t  moduleStart;
-    /**
-     * Physical end address of the module data
-     */
-    addr_t  moduleEnd;
-
-    /**
-     * Arbitrary ASCII string associated with the module
-     */
-    addr_t  string;
-
-    /**
-     * Boot loader must set to 0; OS should ignore this.
-     */
-    u32_t   reserved;
+  uint32_t  mod_start;
+  uint32_t  mod_end;
+  uint32_t  string;
+  uint32_t  : 32;       /* reserved */
 };
 
-/**
- * The memory map.
- *
- * The mmap_addr field contains the physical address of the first of the
- * memory map structures. "size" represents the size of the rest of the
- * structure and optional padding. The offset to the beginning of the
- * next structure is therefore "size+4"
+/** @brief Multiboot mmap
  */
-struct MB_MemoryMap
+struct multiboot_mmap_t
 {
-  u32_t	size;
-  u32_t	baseAddrLow;
-  u32_t	baseAddrHigh;
-  u32_t	lengthLow;
-  u32_t	lengthHigh;
-  u32_t	type;
-  /* unspecified optional padding ... */
+  uint32_t  size;
+  uint32_t  base_addr_lo;
+  uint32_t  base_addr_hi;
+  uint32_t  length_lo;
+  uint32_t  length_hi;
+  uint32_t  type;
 };
+
+/** @brief Multiboot drive info
+ */
+struct multiboot_drive_t
+{
+  uint32_t  size;             /**< @brief distance to next */
+  uint8_t   drive_number;     /**< @brief BIOS drive no */
+  uint8_t   drive_mode;       /**< @brief 0 = CHS, 1 = LBA */
+  uint16_t  drive_cylinders;
+  uint8_t   drive_heads;
+  uint8_t   drive_sectors;
+  uint16_t  drive_ports[0];   /**< @brief I/O ports used to talk with this drive. List ended with 0. */
+};
+
+/** @brief Multiboot APM
+ */
+struct multiboot_apm_t
+{
+  uint16_t  version;
+  uint16_t  cseg;
+  uint32_t  offset;
+  uint16_t  cseg_16;
+  uint16_t  dseg;
+  uint16_t  flags;
+  uint16_t  cseg_len;
+  uint16_t  cseg_16_len;
+  uint16_t  dseg_len;
+};
+
+#endif /* ! __ASSEMBLER__ */
 
 #endif /* __MULTIBOOT_H__ */

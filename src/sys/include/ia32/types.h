@@ -22,51 +22,27 @@
  * @brief Basic types for IA32
  */
 
-typedef unsigned int __attribute__((__mode__(__DI__))) u64_t;
-// typedef unsigned long long int  u64_t;
-typedef unsigned int            u32_t;
-typedef unsigned short          u16_t;
-typedef unsigned char           u8_t;
+typedef unsigned int __attribute__((__mode__(__DI__))) uint64_t;
+// typedef unsigned long long int  uint64_t;
+typedef unsigned int            uint32_t;
+typedef unsigned short          uint16_t;
+typedef unsigned char           uint8_t;
 
-typedef signed int __attribute__((__mode__(__DI__))) s64_t;
-// typedef signed long long int    s64_t;
-typedef signed int              s32_t;
-typedef signed short            s16_t;
-typedef signed char             s8_t;
+typedef signed int __attribute__((__mode__(__DI__))) int64_t;
+// typedef signed long long int    int64_t;
+typedef signed int              int32_t;
+typedef signed short            int16_t;
+typedef signed char             int8_t;
 
 /**
  * @brief Machine word wide unsigned int
  */
-typedef u32_t             word_t;
+typedef uint32_t                word_t;
 
 /// @brief How many bits does machine word have?
 enum {
   WORD_BITS = 32
 };
-
-/**
- * @defgroup OtherNames
- * @brief Other common names for previous types
- * @{
- */
-typedef u32_t   ulong;
-typedef u32_t   u_long;
-typedef u16_t   uint;
-typedef u16_t   u_int;
-typedef u8_t    uchar;
-typedef u8_t    u_char;
-
-// The following names are best, since I've got syntax highlight for them
-// And they are kind-of in the standard :)
-typedef u64_t	uint64_t;
-typedef s64_t	int64_t;
-typedef u32_t   uint32_t;
-typedef s32_t   int32_t;
-typedef u16_t   uint16_t;
-typedef s16_t   int16_t;
-typedef u8_t    uint8_t;
-typedef s8_t    int8_t;
-/** @} */
 
 /**
  * @defgroup PrintfFormats

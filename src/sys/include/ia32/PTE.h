@@ -41,10 +41,8 @@
 #define PTE_PCD   0x010
 /// @brief Accessed
 #define PTE_A     0x020
-#define PTE_ACC   PTE_A
 /// @brief Dirty
 #define PTE_D     0x040
-#define PTE_DRTY  PTE_D
 /// @brief Page size (PDE, Pentium+ only)
 #define PTE_PS    0x080
 /// @brief Global page (PDE, PTE, Pentium Pro+ only)
@@ -80,10 +78,8 @@
 #define PAE_PCD   0x010
 /// @brief Accessed
 #define PAE_A     0x020
-#define PAE_ACC   PAE_A
 /// @brief Dirty
 #define PAE_D     0x040
-#define PAE_DRTY  PAE_D
 /// @brief Page Size
 #define PAE_PS    0x080
 /// @brief Global page

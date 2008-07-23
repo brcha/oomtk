@@ -22,9 +22,9 @@
  * @brief Type definitions
  */
 
-#ifndef __ASSEMBLY__
+#ifndef __ASSEMBLER__
 
-#include INC_ARCH(types.h)
+#include <OOMTK_ARCH/types.h>
 
 /**
  * @brief Data type to store addresses
@@ -38,9 +38,9 @@ typedef void* addr_t;
  * @param off offset to add
  * @return new address
  */
-INLINE addr_t addr_offset(addr_t addr, addr_t off)
+INLINE addr_t addr_offset (addr_t addr, addr_t off)
 {
-  return (addr_t) ((word_t)addr + (word_t)off);
+    return (addr_t) ( (word_t) addr + (word_t) off);
 }
 #endif
 
@@ -50,9 +50,9 @@ INLINE addr_t addr_offset(addr_t addr, addr_t off)
  * @param off offset to add
  * @return new address
  */
-INLINE addr_t addr_offset(addr_t addr, word_t off)
+INLINE addr_t addr_offset (addr_t addr, word_t off)
 {
-  return (addr_t) ((word_t)addr + off);
+    return (addr_t) ( (word_t) addr + off);
 }
 
 /**
@@ -63,7 +63,7 @@ INLINE addr_t addr_offset(addr_t addr, word_t off)
  */
 INLINE addr_t addr_mask (addr_t addr, word_t mask)
 {
-  return (addr_t) ((word_t) addr & mask);
+    return (addr_t) ( (word_t) addr & mask);
 }
 
 /**
@@ -75,7 +75,7 @@ INLINE addr_t addr_mask (addr_t addr, word_t mask)
  */
 INLINE addr_t addr_align (addr_t addr, word_t align)
 {
-  return addr_mask (addr, ~(align - 1));
+    return addr_mask (addr, ~ (align - 1));
 }
 
 /**
@@ -87,13 +87,13 @@ INLINE addr_t addr_align (addr_t addr, word_t align)
  */
 INLINE addr_t addr_align_up (addr_t addr, word_t align)
 {
-  return addr_mask (addr_offset (addr, align - 1), ~(align - 1));
+    return addr_mask (addr_offset (addr, align - 1), ~ (align - 1));
 }
 
 #ifndef NULL
 #define NULL 0
 #endif
 
-#endif /* ! __ASSEMBLY__ */
+#endif /* ! __ASSEMBLER__ */
 
 #endif /* __TYPES_H__ */

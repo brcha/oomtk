@@ -1,1 +1,22 @@
-All classes begin with capital K (from "Klasa" which is "Class" in Serbian).
+== File extensions ==
+
+*.S   = assembler source (with the exception of arch/*/ldscript.S)
+*.c   = C source
+*.cpp = C++ source
+*.h   = C/C++ header
+
+== File naming ==
+
+File names are all lowercase. C++ headers contain only one class (possibly with a few
+helper classes) and there is a wrapper header whose name is the same as that of the
+class which is located in include/OOMTK.
+
+== C types naming ==
+
+All C types (typedefs and structs) are all lowercase, words separated with underscore
+and ending with underscore t. For example: uint32_t, multiboot_info_t, ...
+
+== C++ classes naming ==
+
+All C++ classes are with uppercased words, beginning with an O. For example: OProcess,
+OKernelOutputStream, ...
