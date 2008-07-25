@@ -22,6 +22,8 @@
  * @brief Halt the CPU
  */
 
+#include <macros.h>
+
 #ifdef __cplusplus
 extern "C"
 {

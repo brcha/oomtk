@@ -17,37 +17,6 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# # First set the cross toolchain location & prefix
-# set(OOMTK_SUBTARGET "-unknown-oomtk-gnu")
-
-# # Cross-gcc prefix
-# set(CROSS_BIN_PREFIX "${CMAKE_INSTALL_PREFIX}/host/bin")
-# if(OOMTK_ARCH STREQUAL "ia32")
-#   set(OOMTK_TARGET "i386${OOMTK_SUBTARGET}")
-#   set(_OOMTK_TOOLCHAIN_PREFIX "${CROSS_BIN_PREFIX}/${OOMTK_TARGET}-")
-# elseif(OOMTK_ARCH STREQUAL "amd64")
-#   set(OOMTK_TARGET "x86_64${OOMTK_SUBTARGET}")
-#   set(_OOMTK_TOOLCHAIN_PREFIX "${CROSS_BIN_PREFIX}/${OOMTK_TARGET}-")
-# elseif(OOMTK_ARCH STREQUAL "arm")
-#   set(_OOMTK_TOOLCHAIN_PREFIX "arm${OOMTK_SUBTARGET}")
-#   set(GCCPREFIX "${CROSS_BIN_PREFIX}/${OOMTK_TARGET}-")
-# elseif(OOMTK_ARCH STREQUAL "ppc")
-#   set(OOMTK_TARGET "ppc${OOMTK_SUBTARGET}")
-#   set(_OOMTK_TOOLCHAIN_PREFIX "${CROSS_BIN_PREFIX}/${OOMTK_TARGET}-")
-# else(OOMTK_ARCH STREQUAL "ia32")
-#   MESSAGE(FATAL_ERROR "Unsupported architecture :(")
-# endif(OOMTK_ARCH STREQUAL "ia32")
-
-# set (CMAKE_SYSTEM Generic)
-
-# # Cross-gcc tools
-# CMAKE_FORCE_C_COMPILER("${GCCPREFIX}gcc" GNU)
-# CMAKE_FORCE_CXX_COMPILER("${GCCPREFIX}g++" GNU)
-# set(CMAKE_GnuAssembler_COMPILER "${GCCPREFIX}gcc")
-# set(CMAKE_GnuAssembler_IS_GNUGAS 1)
-# set(CMAKE_AR "${GCCPREFIX}ar")
-# set(CMAKE_RANLIB "${GCCPREFIX}ranlib")
-
 project(sys C CXX ASM-GCC)
 
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
@@ -108,7 +77,7 @@ if(IA32_sse3)
   set(CFLAGS_ia32_subarch "-march=pentium4 -msse3 -D__SUBARCH__=Pentium4 -D__SSE3__")
 endif(IA32_sse3)
 
-set(CFLAGS_ia32 "-DOOMTK_ARCH_IA32 -mpreferred-stack-boundary=2 -falign-functions=4 ${CFLAGS_ia32_subarch}")
+set(CFLAGS_ia32 "-DOOMTK_ARCH_IA32 -DOOMTK_ARCH=ia32 -mpreferred-stack-boundary=2 -falign-functions=4 ${CFLAGS_ia32_subarch}")
 
 endif(OOMTK_ARCH STREQUAL "ia32")
 # End of ia32 flags
@@ -130,40 +99,32 @@ set(CMAKE_ASM-GCC_FLAGS_DEBUG "${CFLAGS_GENERIC} ${CFLAGS_DEBUG} ${CFLAGS_${OOMT
 
 # Ok, finished configuring, go build!
 # Include gcc standard definitions
-# include_directories(
-#   ${CMAKE_INSTALL_PREFIX}/host/lib/gcc/i386-unknown-oomtk-gnu/4.1.2/include
-# )
+# TODO: Find a way to put ${TARGET} and ${GCC_VERSION} in these directories...
+include_directories(
+  ${CMAKE_INSTALL_PREFIX}/host/lib/gcc/i386-unknown-oomtk-gnu/4.1.2/include
+)
 
-# include_directories( ${sys_SOURCE_DIR} ${sys_BINARY_DIR} ${sys_SOURCE_DIR}/include )
-# 
-# # minilibc
-# include_directories( ${sys_SOURCE_DIR}/libs/minilibc/include
-#                      ${sys_SOURCE_DIR}/libs/minilibc/${OOMTK_ARCH}/include
-#                    )
-# 
-# # libglue
-# include_directories( ${sys_SOURCE_DIR}/libs/libglue )
-# 
-# # libc++
-# include_directories( ${sys_SOURCE_DIR}/libs/libc++/include )
-# 
-# # supc++
-# include_directories( ${sys_SOURCE_DIR}/libs/supc++/include )
-# 
-# # Kernel headers
-# include_directories( ${sys_SOURCE_DIR}/kernel 
-#   ${sys_BINARY_DIR}/kernel
-#   )
-# 
-# # Devices headers
-# include_directories( ${sys_SOURCE_DIR}/devices )
+include_directories( ${sys_SOURCE_DIR} ${sys_BINARY_DIR} ${sys_SOURCE_DIR}/include )
 
-# add_subdirectory(boot) # this doesn't work if you don't compile the libraries first!!!
-# add_subdirectory(devices)
-# add_subdirectory(kernel)
-# add_subdirectory(libs)
+# minilibc
+include_directories( ${sys_SOURCE_DIR}/libs/minilibc/include
+                     ${sys_SOURCE_DIR}/libs/minilibc/${OOMTK_ARCH}/include
+                   )
 
-# Include directories path
-include_directories(${sys_SOURCE_DIR}/include)
+# libglue
+include_directories( ${sys_SOURCE_DIR}/libs/libglue )
 
-add_subdirectory(arch) # This directory contains architecture dependant files
+# libc++
+include_directories( ${sys_SOURCE_DIR}/libs/libc++/include )
+
+# supc++
+include_directories( ${sys_SOURCE_DIR}/libs/supc++/include )
+
+# Kernel headers
+include_directories( ${sys_SOURCE_DIR}/kernel 
+  ${sys_BINARY_DIR}/kernel
+  )
+
+add_subdirectory(arch)    # This directory contains architecture dependant files
+add_subdirectory(kernel)  # This directory contains mostly architecture independant kernel classes
+add_subdirectory(libs)    # This directory contains 3rd party libraries

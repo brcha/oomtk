@@ -22,8 +22,12 @@
  * @brief Configuration definitions
  */
 
+#ifndef INC_ARCH
+#define INC_ARCH(x) <OOMTK_ARCH/x>
+#endif
+
 /* Take from arch-specific config.h first, then define what's left undefined here */
-#include <OOMTK_ARCH/config.h>
+#include INC_ARCH(config.h)
 
 #ifndef MAX_NCPU
 /** @brief Maximum number of CPUs

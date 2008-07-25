@@ -22,6 +22,7 @@
  * @brief Divide et impera -- C++ requires this include file for arch specific divide
  */
 
+#include <macros.h>
 #include INC_ARCH(div32.h)
 
 #endif /* __GENERIC_DIV32_H__ */

@@ -1,7 +1,7 @@
 #
-#  Copyright (C) 2007 by Filip Brcic <brcha@users.sourceforge.net>
+#  Copyright (C) 2007 by Filip Brcic <brcha@gna.org>
 #
-#  This file is part of OOMTK (http://launchpad.net/oomtk)
+#  This file is part of OOMTK
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(devices_SOURCES
-    Console.cc
-    PortIO.cc
-    ${OOMTK_ARCH}/PortIO-${OOMTK_ARCH}.cc
-    VgaConsole.cc
-    libc_backend.cc
+    oconsole.cpp
+    oportio.cpp
+    ${OOMTK_ARCH}/oportio-${OOMTK_ARCH}.cpp
+    ovgaconsole.cpp
+    libc_backend.cpp
    )
 
 add_library(Devices STATIC ${devices_SOURCES})

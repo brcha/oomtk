@@ -50,7 +50,7 @@ SECTIONS
 	_erodata = .;
 	
 	/* Syscalls */
-	. = ALIGN(OOMTK_PAGE_SIZE)
+	. = ALIGN(OOMTK_PAGE_SIZE);
 	__syscall_page = .;
 	.sc_trampoline : AT(ADDR(.sc_trampoline) - KVA)
 	{
@@ -115,6 +115,19 @@ SECTIONS
 	}
 	_bss_end = .;
 	
+	.ctors ALIGN(4) : AT(ADDR(.ctors) - KVA)
+	{
+	  __ctors_start__ = .;
+	  *(.ctors)
+	  __ctors_end__ = .;
+	  . = ALIGN(4);
+	}
+	
+	.gnu.linkonce ALIGN(4) : AT(ADDR(.gnu.linkonce) - KVA)
+	{
+	  *(.gnu.linkonce.*)
+	}
+	    
 	_end = .;
 	
 	/* C++ support (ctors/dtors) */

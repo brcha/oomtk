@@ -23,13 +23,27 @@ if(NOT OOMTK_ARCH STREQUAL "ia32")
 endif(NOT OOMTK_ARCH STREQUAL "ia32")
 
 set(arch_ia32_SOURCES
-	
+	start.S
+	init.cpp
 )
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ldscript
-                   COMMAND ${CMAKE_C_COMPILER} -E -P ${CMAKE_C_FLAGS} -c ${CMAKE_CURRENT_SOURCE_DIR}/ldscript.S -o ${CMAKE_CURRENT_BINARY_DIR}/ldscript
-                   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ldscript.S
-                  )
+set(oomtk_LIBRARIES
+    Kernel
+    Devices
+    minilibc
+    supc++
+#     libc++
+    glue
+   )
 
 add_executable(oomtk ${arch_ia32_SOURCES})
-add_dependencies(oomtk ${CMAKE_CURRENT_BINARY_DIR}/ldscript)
+target_link_libraries(oomtk ${oomtk_LIBRARIES})
+set_target_properties(oomtk
+  PROPERTIES LINK_FLAGS "-Xlinker -T -Xlinker ${CMAKE_CURRENT_BINARY_DIR}/ldscript"
+  LINKER_LANGUAGE  CXX
+  )
+
+add_custom_command(TARGET oomtk
+                   PRE_LINK
+                   COMMAND ${CMAKE_C_COMPILER} -E -P -I ${sys_SOURCE_DIR} -I ${sys_SOURCE_DIR}/include -DOOMTK_ARCH=ia32 -DOOMTK_ARCH_IA32 -c ${CMAKE_CURRENT_SOURCE_DIR}/ldscript.S -o ${CMAKE_CURRENT_BINARY_DIR}/ldscript
+                  )

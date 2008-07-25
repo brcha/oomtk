@@ -22,6 +22,7 @@
  * @brief Divide et moduo -- C++ requires this include file, for arch specific moduo
  */
 
+#include <macros.h>
 #include INC_ARCH(mod32.h)
 
 #endif /* __GENERIC_MOD32_H__ */

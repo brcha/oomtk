@@ -1,6 +1,8 @@
 #ifndef MLC_MOD32_H__
 #define MLC_MOD32_H__
 
+#include <macros.h>
+
 /** return (divident % divisor) with divisor<2^32 */
 extern inline CONST
 unsigned long

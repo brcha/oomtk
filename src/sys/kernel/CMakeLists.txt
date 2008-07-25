@@ -1,7 +1,7 @@
 #
 #  Copyright (C) 2007,2008 by Filip Brcic <brcha@gna.org>
 #
-#  This file is part of OOMTK (http://launchpad.net/oomtk)
+#  This file is part of OOMTK
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -24,7 +24,9 @@ configure_file(oomtkversion.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/oomtkversion.h)
 
 set(kernel_SOURCES
   oomtkversion.cpp
-  fatal.cpp
+#   fatal.cpp
   )
 
 add_library(Kernel STATIC ${kernel_SOURCES})
+
+add_subdirectory(devices)

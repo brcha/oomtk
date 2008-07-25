@@ -54,5 +54,31 @@ enum {
 #define OOMTK_X64_FMT         "%016llx"
 #define OOMTK_ADDR_INPUT_FMT  "%8x"
 #define OOMTK_FRAME_INPUT_FMT "%5x"
+/** @} */
+
+/**
+ * @brief Type sufficient to hold a kernel-implemented physical address.
+ */
+typedef uint64_t kpa_t;
+
+/**
+ * @brief Type sufficient to hold a count of items that will fit in the physical memory.
+ */
+typedef uint64_t kpsize_t;
+
+/**
+ * @brief Type sufficient to hold a kernel virtual address.
+ */
+typedef uint32_t kva_t;
+
+/**
+ * @brief Type sufficient to hold a user virtual address.
+ */
+typedef uint32_t uva_t;
+
+/**
+ * @brief Type of a target address space ID.
+ */
+typedef uint32_t asid_t;
 
 #endif /* __ARCH__IA32__TYPES_H__ */

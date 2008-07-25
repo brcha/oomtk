@@ -11,7 +11,7 @@ __assert_fail (const char *__assertion, const char *__file,
 {
   printf("\nAssertion failed: '%s'\n"
          "  %s:%i at "OOMTK_PTR_FMT"\n",
-         __assertion, __file, __line, (addr_t)__builtin_return_address(0));
+         __assertion, __file, __line, (kva_t)__builtin_return_address(0));
 
   exit(1);
 }

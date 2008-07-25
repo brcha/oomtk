@@ -17,36 +17,49 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /** \file
- * \brief Glue for the LibC
+ * \brief Abstract Port I/O API
+ *
+ * NOTE: This class must have architecture specific implementations!
  */
 
-#include <libc_backend.h>
-#include <Console.h>
+#include "oportio.h"
 
-int __libc_backend_outs(const char *s, size_t len)
+// Only the delayed versions are implemented here
+uint8_t OPortIO::in8_d(word_t port)
 {
-  if (Console::stdout)
-    return Console::stdout->write(s,len);
-  else
-    return -1;
+  uint8_t tmp = in8(port);
+  iodelay();
+  return tmp;
 }
 
-int __libc_backend_ins(char *s, size_t len)
+uint16_t OPortIO::in16_d(word_t port)
 {
-  if (Console::stdin)
-  {
-    size_t i;
-    for(i = 0; i < len; i++)
-    {
-      s[i] = Console::stdin->getchar();
-      if (s[i] == '\r')
-      {
-        i ++;
-        break;
-      }
-    }
-    return i;
-  } else
-    return 0;
+  uint16_t tmp = in16(port);
+  iodelay();
+  return tmp;
 }
 
+uint32_t OPortIO::in32_d(word_t port)
+{
+  uint32_t tmp = in32(port);
+  iodelay();
+  return tmp;
+}
+
+void OPortIO::out8_d(word_t port, uint8_t value)
+{
+  out8(port,value);
+  iodelay();
+}
+
+void OPortIO::out16_d(word_t port, uint16_t value)
+{
+  out16(port,value);
+  iodelay();
+}
+
+void OPortIO::out32_d(word_t port, uint32_t value)
+{
+  out32(port,value);
+  iodelay();
+}

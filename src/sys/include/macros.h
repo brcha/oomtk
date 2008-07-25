@@ -1,9 +1,9 @@
 #ifndef __MACROS_H__
 #define __MACROS_H__
 /*
- *  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,18 +22,7 @@
  * @brief Macro definitions for convenience
  */
 
-/* This file is autoincluded in all files */
-
-#ifndef __GNUC__
-#error "Ha ha ha :) You are not using a compiler... at least not a GNU Compiler"
-#endif
-
-/* Include macros */
-/**
- * @brief Include arch-dependent file
- * Requires __ARCH__=<something> to be defined
- */
-#define INC_ARCH(x)               <arch/__ARCH__/x>
+#include <config.h>
 
 /**
  * Define per-CPU data if SMP is being compiled...
@@ -184,5 +173,15 @@
 #ifndef OOMTKSYS_EXPORT
 #define OOMTKSYS_EXPORT
 #endif
+
+/**
+ * @defgroup KVA
+ * @brief Virtual to physical address conversion and back.
+ * @{
+ */
+#define KVTOL(a)      (a)
+#define PTOKV(a, T)   ((T) ((kva_t) (((kpa_t)(a)) + KVA)))
+#define KVTOP(a)      ((kpa_t) (KVTOL((kva_t)(a)) - KVA))
+/** @} */
 
 #endif /* __MACROS_H__ */

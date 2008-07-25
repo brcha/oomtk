@@ -138,6 +138,7 @@ over:
 	movl	%edx, %eax
 	andl	$CPUID_EDX_PSE, %eax
 	jz	1f
+	movb    $1, EXT(HavePSE)
 	orl	$CR4_PSE, %ebx
 
 1:	/* DE */
@@ -255,6 +256,10 @@ enable_paging:
 	/* Setup %cr0 */
 	mov	%cr0, %edx
 	orl	$(CR0_PG|CR0_AM|CR0_WP|CR0_ET|CR0_TS|CR0_MP|CR0_PE), %edx
+#if	HAVE_CONSOLE
+	/* Preserve write-through mode */
+	orl	$(CR0_NW), %edx
+#endif
 	mov	%edx, %cr0
 
 #if 	HAVE_CONSOLE

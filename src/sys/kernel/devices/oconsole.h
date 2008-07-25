@@ -1,5 +1,5 @@
-#ifndef __Console_H__
-#define __Console_H__
+#ifndef __OOMTKSYS_OCONSOLE_H__
+#define __OOMTKSYS_OCONSOLE_H__
 /*
  *  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
  *
@@ -18,13 +18,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file Console.h
+/** \file
  * \brief Abstract Console class
  */
 #include <cstddef>
 #include <types.h>
 
-class Console
+class OConsole
 {
   public:
     /**
@@ -89,7 +89,7 @@ class Console
     /**
      * \brief Don't construct this class!
      */
-    Console() {};
+    OConsole() {};
 
   public:
     enum State
@@ -115,16 +115,16 @@ class Console
   public:
 
     /// Standard output
-    static Console * stdout;
+    static OConsole * stdout;
 
     /// Standard input
-    static Console * stdin;
+    static OConsole * stdin;
 
     /// Standard error
-    static Console * stderr;
+    static OConsole * stderr;
 
   protected:
     word_t  m_state;
 };
 
-#endif /* __Console_H__ */
+#endif /* __OOMTKSYS_OCONSOLE_H__ */

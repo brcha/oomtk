@@ -19,20 +19,20 @@
 /** \file
  * \brief Abstract Console class
  */
-#include "Console.h"
+#include "oconsole.h"
 #include <cstddef>
 
 // Initialize static members
-Console * Console::stdout = 0;
-Console * Console::stdin  = 0;
-Console * Console::stderr = 0;
+OConsole * OConsole::stdout = 0;
+OConsole * OConsole::stdin  = 0;
+OConsole * OConsole::stderr = 0;
 
 /**
  * Disable stdin, stdout and stderr console.
  *
  * NOTE:
  */
-void Console::disableAll()
+void OConsole::disableAll()
 {
   stdout = 0;
   stdin  = 0;
@@ -43,7 +43,7 @@ void Console::disableAll()
  * Set current console state
  * \param newState new state
  */
-void Console::state(word_t newState)
+void OConsole::state(word_t newState)
 {
   m_state = newState;
 }
@@ -55,7 +55,7 @@ void Console::state(word_t newState)
  * NOTE: There is no setter command, since console attributes are not to be set by
  * users. Console attributes are properties of the console.
  */
-word_t Console::attributes() const
+word_t OConsole::attributes() const
 {
   return INVALID;
 }
@@ -69,7 +69,7 @@ word_t Console::attributes() const
  * NOTE: This method should be implemented in the implementations of the Console.
  * NOTE: This method is used to connect the console with the libc glue.
  */
-int Console::write(char const * string, size_t length)
+int OConsole::write(char const * string, size_t length)
 {
   return 0;
 }
@@ -82,7 +82,7 @@ int Console::write(char const * string, size_t length)
  * NOTE: This method should be implemented in the implementations of the Console.
  * NOTE: This method is used to connect the console with the libc glue.
  */
-int Console::getchar(bool blocking)
+int OConsole::getchar(bool blocking)
 {
   return -1;
 }
@@ -93,7 +93,7 @@ int Console::getchar(bool blocking)
  *
  * NOTE: This metod should be implemented in the implementations of the Console.
  */
-int Console::charAvailable() const
+int OConsole::charAvailable() const
 {
   return -1;
 }

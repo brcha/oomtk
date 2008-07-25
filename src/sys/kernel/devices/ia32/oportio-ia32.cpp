@@ -19,10 +19,9 @@
 /** \file
  * \brief Port I/O API - ia32 implementation
  */
-#include "PortIO.h"
+#include "oportio.h"
 
-/* Linux, L4, Coyotos uses this for iodelay, so I guess, I can too */
-void PortIO::iodelay()
+void OPortIO::iodelay()
 {
   asm volatile (
       "outb %al,$0x80\n\t"
@@ -30,38 +29,38 @@ void PortIO::iodelay()
   );
 }
 
-u8_t PortIO::in8(word_t port)
+uint8_t OPortIO::in8(word_t port)
 {
-  u8_t tmp;
+  uint8_t tmp;
   asm volatile ("inb %w1, %b0" : "=a"(tmp) : "Nd"(port));
   return tmp;
 }
 
-u16_t PortIO::in16(word_t port)
+uint16_t OPortIO::in16(word_t port)
 {
-  u16_t tmp;
+  uint16_t tmp;
   asm volatile ("inw %w1, %w0" : "=a"(tmp) : "Nd"(port));
   return tmp;
 }
 
-u32_t PortIO::in32(word_t port)
+uint32_t OPortIO::in32(word_t port)
 {
-  u32_t tmp;
+  uint32_t tmp;
   asm volatile ("in %w1, %0" : "=a"(tmp) : "Nd"(port));
   return tmp;
 }
 
-void PortIO::out8(word_t port, u8_t value)
+void OPortIO::out8(word_t port, uint8_t value)
 {
   asm volatile ("outb %b0, %w1" : : "a"(value), "Nd"(port));
 }
 
-void PortIO::out16(word_t port, u16_t value)
+void OPortIO::out16(word_t port, uint16_t value)
 {
   asm volatile ("outw %w0, %w1" : : "a"(value), "Nd"(port));
 }
 
-void PortIO::out32(word_t port, u32_t value)
+void OPortIO::out32(word_t port, uint32_t value)
 {
   asm volatile ("out %0, %w1" : : "a"(value), "Nd"(port));
 }

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2008 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
  */
 #ifndef __OOMTK_VERSION_H__
 #define __OOMTK_VERSION_H__
+
+#include <macros.h>
 
 /// \brief Version of OOMTK as a string, as defined at compile time
 #cmakedefine OOMTK_VERSION_STRING "@OOMTK_VERSION_STRING@"
