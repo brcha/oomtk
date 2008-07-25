@@ -23,6 +23,7 @@ set(libglue_SOURCES
       memset.c
       abort.c
       _exit.c
+      libc_backend.cpp
    )
 
 add_library(glue STATIC ${libglue_SOURCES})

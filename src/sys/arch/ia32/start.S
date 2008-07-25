@@ -357,6 +357,6 @@ message_prehistoric:
 	.asciz	"OOMTK doesn't support 486 or weaker processors"
 message_no_cpuid:
 	.asciz	"OOMTK needs CPUID support"
-message_no_feature_info:
+message_no_cpuid_feature_info:
 	.asciz	"OOMTK needs CPUID that supports feature info function"
 #endif

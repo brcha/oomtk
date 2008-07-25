@@ -21,7 +21,7 @@
  */
 
 #include <libc_backend.h>
-#include "oconsole.h"
+#include <OOMTK/OConsole>
 
 int __libc_backend_outs(const char *s, size_t len)
 {

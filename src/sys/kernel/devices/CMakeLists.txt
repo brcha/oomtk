@@ -24,7 +24,6 @@ set(devices_SOURCES
     oportio.cpp
     ${OOMTK_ARCH}/oportio-${OOMTK_ARCH}.cpp
     ovgaconsole.cpp
-    libc_backend.cpp
    )
 
 add_library(Devices STATIC ${devices_SOURCES})
