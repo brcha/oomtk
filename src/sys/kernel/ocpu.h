@@ -93,9 +93,12 @@ class OCPU{
      * 
      * It is <= MAX_NCPU
      */
-    static size_t ncpu;
+    static size_t m_ncpu;
+    
+    /**
+     * @brief Vector of all CPU structures
+     */
+    static OCPU m_vector[MAX_NCPU] asm("cpu_vector");
 };
-
-extern "C" OCPU cpu_vector[MAX_NCPU];
 
 #endif /* __OOMTKSYS_OCPU_H__ */

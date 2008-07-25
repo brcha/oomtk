@@ -17,7 +17,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <cstddef>
+
 #include <OOMTK/OVgaConsole>
+#include <OOMTK/OCPU>
 
 extern "C" {
   uint32_t multibootSignature;  ///< @brief Multiboot signature
@@ -55,10 +58,15 @@ extern "C" void arch_init(void);
  */
 void arch_init(void)
 {
-  /* Initialize the console
+  /* Initialize the console so that we can use printf for diagnostics.
    */
   OVgaConsole * vga = OVgaConsole::instance();
   vga->initialize();
+  
+  /* Initialize the CPU structures
+   */
+  for (int ndx = 0; ndx < MAX_NCPU; ndx++)
+    OCPU::initialize(ndx);
   
   for (;;);
 }

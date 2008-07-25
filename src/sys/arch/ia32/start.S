@@ -297,7 +297,7 @@ reload_map:
 	movl	$EXT(cpu0_kstack_hi), %esp
 
 	/* Set the curCPU pointer for CPU0 */
-/*	movl	$EXT(cpu_vec), EXT(cpu0_kstack_lo) */
+	movl	$EXT(cpu_vector), EXT(cpu0_kstack_lo)
 
 #if 	HAVE_CONSOLE
 	movl	$0x074f0720, 0xc00b8010 /* " O" */

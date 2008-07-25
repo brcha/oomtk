@@ -19,7 +19,7 @@
 #include "ocpu.h"
 #include <string.h> // for INIT_TO_ZERO, that is memset()
 
-extern "C" OCPU cpu_vector[MAX_NCPU]; // must be accessible from assembler, so that's why it is extern "C"
+OCPU OCPU::m_vector[MAX_NCPU];
 
 OCPU::OCPU()
 {
@@ -27,7 +27,7 @@ OCPU::OCPU()
 
 void OCPU::initialize(cpuid_t ndx)
 {
-  OCPU * cpu = &cpu_vector[ndx];
+  OCPU * cpu = &OCPU::m_vector[ndx];
   
   INIT_TO_ZERO(cpu);
   cpu->m_id = ndx;
