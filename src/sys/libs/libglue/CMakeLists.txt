@@ -18,6 +18,7 @@
 #
 
 set(libglue_SOURCES
+      fatal.c
       free.c
       malloc.c
       memset.c

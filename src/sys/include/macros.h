@@ -184,4 +184,11 @@
 #define KVTOP(a)      ((kpa_t) (KVTOL((kva_t)(a)) - KVA))
 /** @} */
 
+/**
+ * @brief Sets the whole structure/class to 0
+ * 
+ * @note Remember to include <string.h> before using this macro.
+ */
+#define INIT_TO_ZERO(ob) memset(ob, 0, sizeof(__typeof__(*ob)))
+
 #endif /* __MACROS_H__ */

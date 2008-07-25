@@ -1,7 +1,9 @@
+#ifndef __OOMTKSYS_OPROCESS_H__
+#define __OOMTKSYS_OPROCESS_H__
 /*
- *  Copyright (C) 2007 by Filip Brčić <brcha@users.sourceforge.net>
+ *  Copyright (C) 2008 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,32 +18,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file Process.h
- * \brief Process structure (platform independent part)
- */
-#ifndef OOMTK_KernelProcess_h
-#define OOMTK_KernelProcess_h
-
-#include <Context.h>
-
-/** \brief Process structure (platform independent)
+/** @file oprocess.h
+ * @brief Process
  */
 
-class Process
-{
-  public:
-    Process();
+/**
+ * @brief The process class
+ * 
+ * @todo This class should be implemented, this is more like a forward declaration for now...
+ */
+class OProcess{
+public:
+    OProcess();
+    ~OProcess();
 
-    ~Process();
-
-  protected:
-    // here should be data about process, such as pointers to scheduler queues, process state, ... what ever.
-    // the only thing that is here is the platform dependent context switching part:
-    Context ctx;
-
-    OFFSET_FRIENDLY;
 };
 
-
-
-#endif
+#endif /* __OOMTKSYS_OPROCESS_H__ */

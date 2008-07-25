@@ -24,7 +24,9 @@ configure_file(oomtkversion.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/oomtkversion.h)
 
 set(kernel_SOURCES
   oomtkversion.cpp
-#   fatal.cpp
+  oprocess.cpp
+  ocpu.cpp
+  ${OOMTK_ARCH}/ocpu-${OOMTK_ARCH}.cpp
   )
 
 add_library(Kernel STATIC ${kernel_SOURCES})

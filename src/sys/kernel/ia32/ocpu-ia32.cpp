@@ -1,9 +1,7 @@
-#ifndef __fatal_H__
-#define __fatal_H__
 /*
- *  Copyright (C) 2006 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2008 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,16 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file fatal.h
- * \brief Print the message and exit
- */
 
-extern "C" {
-  /**
-   * \brief Prints out the message and halts the CPU
-   * \param message a message to be printed - printf formated
-   */
-  void fatal(const char * message, ...) NORETURN;
-};
+#include "ocpu.h"
+#include <ia32/pagesize.h>
+#include <config.h>
 
-#endif /* __fatal_H__ */
+OCPU * OCPU::current()
+{
+  register uint32_t sp asm("esp");
+  
+  sp &= ~((KSTACK_NPAGES * OOMTK_PAGE_SIZE) - 1);
+  return *((OCPU **) sp);
+}
