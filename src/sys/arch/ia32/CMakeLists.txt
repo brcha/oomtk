@@ -25,6 +25,8 @@ endif(NOT OOMTK_ARCH STREQUAL "ia32")
 set(arch_ia32_SOURCES
 	start.S
 	init.cpp
+	otss.cpp
+	ogdt.cpp
 )
 
 set(oomtk_LIBRARIES

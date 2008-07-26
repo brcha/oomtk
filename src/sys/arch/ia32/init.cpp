@@ -26,6 +26,9 @@
 #include <OOMTK/OCPU>
 #include <OOMTK/Version>
 
+#include "ogdt.h"
+#include "otss.h"
+
 extern "C" {
   uint32_t multibootSignature;  ///< @brief Multiboot signature
   uint32_t multibootInfo;       ///< @brief Multiboot information pointer
@@ -74,13 +77,24 @@ void arch_init(void)
   OConsole::stdout = vga;
   OConsole::stderr = vga;
   
+  /* Print Hello world :)
+   */
   printf(ANSI_FG_WHITE "OOMTK version %s%s%s\n" ANSI_NORMAL,
 	 ANSI_FG_CYAN, OOMTK::versionString(), ANSI_FG_WHITE);
+  
+  printf ("Initializing: ");
   
   /* Initialize the CPU structures
    */
   for (int ndx = 0; ndx < MAX_NCPU; ndx++)
-    OCPU::initialize(ndx);
+  {
+    OCPU::initialize(ndx); printf("CPU[%d], ", ndx);
+  }
+  
+  /* Intitialize GDT & TSS tables
+   */
+  OGDT::instance()->initialize(); printf("GDT, ");
+  OTSS::instance()->initialize(); printf("TSS, ");
   
   for (;;);
 }
