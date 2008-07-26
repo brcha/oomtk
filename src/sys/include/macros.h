@@ -25,21 +25,6 @@
 #include <config.h>
 
 /**
- * Define per-CPU data if SMP is being compiled...
- */
-#ifdef SMP
-#define DEFINE_PER_CPU(ty, nm) \
-  __attribute__((__section__(".data.percpu"))) __typeof__(ty) nm
-#else /* ! SMP */
-#define DEFINE_PER_CPU(ty, nm) __typeof__(ty) nm
-#endif /* SMP */
-
-/**
- * Declare per-CPU data
- */
-#define DECLARE_PER_CPU(ty, nm) extern __typeof__(ty) nm
-
-/**
  * Cache align data
  */
 #define CACHE_ALIGN __attribute__((__aligned__(CACHE_LINE_SIZE), \
