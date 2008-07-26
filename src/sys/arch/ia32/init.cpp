@@ -18,9 +18,13 @@
  */
 
 #include <cstddef>
+#include <cstdio>
+
+#include <ansi.h>
 
 #include <OOMTK/OVgaConsole>
 #include <OOMTK/OCPU>
+#include <OOMTK/Version>
 
 extern "C" {
   uint32_t multibootSignature;  ///< @brief Multiboot signature
@@ -38,6 +42,11 @@ extern "C" {
   extern uint32_t __end_maps[];
   extern uint32_t cpu0_kstack_lo[];
   extern uint32_t cpu0_kstack_hi[];
+  
+  // temporary, for trying the kernel...
+  uint64_t KernPDPT[4];
+  bool HavePSE;
+  bool UsingPAE;
 }
 
 extern "C" void arch_init(void);
@@ -62,6 +71,11 @@ void arch_init(void)
    */
   OVgaConsole * vga = OVgaConsole::instance();
   vga->initialize();
+  OConsole::stdout = vga;
+  OConsole::stderr = vga;
+  
+  printf(ANSI_FG_WHITE "OOMTK version %s%s%s\n" ANSI_NORMAL,
+	 ANSI_FG_CYAN, OOMTK::versionString(), ANSI_FG_WHITE);
   
   /* Initialize the CPU structures
    */

@@ -67,6 +67,8 @@ void OVgaConsole::initialize()
   m_offset = 0;
   
   clear();
+  showCursorAt(0);
+  state(OUTPUT);
 }
 
 void OVgaConsole::setAt(uint32_t pos, char c)
@@ -240,6 +242,7 @@ void OVgaConsole::putchar(char c)
       case ASCII_LF:
 	// Linefeed
 	m_offset += m_columns;
+	m_offset -= (m_offset % m_columns);
 	break;
       case ASCII_VT:
 	// Reverse linefeed
