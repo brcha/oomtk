@@ -1,7 +1,7 @@
 /*
- *  Copyright (C) 2006-2007 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006-2008 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,23 +16,30 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file
- * \brief Paging support
+/** @file
+ * @brief OPaging support
  *
- * \todo Is this file IA32 specific or generic???
+ * @todo Is this file IA32 specific or generic???
  */
-#include "Paging.h"
+#include "opaging.h"
+#include "opaginglegacy.h"
+#include "opagingpae.h"
 
-#include <fatal.h>
-#include <ansi.h>
+extern "C" {
+    bool UsingPAE;
+}
 
+OPaging * OPaging::instance()
+{
+  if (UsingPAE)
+    return OPagingPAE::instance();
+  else
+    return OPagingLegacy::instance();
+}
+// 
 // Low-level get/set operators
 
-/**
- * \brief Get the CR0 register
- * \returns value of the CR0 register
- */
-uint32_t Paging::cr0()
+uint32_t OPaging::cr0()
 {
   uint32_t value;
 
@@ -47,13 +54,7 @@ uint32_t Paging::cr0()
   return value;
 };
 
-/**
- * \brief Set the CR0 register
- * \param value new value for the CR0 register
- *
- * \warning This method enables paging (if PG bit is set), so take care how you use it
- */
-void Paging::cr0(uint32_t value)
+void OPaging::cr0(uint32_t value)
 {
   GNU_ASM(
       "   movl  %[value], %%edx   \n"
@@ -64,11 +65,7 @@ void Paging::cr0(uint32_t value)
          );
 };
 
-/**
- * \brief Get the CR3 register
- * \returns value of the CR3 register
- */
-uint32_t Paging::cr3()
+uint32_t OPaging::cr3()
 {
   uint32_t value;
 
@@ -83,11 +80,7 @@ uint32_t Paging::cr3()
   return value;
 };
 
-/**
- * \brief Set the CR3 register
- * \param value new value for CR3 register
- */
-void Paging::cr3(uint32_t value)
+void OPaging::cr3(uint32_t value)
 {
   GNU_ASM(
       "   movl  %[value], %%edx   \n"
@@ -98,11 +91,7 @@ void Paging::cr3(uint32_t value)
          );
 };
 
-/**
- * \brief Get the CR4 register
- * \returns the value from CR4
- */
-uint32_t Paging::cr4()
+uint32_t OPaging::cr4()
 {
   uint32_t value;
 
@@ -117,11 +106,7 @@ uint32_t Paging::cr4()
   return value;
 };
 
-/**
- * \brief Set the CR4 register
- * \param value new value for CR4 register
- */
-void Paging::cr4(uint32_t value)
+void OPaging::cr4(uint32_t value)
 {
   GNU_ASM(
       "   movl  %[value], %%edx   \n"

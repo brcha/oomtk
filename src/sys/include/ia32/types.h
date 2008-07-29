@@ -45,18 +45,6 @@ enum {
 };
 
 /**
- * @defgroup PrintfFormats
- * @brief Printf formats for various types
- * @{
- */
-#define OOMTK_PTR_FMT         "%08lx"
-#define OOMTK_MWORD_FMT       "%08lx"
-#define OOMTK_X64_FMT         "%016llx"
-#define OOMTK_ADDR_INPUT_FMT  "%8x"
-#define OOMTK_FRAME_INPUT_FMT "%5x"
-/** @} */
-
-/**
  * @brief Type sufficient to hold a kernel-implemented physical address.
  */
 typedef uint64_t kpa_t;
@@ -80,5 +68,21 @@ typedef uint32_t uva_t;
  * @brief Type of a target address space ID.
  */
 typedef uint32_t asid_t;
+
+/**
+ * @defgroup PrintfFormats
+ * @brief Printf formats for various types
+ * @{
+ */
+#define OOMTK_PTR_FMT         "%08lx"
+#define OOMTK_MWORD_FMT       "%08lx"
+#define OOMTK_X64_FMT         "%016llx"
+#define OOMTK_ADDR_INPUT_FMT  "%8x"
+#define OOMTK_FRAME_INPUT_FMT "%5x"
+
+#define OOMTK_KPA_FMT         OOMTK_X64_FMT
+#define OOMTK_KVA_FMT         OOMTK_PTR_FMT
+#define OOMTK_UVA_FMT         OOMTK_PTR_FMT
+/** @} */
 
 #endif /* __ARCH__IA32__TYPES_H__ */

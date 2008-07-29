@@ -1,7 +1,7 @@
 /*
- *  Copyright (C) 2006-2007 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006-2008 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,37 +16,41 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file
- * \brief Paging for PAE enabled processors
+/** @file
+ * @brief Paging for PAE enabled processors
  */
 
-#include "PagingPAE.h"
+#include "opagingpae.h"
 
 #include <stdio.h>
 #include <ansi.h>
 #include <fatal.h>
-#include <CPUID.h>
-#include INC_ARCH(CR.h)
+#include <string.h>
+
+// #include <CPUID.h>
+
+#include <ia32/pagesize.h>
+#include <ia32/CR.h>
 
 /**
- * \brief Get the one instance of paging class
+ * @brief Get the one instance of paging class
  * \returns the instance
  */
-PagingPAE * PagingPAE::instance()
+OPagingPAE * OPagingPAE::instance()
 {
-  static PagingPAE paging = PagingPAE();
+  static OPagingPAE paging = OPagingPAE();
 
   return &paging;
 };
 
 /**
  * \defgroup Mappings
- * \brief Mappings as declared in linker.ia32.ld.S + Kernel's PDPT
+ * @brief Mappings as declared in linker.ia32.ld.S + Kernel's PDPT
  * @{
  */
 
 /**
- * \brief Kernel's PDPT
+ * @brief Kernel's PDPT
  *
  * Must be declared in the .data.percpu because of SMP. Like this it is aligned to
  * CPU cache size, so the CPUs could easily cache only what they need.
@@ -56,28 +60,28 @@ PagingPAE * PagingPAE::instance()
  * possible, and I found out that QEmu can emulate more than one CPU, so I will be
  * able to test it).
  */
-DEFINE_PER_CPU(uint64_t[4], KernPDPT);
+uint64_t KernPDPT[4];
 
-extern void * MasterPageDir;  ///< \brief Master paging directory
-extern void * KernPageTable;  ///< \brief Kernel paging table
-extern void * TransMap;       ///< \brief Transient mappings page
+extern kva_t KernPageDir[0];    ///< @brief Master paging directory
+extern kva_t KernPageTable[0];  ///< @brief Kernel paging table
+extern kva_t TransientMap[0];   ///< @brief Transient mappings page
 
 /** @} */ // Mappings
 
 /**
- * \brief Protected constructor
+ * @brief Protected constructor
  */
-PagingPAE::PagingPAE() :
-    Paging()
+OPagingPAE::OPagingPAE() :
+    OPaging()
 {
-  KernelPDPT        = reinterpret_cast<PDPTE_t*>(&KernPDPT);
-  PageDirectory     = reinterpret_cast<PDE_t*>  (&MasterPageDir);
-  KernelPageTable   = reinterpret_cast<PTE_t*>  (&KernPageTable);
-  TransientMappings = reinterpret_cast<PTE_t*>  (&TransMap);
+  m_KernelPDPT        = reinterpret_cast<PDPTE_t*>(&KernPDPT[0]);
+  m_PageDirectory     = reinterpret_cast<PDE_t*>  (&KernPageDir[0]);
+  m_KernelPageTable   = reinterpret_cast<PTE_t*>  (&KernPageTable[0]);
+  m_TransientMappings = reinterpret_cast<PTE_t*>  (&TransientMap[0]);
 };
 
 /**
- * \brief Setup paging
+ * @brief Setup paging
  *
  * After booting, the kernel is located at physical memory location 0x00100000,
  * but kernel is relocated at 0xC0100000 (= KVA + 0x00100000 = 3 GB + 1 MB).
@@ -87,9 +91,9 @@ PagingPAE::PagingPAE() :
  *
  * PT and PD have 512 entries.
  */
-void PagingPAE::setup()
+void OPagingPAE::setup()
 {
-  DEBUG_PAGING
+/*  DEBUG_PAGING
       printf("Starting IA32 PAE paging ... ");
 
   // Map first [0, 2M]
@@ -172,5 +176,31 @@ void PagingPAE::setup()
   cr0(CR0);
 
   DEBUG_PAGING
-      printf(ANSI_FG_GREEN "[ok]\n" ANSI_NORMAL);
+      printf(ANSI_FG_GREEN "[ok]\n" ANSI_NORMAL);*/
 };
+
+#define TRANSMAP_PERCPU_ENTRY(slot)   ((slot) + MY_CPU(id) * TRANSMAP_ENTRIES_PER_CPU)
+#define TRANSMAP_ENTRY_VA(slot)       (TRANSMAP_WINDOW_KVA + (OOMTK_PAGE_SIZE * (slot)))
+#define TRANSMAP_VA_ENTRY(va)         (((va) - TRANSMAP_WINDOW_KVA) / OOMTK_PAGE_SIZE)
+#define TRANSMAP_ENTRY_SLOT(entry)    ((entry) % TRANSMAP_ENTRIES_PER_CPU)
+
+void OPagingPAE::transientMappingsInitialize()
+{
+  memset(m_TransientMappings, 0, OOMTK_PAGE_SIZE * TRANSMAP_PAGES);
+  
+  for (size_t i = 0; i < TRANSMAP_PAGES; i++)
+  {
+    const uint32_t offset = OOMTK_PAGE_SIZE * i;
+    const kva_t va = TRANSMAP_WINDOW_KVA + i * 2*1024*1024;
+    const uint32_t pa = ((reinterpret_cast<uint32_t>(&m_TransientMappings[0])) - KVA) + offset;
+    
+    uint32_t undx = PAE_PGDIR_NDX(va);
+    m_PageDirectory[undx].value = pa;
+    m_PageDirectory[undx].bits4k.present  = 1;
+    m_PageDirectory[undx].bits4k.rw       = 1;
+    m_PageDirectory[undx].bits4k.accessed = 1;
+//     m_PageDirectory[undx].bits4k.dirty    = 1;
+    m_PageDirectory[undx].bits4k.ps       = 0;
+  }
+
+}

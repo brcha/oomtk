@@ -27,6 +27,7 @@ set(kernel_SOURCES
   oprocess.cpp
   ocpu.cpp
   ${OOMTK_ARCH}/ocpu-${OOMTK_ARCH}.cpp
+  ophysicalmemorymanagement.cpp
   )
 
 add_library(Kernel STATIC ${kernel_SOURCES})

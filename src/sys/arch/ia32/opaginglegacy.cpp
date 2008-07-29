@@ -1,7 +1,7 @@
 /*
- *  Copyright (C) 2006-2007 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006-2008 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,51 +16,55 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file
- * \brief Legacy Paging for IA-32
+/** @file
+ * @brief Legacy Paging for IA-32
  */
 
-#include "PagingLegacy.h"
+#include "opaginglegacy.h"
 
 #include <stdio.h>
 #include <ansi.h>
-#include <CPUID.h>
-#include INC_ARCH(CR.h)
+#include <string.h>
+
+#include <config.h>
+
+#include <ia32/pagesize.h>
+#include <ia32/CR.h>
 
 /**
- * \brief Get the one instance of paging class
+ * @brief Get the one instance of paging class
  * \returns the instance
  */
-PagingLegacy * PagingLegacy::instance()
+OPagingLegacy * OPagingLegacy::instance()
 {
-  static PagingLegacy paging = PagingLegacy();
+  static OPagingLegacy paging = OPagingLegacy();
 
   return &paging;
 };
 
 /**
  * \defgroup Mappings
- * \brief Mappings as declared in linker.ia32.ld.S
+ * @brief Mappings as declared in ldscript.S
  * @{
  */
-extern void * MasterPageDir;  ///< \brief Master paging directory
-extern void * KernPageTable;  ///< \brief Kernel paging table
-extern void * TransMap;       ///< \brief Transient mappings page
+extern kva_t KernPageDir[];    ///< @brief Master paging directory
+extern kva_t KernPageTable[];  ///< @brief Kernel paging table
+extern kva_t TransientMap[];   ///< @brief Transient mappings page
 /** @} */
 
 /**
- * \brief Protected constructor
+ * @brief Protected constructor
  */
-PagingLegacy::PagingLegacy() :
-    Paging()
+OPagingLegacy::OPagingLegacy() :
+    OPaging()
 {
-  PageDirectory     = reinterpret_cast<PDE_t*>(&MasterPageDir);
-  KernelPageTable   = reinterpret_cast<PTE_t*>(&KernPageTable);
-  TransientMappings = reinterpret_cast<PTE_t*>(&TransMap);
+  m_PageDirectory     = reinterpret_cast<PDE_t*>(&KernPageDir[0]);
+  m_KernelPageTable   = reinterpret_cast<PTE_t*>(&KernPageTable[0]);
+  m_TransientMappings = reinterpret_cast<PTE_t*>(&TransientMap[0]);
 };
 
 /**
- * \brief Setup paging
+ * @brief Setup paging
  *
  * After booting, the kernel is located at physical memory location 0x00100000,
  * but kernel is relocated at 0xC0100000 (= KVA + 0x00100000 = 3 GB + 1 MB).
@@ -70,20 +74,20 @@ PagingLegacy::PagingLegacy() :
  *
  * PageDirectory has 1024 PDEs that map 1024*4M = 4G memory
  */
-void PagingLegacy::setup()
+void OPagingLegacy::setup()
 {
-  DEBUG_PAGING
+/*  DEBUG_PAGING
       printf("Starting IA32 legacy paging ... ");
   // Map first [0,4M]
   uint32_t address = 0u;
   for (size_t i = 0; i < 1024; i++)
   {
     // set the bits
-    KernelPageTable[i].value            = address;
-    KernelPageTable[i].bits4k.present   = 1;
-    KernelPageTable[i].bits4k.rw        = 1;
-    KernelPageTable[i].bits4k.accessed  = 1;
-    KernelPageTable[i].bits4k.dirty     = 1;
+    m_KernelPageTable[i].value            = address;
+    m_KernelPageTable[i].bits4k.present   = 1;
+    m_KernelPageTable[i].bits4k.rw        = 1;
+    m_KernelPageTable[i].bits4k.accessed  = 1;
+    m_KernelPageTable[i].bits4k.dirty     = 1;
     // update the address for the next run
     address += 0x1000; // = 4 kb
   }
@@ -91,13 +95,13 @@ void PagingLegacy::setup()
   // Set the paging directory to point to kernel page table
 
   // First set the first 0-4 Mb
-  PageDirectory[0].value              =
-      reinterpret_cast<uint32_t>(&KernelPageTable[0]) - KVA;
-  PageDirectory[0].bits4k.present     = 1;
-  PageDirectory[0].bits4k.rw          = 1;
-  PageDirectory[0].bits4k.accessed    = 1;
+  m_PageDirectory[0].value              =
+      reinterpret_cast<uint32_t>(&m_KernelPageTable[0]) - KVA;
+  m_PageDirectory[0].bits4k.present     = 1;
+  m_PageDirectory[0].bits4k.rw          = 1;
+  m_PageDirectory[0].bits4k.accessed    = 1;
   // 4 kb page - not needed, but this clarifies syntax
-  PageDirectory[0].bits4k.ps          = 0;
+  m_PageDirectory[0].bits4k.ps          = 0;
 
   // Next, set the KVA - KVA + 4 Mb to point to the same place
   // NOTE: Index of PDE is KVA >> 22
@@ -152,5 +156,30 @@ void PagingLegacy::setup()
   cr0(CR0);
 
   DEBUG_PAGING
-      printf(ANSI_FG_GREEN "[ok]\n" ANSI_NORMAL);
+      printf(ANSI_FG_GREEN "[ok]\n" ANSI_NORMAL);*/
 };
+
+#define TRANSMAP_PERCPU_ENTRY(slot)   ((slot) + MY_CPU(id) * TRANSMAP_ENTRIES_PER_CPU)
+#define TRANSMAP_ENTRY_VA(slot)       (TRANSMAP_WINDOW_KVA + (OOMTK_PAGE_SIZE * (slot)))
+#define TRANSMAP_VA_ENTRY(va)         (((va) - TRANSMAP_WINDOW_KVA) / OOMTK_PAGE_SIZE)
+#define TRANSMAP_ENTRY_SLOT(entry)    ((entry) % TRANSMAP_ENTRIES_PER_CPU)
+
+void OPagingLegacy::transientMappingsInitialize()
+{
+  memset(m_TransientMappings, 0, OOMTK_PAGE_SIZE * TRANSMAP_PAGES/2);
+  
+  for (size_t i = 0; i < TRANSMAP_PAGES/2; i++)
+  {
+    const uint32_t offset = OOMTK_PAGE_SIZE * i;
+    const kva_t va = TRANSMAP_WINDOW_KVA + i * 4*1024*1024;
+    const uint32_t pa = ((reinterpret_cast<uint32_t>(&m_TransientMappings[0])) - KVA) + offset;
+    
+    uint32_t undx = PTE_PGDIR_NDX(va);
+    m_PageDirectory[undx].value = pa;
+    m_PageDirectory[undx].bits4k.present  = 1;
+    m_PageDirectory[undx].bits4k.rw       = 1;
+    m_PageDirectory[undx].bits4k.accessed = 1;
+//     m_PageDirectory[undx].bits4k.dirty    = 1;
+    m_PageDirectory[undx].bits4k.ps       = 0;
+  }
+}

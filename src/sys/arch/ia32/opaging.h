@@ -1,9 +1,9 @@
-#ifndef __Paging_H__
-#define __Paging_H__
+#ifndef __IA32_OPAGING_H__
+#define __IA32_OPAGING_H__
 /*
- *  Copyright (C) 2006-2007 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006-2008 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,28 +18,37 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file Paging.h
- * \brief Paging support
+/** @file
+ * @brief Paging support
  *
- * \todo Is this file IA32 specific or generic???
+ * @todo Is this file IA32 specific or generic???
  */
 
 #include <types.h>
 #include <fatal.h>
 #include <ansi.h>
 
+extern "C" bool UsingPAE;
+
 /**
- * \brief Paging base class
+ * @brief Paging base class
  *
  * This is the base class for paging support. It has to be inherited and implemented
  * for specific architecture and specific paging method.
  */
-
-class Paging
+class OPaging
 {
   public:
     /**
-     * \brief Setup paging
+     * @brief Get one instance of OPaging class
+     * 
+     * Actually, this returns the instance of OPagingLegacy or OPagingPAE class, depending on
+     * the value of bool UsingPAE set in start.S
+     */
+    static OPaging * instance();
+    
+    /**
+     * @brief Setup paging
      *
      * After booting, the kernel is located at physical memory location 0x00100000,
      * but kernel is relocated at 0xC0100000 (= KVA + 0x00100000 = 3 GB + 1 MB).
@@ -49,56 +58,54 @@ class Paging
      *
      * In case of legacy mapping, it will map [0, 4M] to virtual [0, 4M] and KVA + [0, 4M].
      */
-    virtual void setup()
-    {
-      fatal(ANSI_FG_RED "Paging::setup is virtual function!!!\n" ANSI_NORMAL);
-    };
+    virtual void setup() = 0;
+    
+    /**
+     * @brief Initialize the transient mappings
+     */
+    virtual void transientMappingsInitialize() = 0;
 
   protected:
     /**
-     * \brief Inhibit creating instances of this class
+     * @brief Inhibit creating instances of this class
      */
-    Paging() {};
+    OPaging() {}
+    virtual ~OPaging() {}
 
     /**
-     * \brief Get the CR0 register
-     * \returns value of the CR0 register
+     * @brief Get the CR0 register
+     * @returns value of the CR0 register
      */
     uint32_t cr0();
     /**
-     * \brief Set the CR0 register
-     * \param value new value for the CR0 register
+     * @brief Set the CR0 register
+     * @param value new value for the CR0 register
      *
-     * \warning This method enables paging (if PG bit is set), so take care how you use it
+     * @warning This method enables paging (if PG bit is set), so take care how you use it
      */
     void cr0(uint32_t value);
 
     /**
-     * \brief Get the CR3 register
-     * \returns value of the CR3 register
+     * @brief Get the CR3 register
+     * @returns value of the CR3 register
      */
     uint32_t cr3();
     /**
-     * \brief Set the CR3 register
-     * \param value new value for CR3 register
+     * @brief Set the CR3 register
+     * @param value new value for CR3 register
      */
     void cr3(uint32_t value);
 
     /**
-     * \brief Get the CR4 register
-     * \returns the value from CR4
+     * @brief Get the CR4 register
+     * @returns the value from CR4
      */
     uint32_t cr4();
     /**
-     * \brief Set the CR4 register
-     * \param value new value for CR4 register
+     * @brief Set the CR4 register
+     * @param value new value for CR4 register
      */
     void cr4(uint32_t value);
 };
 
-/**
- * \brief Enable debugging messages or not
- */
-#define DEBUG_PAGING DEBUG_ENABLE
-
-#endif /* __Paging_H__ */
+#endif /* __IA32_OPAGING_H__ */

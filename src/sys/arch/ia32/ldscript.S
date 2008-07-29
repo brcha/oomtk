@@ -115,6 +115,7 @@ SECTIONS
 	}
 	_bss_end = .;
 	
+	/* C++ support (ctors/dtors) */
 	.ctors ALIGN(4) : AT(ADDR(.ctors) - KVA)
 	{
 	  __ctors_start__ = .;
@@ -129,9 +130,6 @@ SECTIONS
 	}
 	    
 	_end = .;
-	
-	/* C++ support (ctors/dtors) */
-	/* TODO: to be included later */
 	
 	/* Debug support */
 	.stab 0 :		{ *(.stab) }

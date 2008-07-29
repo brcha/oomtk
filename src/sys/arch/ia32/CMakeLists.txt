@@ -27,15 +27,19 @@ set(arch_ia32_SOURCES
 	init.cpp
 	otss.cpp
 	ogdt.cpp
+	opaging.cpp
+	opaginglegacy.cpp
+	opagingpae.cpp
 )
 
 set(oomtk_LIBRARIES
     Kernel
     Devices
-    minilibc
     supc++
+    minilibc
 #     libc++
     glue
+    gcc
    )
 
 add_executable(oomtk ${arch_ia32_SOURCES})

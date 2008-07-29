@@ -165,8 +165,8 @@
  * @{
  */
 #define KVTOL(a)      (a)
-#define PTOKV(a, T)   ((T) ((kva_t) (((kpa_t)(a)) + KVA)))
-#define KVTOP(a)      ((kpa_t) (KVTOL((kva_t)(a)) - KVA))
+#define PTOKV(a, T)   ((T)((kva_t)(((kpa_t)(a)) + KVA)))
+#define KVTOP(a)      ((kpa_t)(KVTOL((kva_t)(a)) - KVA))
 /** @} */
 
 /**
@@ -175,5 +175,44 @@
  * @note Remember to include <string.h> before using this macro.
  */
 #define INIT_TO_ZERO(ob) memset(ob, 0, sizeof(__typeof__(*ob)))
+
+/**
+ * @brief Align a value down to the next multiple of al. The value of al must be 2^n.
+ */
+#define alignDown(v, al)    ((v) & ~((al) - 1))
+#define alignUp(v, al)      alignDown(((v) + (al) - 1), al)
+
+/**
+ * @brief Field extraction for unsigned fields.
+ * 
+ * @note Upper limit is INCLUSIVE
+ */
+#define FIELD(word, hi, lo)     ((((2u << (hi)) - 1u) & (word)) >> (lo))
+
+/**
+ * @brief Return the bits above @p bits in @p value, shifted to be at the bottom of the value.
+ */
+#define safeRightShift(value, n)              \
+  ({  size_t  _maxbits  = sizeof(value) * 8;  \
+      size_t  _n        = (n);                \
+      ((_n < _maxbits) ? ((value) >> _n) : 0);  })
+
+/**
+ * @brief Return the bits below @p bits in @p value, shifted to be at the top of the value.
+ */
+#define safeLeftShift(value, n)               \
+  ({  size_t  _maxbits  = sizeof(value) * 8;  \
+      size_t  _n        = (n);                \
+      ((_n < _maxbits) ? ((value) << _n) : 0);  })
+
+/**
+ * @brief Return the bits below @p bits in @p value
+ */
+#define safeLowBits(value, n)                   \
+  ({  size_t  _maxbits    = sizeof(value) * 8;  \
+      size_t  _n          = (n);                \
+      typeof(value) _mask = ((_n < _maxbits)  ? \
+        ((typeof(value))1 << _n) - 1          : \
+        ((value) & _mask); })
 
 #endif /* __MACROS_H__ */
