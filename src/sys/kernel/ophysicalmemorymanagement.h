@@ -30,6 +30,8 @@
 #include <types.h>
 #include <cstddef>
 
+#include <OOMTK/OSpinLock>
+
 /**
  */
 class OPhysicalMemoryManagement
@@ -172,7 +174,7 @@ class OPhysicalMemoryManagement
      * @param description debugging description
      * @returns the base address of the region
      */
-    kpa_t allocBytes(const constraint_t * constraint, size_t size, Use use, const char * description);
+    kpa_t allocBytes(const constraint_t & constraint, size_t size, Use use, const char * description);
     
     /**
      * @brief Return the number of available units of size @p unitSize
@@ -181,7 +183,7 @@ class OPhysicalMemoryManagement
      * @param contiguous if true, return the maximum number of available units of the specified size.
      * @returns the number of available units
      */
-    kpsize_t available(const constraint_t * constraint, kpsize_t unitSize, bool contiguous);
+    kpsize_t available(const constraint_t & constraint, kpsize_t unitSize, bool contiguous);
     
     /**
      * @brief Find the first region that contains [base,bound)
@@ -246,7 +248,7 @@ class OPhysicalMemoryManagement
      * @param constraint to be satisfied
      * @returns the region
      */
-    info_t * chooseRegion(size_t bytes, const constraint_t * constraint);
+    info_t * chooseRegion(size_t bytes, const constraint_t & constraint);
     
     /**
      * @brief Add a new physical memory region to the region list
@@ -289,7 +291,7 @@ class OPhysicalMemoryManagement
     info_t   m_table[PHYSMEM_NREGIONS];
     unsigned m_nInfo;
     
-    // spinlock_t m_lock = SPINLOCK_INIT;
+    OSpinLock m_lock;
 };
 
 /**

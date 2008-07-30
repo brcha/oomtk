@@ -26,7 +26,10 @@
 #include <config.h>
 #include <cstddef>
 
+#include <OOMTK/OAtomic>
 #include <OOMTK/OProcess>
+
+class OMutex;
 
 /**
  * @brief Every CPU has it's own cpu class.
@@ -53,38 +56,74 @@ class OCPU{
   private:
     /**
      * @brief Mutex for locks held by current process on this CPU.
+     * 
+     * @note A change of this member has the side effect of group-releasing all
+     * spinlocks and mutexes currently held by this CPU. See OMutex::tryLock()
+     * for more info.
      */
-    // Atomic m_procMutexValue
+    OAtomic       m_procMutexValue;
     
     /**
      * @brief Process that is currently running on this CPU
      */
-    OProcess * m_current;
+    OProcess *    m_currentProcess;
     
     /**
      * @brief Unique identifier for this CPU
      */
-    cpuid_t   m_id;
+    cpuid_t       m_id;
+    
+    /**
+     * @brief Bitmap of this CPU's available transmap entries
+     */
+    transmeta_t   m_transMetaMap;
+    
+    /**
+     * @brief Bitmap of this CPU's available transmap entries that have
+     * been released, but not yet flushed from the TLB
+     */
+    transmeta_t   m_transMetaMapReleased;
     
     /**
      * @brief Per-CPU kernel stack reload address
      */
-    kva_t     m_topOfStack;
+    kva_t         m_topOfStack;
+    
+    /**
+     * @brief If shouldDefer matches procMutexValue, this CPU has been asked
+     * to get out of the way if it cannot aquire a mutex immediately.
+     */
+    OAtomic       m_shouldDefer;
     
     /**
      * @brief True iff this CPU is present
      */
-    bool      m_present;
+    bool          m_present;
     
     /**
      * @brief True iff this CPU has been started
      * 
      * @note When CPU is started, it cannot be stopped.
      */
-    bool      m_active;
+    bool          m_active;
     
     /**
-     * @brief Linked list of vector entries that need to be awaken.
+     * @brief Priority of current process on CPU
+     */
+    OAtomic       m_priority;
+    
+    /**
+     * @brief Action flags for this CPU
+     */
+    OAtomic       m_flags;
+    
+    /**
+     * @brief Mapping context currently loaded on this CPU
+     */
+    // Mapping * curMap;
+    
+    /**
+     * @brief Linked list of interrupt vector entries that need to be awaken.
      */
     // Something * m_wakeVectors;
     
@@ -99,6 +138,9 @@ class OCPU{
      * @brief Vector of all CPU structures
      */
     static OCPU m_vector[MAX_NCPU] asm("cpu_vector");
+    
+    // Friendly mutex class
+    friend class OMutex;
 };
 
 #endif /* __OOMTKSYS_OCPU_H__ */

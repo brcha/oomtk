@@ -1,3 +1,5 @@
+#ifndef __OOMTKSYS_IA32_OATOMICPTR_H__
+#define __OOMTKSYS_IA32_OATOMICPTR_H__
 /*
  *  Copyright (C) 2008 by Filip Brcic <brcha@gna.org>
  *
@@ -16,21 +18,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/** @file oatomicptr-ia32.h
+ * @brief IA32 implementation of atomic pointer manipulations
+ */
 
-#include <OOMTK/OCPU>
+namespace OOMTK {
+  namespace IA32 {
+    /**
+    * @brief Atomic compare and swap for pointers
+    * @param ap atomic pointer
+    * @param oldValue old value
+    * @param newValue new value
+    * @returns the original value
+    */
+    void * compareAndSwapPtr(void **ap, void * oldValue, void * newValue);
+  }; // namespace IA32
+}; // namespace OOMTK
 
-#include <ia32/pagesize.h>
-#include <config.h>
-
-OCPU * OCPU::current()
-{
-#if MAX_NCPU > 1
-  register uint32_t sp asm("esp");
-  
-  sp &= ~((KSTACK_NPAGES * OOMTK_PAGE_SIZE) - 1);
-  return *((OCPU **) sp);
-#else
-  // Only one CPU, so no "detecting" which CPU active is needed.
-  return &OCPU::m_vector[0];
-#endif
-}
+#endif /* __OOMTKSYS_IA32_OATOMICPTR_H__ */

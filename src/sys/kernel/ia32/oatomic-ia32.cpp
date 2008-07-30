@@ -16,21 +16,37 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <OOMTK/OAtomic>
 
-#include <OOMTK/OCPU>
-
-#include <ia32/pagesize.h>
+#include <types.h>
 #include <config.h>
+#include <macros.h>
 
-OCPU * OCPU::current()
+word_t OAtomic::compareAndSwap(word_t oldValue, word_t newValue)
 {
-#if MAX_NCPU > 1
-  register uint32_t sp asm("esp");
+  word_t result;
   
-  sp &= ~((KSTACK_NPAGES * OOMTK_PAGE_SIZE) - 1);
-  return *((OCPU **) sp);
-#else
-  // Only one CPU, so no "detecting" which CPU active is needed.
-  return &OCPU::m_vector[0];
-#endif
+  GNU_ASM("lock cmpxchgl %1, %2\n"
+  : "=a" (result)
+  : "r" (newValue), "m"(m_word), "0" (oldValue)
+  : "memory", "cc"
+	 );
+  
+  return result;
+}
+
+void OAtomic::setBits(word_t mask)
+{
+  GNU_ASM("lock orl %[mask], %[word]\n"
+  : [word] "+m" (m_word)
+  : [mask] "r" (mask)
+  : "cc");
+}
+
+void OAtomic::clearBits(word_t mask)
+{
+  GNU_ASM("lock andl %[mask], %[word]\n"
+  : [word] "+m" (m_word)
+  : [mask] "r" (mask)
+  : "cc");
 }

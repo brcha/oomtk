@@ -16,21 +16,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "oatomicptr-ia32.h"
 
-#include <OOMTK/OCPU>
+#include <macros.h>
+#include <types.h>
 
-#include <ia32/pagesize.h>
-#include <config.h>
-
-OCPU * OCPU::current()
+void * OOMTK::IA32::compareAndSwapPtr(void **ap, void * oldValue, void * newValue)
 {
-#if MAX_NCPU > 1
-  register uint32_t sp asm("esp");
+  void * result;
   
-  sp &= ~((KSTACK_NPAGES * OOMTK_PAGE_SIZE) - 1);
-  return *((OCPU **) sp);
-#else
-  // Only one CPU, so no "detecting" which CPU active is needed.
-  return &OCPU::m_vector[0];
-#endif
+  GNU_ASM("lock cmpxchgl %1, %2"
+  : "=a" (result)
+  : "r" (newValue), "m" (*(word_t*)(ap)), "0" (oldValue)
+  : "memory", "cc");
+  
+  return result;
 }

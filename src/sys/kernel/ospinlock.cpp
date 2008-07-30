@@ -16,21 +16,32 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "ospinlock.h"
 
-#include <OOMTK/OCPU>
-
-#include <ia32/pagesize.h>
-#include <config.h>
-
-OCPU * OCPU::current()
+OSpinLock::OSpinLock()
+ : OMutex()
 {
-#if MAX_NCPU > 1
-  register uint32_t sp asm("esp");
-  
-  sp &= ~((KSTACK_NPAGES * OOMTK_PAGE_SIZE) - 1);
-  return *((OCPU **) sp);
-#else
-  // Only one CPU, so no "detecting" which CPU active is needed.
-  return &OCPU::m_vector[0];
-#endif
 }
+
+
+OSpinLock::~OSpinLock()
+{
+}
+
+OSpinLock::hold_info_t OSpinLock::grab()
+{
+  word_t oldValue = m_atomic.get();
+  
+  while(1)
+  {
+    if (doTryLock(oldValue, &oldValue))
+    {
+      hold_info_t hi;
+      hi.lockPtr = this;
+      hi.oldValue = oldValue;
+      return hi;
+    }
+  }
+}
+
+

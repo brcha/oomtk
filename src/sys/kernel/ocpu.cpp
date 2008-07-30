@@ -18,8 +18,15 @@
  */
 #include "ocpu.h"
 #include <string.h> // for INIT_TO_ZERO, that is memset()
+#include <macros.h>
+#include <config.h>
+#include <types.h>
 
+#include <OOMTK/OMutex>
+
+// Define static members
 OCPU OCPU::m_vector[MAX_NCPU];
+size_t OCPU::m_ncpu = MAX_NCPU; // later updated
 
 OCPU::OCPU()
 {
@@ -31,5 +38,9 @@ void OCPU::initialize(cpuid_t ndx)
   
   INIT_TO_ZERO(cpu);
   cpu->m_id = ndx;
-  // the rest is following...
+  cpu->m_transMetaMap = safeLeftShift(1ull, TRANSMAP_ENTRIES_PER_CPU) - 1ull;
+//   cpu->curMap = &KernMapping;
+  
+  cpu->m_procMutexValue.set(OMutex::lockValue(0, OMutex::lty_Transaction, ndx));
+//   cpu->wakeVectors = 0;
 }

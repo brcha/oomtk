@@ -28,9 +28,11 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <OOMTK/OSpinLock>
+
 #include "shellsort.h"
 
-#define DEBUG_PMEM DEBUG_ENABLE
+#define DEBUG_PMEM DEBUG_DISABLE
 
 OPhysicalMemoryManagement::OPhysicalMemoryManagement() :
     m_nInfo(0)
@@ -69,7 +71,7 @@ void OPhysicalMemoryManagement::initialize(kpa_t base, kpa_t bound)
 OPhysicalMemoryManagement::info_t *
     OPhysicalMemoryManagement::overlapsRegion(kpa_t base, kpa_t bound, bool ignoreAvail)
 {
-  // SpinHoldInfo shi = spinlock_grab(&m_lock); (to be implemented)
+  OSpinLock::hold_info_t hi = m_lock.grab();
   
   for (unsigned i = 0; i < PHYSMEM_NREGIONS; i++)
   {
@@ -93,7 +95,7 @@ OPhysicalMemoryManagement::info_t *
       return &m_table[i];
   }
   
-  // spinlock_release(shi); (to be done)
+  m_lock.release(hi);
   
   // If nothing is returned before, return NULL
   return NULL;
@@ -102,7 +104,7 @@ OPhysicalMemoryManagement::info_t *
 OPhysicalMemoryManagement::info_t *
     OPhysicalMemoryManagement::newRegion(kpa_t base, kpa_t bound, Class cls, Use use, const char * description)
 {
-  // SpinHoldInfo shi = spinlock_grab(&m_lock);
+  OSpinLock::hold_info_t hi = m_lock.grab();
   
   if (m_nInfo >= PHYSMEM_NREGIONS)
   {
@@ -138,7 +140,7 @@ OPhysicalMemoryManagement::info_t *
   pmi->use = use;
   pmi->description = description; // TODO: Does this work? strcpy, anyone? but without malloc...?
   
-  // spinlock_release(shi);
+  m_lock.release(hi);
   
   // And the final leap of faith, find me my region I just made:
   return findRegion(base);
@@ -207,13 +209,13 @@ kpa_t OPhysicalMemoryManagement::allocRegion(kpa_t base, kpa_t bound, Class cls,
   
   assert (base < bound);
   
-  // SpinHoldInfo shi = spinlock_grab(&m_lock); (to be implemented)
+  OSpinLock::hold_info_t hi = m_lock.grab();
   
   info_t * pmi = findRegion(base);
   
   if (!pmi)
   {
-    // spinlock_release(shi);
+    m_lock.release(hi);
     return AllocFail;
   }
   
@@ -267,14 +269,14 @@ kpa_t OPhysicalMemoryManagement::allocRegion(kpa_t base, kpa_t bound, Class cls,
   
   cleanup();
   
-  // spinlock_release(shi);
+  m_lock.release(hi);
   
   return base;
 }
 
 void OPhysicalMemoryManagement::showAll()
 {
-  // SpinHoldInfo shi = spinlock_grab(&m_lock); (to be done)
+  OSpinLock::hold_info_t hi = m_lock.grab();
   
   for (unsigned i = 0; i < PHYSMEM_NREGIONS; i++)
   {
@@ -287,7 +289,7 @@ void OPhysicalMemoryManagement::showAll()
 	   m_table[i].description ? m_table[i].description : "");
   }
   
-  // spinlock_release(shi);
+  m_lock.release(hi);
 }
 
 OPhysicalMemoryManagement::info_t *
@@ -304,7 +306,7 @@ OPhysicalMemoryManagement::info_t *
 }
 
 OPhysicalMemoryManagement::info_t *
-    OPhysicalMemoryManagement::chooseRegion(size_t bytes, const constraint_t * constraint)
+    OPhysicalMemoryManagement::chooseRegion(size_t bytes, const constraint_t & constraint)
 {
   info_t * target = 0;
   
@@ -317,25 +319,25 @@ OPhysicalMemoryManagement::info_t *
     if (pmi->use != use_Available)
       continue;
     
-    kpa_t base = max(pmi->base, constraint->base);
-    kpa_t bound = min(pmi->bound, constraint->bound);
+    kpa_t base = max(pmi->base, constraint.base);
+    kpa_t bound = min(pmi->bound, constraint.bound);
     
-    base = alignUp(base, constraint->align);
+    base = alignUp(base, constraint.align);
     
     if (base >= bound)
       continue;
     
     // The region (partially) overlaps the requested region. Try to suit the alligned space:
-    if (constraint->fromTop)
+    if (constraint.fromTop)
     {
       kpa_t where = bound - bytes;
-      where = alignDown(where, constraint->align);
+      where = alignDown(where, constraint.align);
       
       if (where < base)
 	continue;
     } else
     {
-      kpa_t where = alignUp(base, constraint->align);
+      kpa_t where = alignUp(base, constraint.align);
       
       if (where + bytes > bound)
 	continue;
@@ -347,44 +349,44 @@ OPhysicalMemoryManagement::info_t *
   return target;
 }
 
-kpa_t OPhysicalMemoryManagement::allocBytes(const constraint_t * constraint, size_t size, Use use, const char * description)
+kpa_t OPhysicalMemoryManagement::allocBytes(const constraint_t & constraint, size_t size, Use use, const char * description)
 {
-  // SpinHoldInfo shi = spinlock_grab(&m_lock); (to be done)
+  OSpinLock::hold_info_t hi = m_lock.grab();
   
   info_t * pmi = chooseRegion(size, constraint);
   if (!pmi)
   {
-    // spinlock_release(shi);
+    m_lock.release(hi);
     return AllocFail;
   }
   
   // Apply the constraint
-  kpa_t bound = min(pmi->bound, constraint->bound);
-  kpa_t base  = max(pmi->base,  constraint->base);
+  kpa_t bound = min(pmi->bound, constraint.bound);
+  kpa_t base  = max(pmi->base,  constraint.base);
   
   kpa_t where;
-  if (constraint->fromTop)
+  if (constraint.fromTop)
   {
     // The highest possible address for the bound
-    where = alignDown(bound -size, constraint->align);
+    where = alignDown(bound -size, constraint.align);
     assert(where >= pmi->base);
   } else
   {
     // The lowest possible address for the base
-    where = alignUp(base, constraint->align);
+    where = alignUp(base, constraint.align);
     assert(where + size <= pmi->bound);
   }
   
   where = allocRegion(where, where + size, cls_RAM, use, description);
   
-  // spinlock_release(shi);
+  m_lock.release(hi);
   
   return where;
 }
 
-kpsize_t OPhysicalMemoryManagement::available(const constraint_t * constraint, kpsize_t unitSize, bool contiguous)
+kpsize_t OPhysicalMemoryManagement::available(const constraint_t & constraint, kpsize_t unitSize, bool contiguous)
 {
-  // SpinHoldInfo shi = spinlock_grab(&m_lock); (to be done)
+  OSpinLock::hold_info_t hi = m_lock.grab();
   
   kpsize_t nUnits = 0;
   kpsize_t nContiguousUnits = 0;
@@ -398,10 +400,10 @@ kpsize_t OPhysicalMemoryManagement::available(const constraint_t * constraint, k
     if (pmi->use != use_Available)
       continue;
     
-    kpa_t base  = max(pmi->base, constraint->base);
-    kpa_t bound = min(pmi->bound, constraint->bound);
+    kpa_t base  = max(pmi->base, constraint.base);
+    kpa_t bound = min(pmi->bound, constraint.bound);
     
-    base = alignUp(base, constraint->align);
+    base = alignUp(base, constraint.align);
     
     if (base >= bound)
       continue;
@@ -414,7 +416,7 @@ kpsize_t OPhysicalMemoryManagement::available(const constraint_t * constraint, k
     nUnits += unitsHere;
   }
   
-  // spinlock_release(shi);
+  m_lock.release(hi);
   
   return contiguous ? nContiguousUnits : nUnits;
 }

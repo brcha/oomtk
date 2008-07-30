@@ -25,6 +25,8 @@
 
 #include <multiboot.h>
 
+#include <ia32/pagesize.h>
+
 #include <OOMTK/OVgaConsole>
 #include <OOMTK/OCPU>
 #include <OOMTK/Version>
@@ -42,16 +44,23 @@ extern "C" {
   
   // Locations from ldscript.S:
   extern uint32_t _start[];
+  extern uint32_t _text[];
   extern uint32_t _etext[];
+  extern uint32_t _rodata[];
+  extern uint32_t _erodata[];
   extern uint32_t __syscall_page[];
   extern uint32_t __esyscall_page[];
-  extern uint32_t _pagedata[];
-  extern uint32_t _end[];
-  extern uint32_t _bss_end[];
   extern uint32_t __begin_maps[];
   extern uint32_t __end_maps[];
   extern uint32_t cpu0_kstack_lo[];
   extern uint32_t cpu0_kstack_hi[];
+  extern uint32_t _pagedata[];
+  extern uint32_t _epagedata[];
+  extern uint32_t _data[];
+  extern uint32_t _edata[];
+  extern uint32_t _bss_start[];
+  extern uint32_t _bss_end[];
+  extern uint32_t _end[];
   
   // temporary, for trying the kernel...
   bool HavePSE;
@@ -185,6 +194,38 @@ void configurePhysicalMemory(void)
   }
 }
 
+/**
+ * @brief Protect memory owned by the kernel
+ */
+void protectKernelMemory(void)
+{
+  OPhysicalMemoryManagement * pmm = OPhysicalMemoryManagement::instance();
+  
+  pmm->allocRegion(KVTOP(_start), KVTOP(_etext), pmm->cls_RAM, pmm->use_Kernel, "Kernel code");
+  pmm->allocRegion(KVTOP(_rodata), KVTOP(_erodata), pmm->cls_RAM, pmm->use_Kernel, "Kernel rodata");
+  pmm->allocRegion(KVTOP(__syscall_page), KVTOP(__esyscall_page),
+		   pmm->cls_RAM, pmm->use_Kernel, "Syscall page");
+  pmm->allocRegion(KVTOP(__begin_maps), KVTOP(__end_maps),
+		   pmm->cls_RAM, pmm->use_Kernel, "Kernel mappings pages");
+  pmm->allocRegion(KVTOP(cpu0_kstack_lo), KVTOP(cpu0_kstack_hi),
+		   pmm->cls_RAM, pmm->use_Kernel, "CPU[0] stack");
+  if (_pagedata != _epagedata)  // there is some page-aligned data
+    pmm->allocRegion(KVTOP(_pagedata), KVTOP(_epagedata),
+		     pmm->cls_RAM, pmm->use_Kernel, "Kernel page-aligned data");
+  pmm->allocRegion(KVTOP(_data), KVTOP(_end), pmm->cls_RAM, pmm->use_Kernel, "Kernel data, bss & ctors");
+}
+
+/**
+ * @brief Protect multiboot modules
+ */
+void protectMultibootModules(void)
+{
+  // First find out the physical locations of modules and command line.
+  struct multiboot_info_t * mbi = PTOKV(multibootInfo, struct multiboot_info_t *);
+  
+  
+}
+
 extern "C" void arch_init(void);
 
 /**
@@ -238,9 +279,17 @@ void arch_init(void)
   
   /* Configure memory (get info on available physical memory and and protect memory regions)
    */
-  OPhysicalMemoryManagement::instance()->initialize(0, UsingPAE ? PAE_PADDR_BOUND : PTE_PADDR_BOUND);
-  printf("PMM, ");
+  OPhysicalMemoryManagement * pmm = OPhysicalMemoryManagement::instance();
+  pmm->initialize(0, UsingPAE ? PAE_PADDR_BOUND : PTE_PADDR_BOUND);
   configurePhysicalMemory();
+  protectKernelMemory();
+  printf("PMM, ");
+  
+  // Findout how many regions are currently available before protecting multiboot regions
+  // because they are going to be released afterwards...
+  size_t totalPages = pmm->available(pmm->needPages, OOMTK_PAGE_SIZE, false);
+  
+  protectMultibootModules();
   
   for (;;);
 }

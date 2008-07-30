@@ -28,6 +28,11 @@ set(kernel_SOURCES
   ocpu.cpp
   ${OOMTK_ARCH}/ocpu-${OOMTK_ARCH}.cpp
   ophysicalmemorymanagement.cpp
+  oatomic.cpp
+  ${OOMTK_ARCH}/oatomic-${OOMTK_ARCH}.cpp
+  ${OOMTK_ARCH}/oatomicptr-${OOMTK_ARCH}.cpp
+  omutex.cpp
+  ospinlock.cpp
   )
 
 add_library(Kernel STATIC ${kernel_SOURCES})

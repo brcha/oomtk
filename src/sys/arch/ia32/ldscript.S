@@ -57,7 +57,7 @@ SECTIONS
 		*(.sc_trampoline)
 		. = ALIGN(OOMTK_PAGE_SIZE);
 	} = 0x9090
-	_esyscall_page = .;
+	__esyscall_page = .;
 	
 	. = ALIGN(OOMTK_PAGE_SIZE);
 	__begin_maps = .;

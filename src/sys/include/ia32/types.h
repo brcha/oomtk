@@ -65,6 +65,15 @@ typedef uint32_t kva_t;
 typedef uint32_t uva_t;
 
 /**
+ * @brief Type sufficient to hold a transmap meta-map entries
+ */
+#if TRANSMAP_ENTRIES_PER_CPU <= 32
+typedef uint32_t transmeta_t;
+#else
+typedef uint64_t transmeta_t;
+#endif
+
+/**
  * @brief Type of a target address space ID.
  */
 typedef uint32_t asid_t;

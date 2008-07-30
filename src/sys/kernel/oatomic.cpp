@@ -16,21 +16,26 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "oatomic.h"
 
-#include <OOMTK/OCPU>
-
-#include <ia32/pagesize.h>
-#include <config.h>
-
-OCPU * OCPU::current()
+OAtomic::OAtomic(word_t init) :
+    m_word(init)
 {
-#if MAX_NCPU > 1
-  register uint32_t sp asm("esp");
-  
-  sp &= ~((KSTACK_NPAGES * OOMTK_PAGE_SIZE) - 1);
-  return *((OCPU **) sp);
-#else
-  // Only one CPU, so no "detecting" which CPU active is needed.
-  return &OCPU::m_vector[0];
-#endif
 }
+
+
+OAtomic::~OAtomic()
+{
+}
+
+word_t OAtomic::get()
+{
+  return m_word;
+}
+
+void OAtomic::set(word_t value)
+{
+  m_word = value;
+}
+
+
