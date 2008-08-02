@@ -227,7 +227,7 @@ void protectMultibootModules(void)
   if (mbi->flags & MBI_CMDLINE) // Copy command line if available
     OCommandLine::instance()->set(mbi->cmdline);
   
-  if (mbi->flags & MBI_MODS) // Get the modules if available
+/*  if (mbi->flags & MBI_MODS) // Get the modules if available
   {
     size_t nMods = mbi->mods_count;
     const struct multiboot_module_info_t * mmi = PTOKV(mbi->mods_addr, const struct multiboot_module_info_t *);
@@ -238,7 +238,7 @@ void protectMultibootModules(void)
 //       const char * cmdLine = PTOKV(mmi->string, const char *);
 //       
 //       if (
-  }
+  }*/
 }
 
 extern "C" void arch_init(void);
@@ -305,6 +305,8 @@ void arch_init(void)
   size_t totalPages = pmm->available(pmm->needPages, OOMTK_PAGE_SIZE, false);
   
   protectMultibootModules();
+  
+  OCommandLine::instance()->processOptions();
   
   for (;;);
 }
