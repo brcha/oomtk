@@ -34,6 +34,7 @@ set(kernel_SOURCES
   omutex.cpp
   ospinlock.cpp
   opaging.cpp
+  ocommandline.cpp
   )
 
 add_library(Kernel STATIC ${kernel_SOURCES})

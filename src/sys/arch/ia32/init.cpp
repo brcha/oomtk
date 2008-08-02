@@ -31,6 +31,7 @@
 #include <OOMTK/OCPU>
 #include <OOMTK/Version>
 #include <OOMTK/OPhysicalMemoryManagement>
+#include <OOMTK/OCommandLine>
 
 #include "ogdt.h"
 #include "otss.h"
@@ -223,7 +224,21 @@ void protectMultibootModules(void)
   // First find out the physical locations of modules and command line.
   struct multiboot_info_t * mbi = PTOKV(multibootInfo, struct multiboot_info_t *);
   
+  if (mbi->flags & MBI_CMDLINE) // Copy command line if available
+    OCommandLine::instance()->set(mbi->cmdline);
   
+  if (mbi->flags & MBI_MODS) // Get the modules if available
+  {
+    size_t nMods = mbi->mods_count;
+    const struct multiboot_module_info_t * mmi = PTOKV(mbi->mods_addr, const struct multiboot_module_info_t *);
+    
+//     // First protect the existing modules
+//     for (size_t i = 0; i < nMods; i++, mmi++)
+//     {
+//       const char * cmdLine = PTOKV(mmi->string, const char *);
+//       
+//       if (
+  }
 }
 
 extern "C" void arch_init(void);
