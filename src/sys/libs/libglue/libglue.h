@@ -1,7 +1,7 @@
 #ifndef __libglue_H__
 #define __libglue_H__
 /*
- *  Copyright (C) 2007 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2007 by Filip Brcic <brcha@gna.org>
  *
  *  This file is part of OOMTK
  */
@@ -13,8 +13,11 @@
  */
 
 #include <abort.h>
+#include <_exit.h>
+#include <fatal.h>
+#include <ffs.h>
 #include <free.h>
 #include <malloc.h>
-#include <memset.h>
+#include <vpstring.h>
 
 #endif /* __libglue_H__ */

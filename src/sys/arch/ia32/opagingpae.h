@@ -21,7 +21,7 @@
 /** @file
  * @brief Paging for PAE enabled processors
  */
-#include "opaging.h"
+#include "opaging-ia32.h"
 
 // A few PAE macros
 #define NPAE_PER_PAGE             (OOMTK_PAGE_SIZE/sizeof(OPagingPAE::PTE_t))
@@ -40,7 +40,7 @@
  * @brief PAE Paging support for IA32
  */
 
-class OPagingPAE : public OPaging
+class OPagingPAE : public OPagingIA32
 {
   public:
     /**
@@ -66,7 +66,20 @@ class OPagingPAE : public OPaging
      * @brief Initialize the transient mappings
      */
     virtual void transientMappingsInitialize();
+    
+    /**
+     * @brief Map the physical address using transmap
+     * @param pa physical address
+     * @returns the mapped virtual address
+     */
+    virtual kva_t map(kpa_t pa);
 
+    /**
+     * @brief Unmap the virtual address previously mapped using transmap
+     * @param va the virtual address
+     */
+    virtual void unmap(kva_t va);
+    
   protected:
     /**
      * @brief Protected constructor

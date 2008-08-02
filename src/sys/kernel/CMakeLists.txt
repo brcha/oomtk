@@ -33,6 +33,7 @@ set(kernel_SOURCES
   ${OOMTK_ARCH}/oatomicptr-${OOMTK_ARCH}.cpp
   omutex.cpp
   ospinlock.cpp
+  opaging.cpp
   )
 
 add_library(Kernel STATIC ${kernel_SOURCES})

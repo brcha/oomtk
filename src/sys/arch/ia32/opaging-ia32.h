@@ -28,6 +28,8 @@
 #include <fatal.h>
 #include <ansi.h>
 
+#include <OOMTK/OPaging>
+
 extern "C" bool UsingPAE;
 
 /**
@@ -36,16 +38,16 @@ extern "C" bool UsingPAE;
  * This is the base class for paging support. It has to be inherited and implemented
  * for specific architecture and specific paging method.
  */
-class OPaging
+class OPagingIA32 : public OPaging
 {
   public:
     /**
-     * @brief Get one instance of OPaging class
-     * 
-     * Actually, this returns the instance of OPagingLegacy or OPagingPAE class, depending on
-     * the value of bool UsingPAE set in start.S
+   * @brief Get one instance of OPagingIA32 class
+   * 
+   * Actually, this returns the instance of OPagingLegacy or OPagingPAE class, depending on
+   * the value of bool UsingPAE set in start.S
      */
-    static OPaging * instance();
+    static OPagingIA32 * instance();
     
     /**
      * @brief Setup paging
@@ -60,17 +62,12 @@ class OPaging
      */
     virtual void setup() = 0;
     
-    /**
-     * @brief Initialize the transient mappings
-     */
-    virtual void transientMappingsInitialize() = 0;
-
   protected:
     /**
-     * @brief Inhibit creating instances of this class
+   * @brief Inhibit creating instances of this class
      */
-    OPaging() {}
-    virtual ~OPaging() {}
+    OPagingIA32() {}
+    virtual ~OPagingIA32() {}
 
     /**
      * @brief Get the CR0 register

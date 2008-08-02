@@ -21,10 +21,11 @@ set(libglue_SOURCES
       fatal.c
       free.c
       malloc.c
-      memset.c
       abort.c
       _exit.c
       libc_backend.cpp
+      ffs.c
+      vpstring.cpp
    )
 
 add_library(glue STATIC ${libglue_SOURCES})

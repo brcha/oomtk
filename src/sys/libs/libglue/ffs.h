@@ -1,7 +1,7 @@
-#ifndef __fatal_H__
-#define __fatal_H__
+#ifndef __libglue_FFS_H__
+#define __libglue_FFS_H__
 /*
- *  Copyright (C) 2006 by Filip Brcic <brcha@gna.org>
+ *  Copyright (C) 2008 by Filip Brcic <brcha@gna.org>
  *
  *  This file is part of OOMTK
  *
@@ -18,8 +18,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** \file fatal.h
- * \brief Print the message and exit
+/** @file ffs.h
+ * @brief Find first bit set in a word
  */
 
 #include <macros.h>
@@ -27,11 +27,21 @@
 __BEGIN_DECLS
 
 /**
-  * \brief Prints out the message and halts the CPU
-  * \param message a message to be printed - printf formated
-  */
-void fatal(const char * message, ...) NORETURN;
+ * @brief Find first bit set in @p val
+ * @returns the position of the first bit set, or 0 if no bits are set in @p val
+ */
+int ffs(int val);
+/**
+ * @brief Find first bit set in @p val
+ * @returns the position of the first bit set, or 0 if no bits are set in @p val
+ */
+int ffsl(long val);
+/**
+ * @brief Find first bit set in @p val
+ * @return the position of the first bit set, or 0 if no bits are set in @p val
+ */
+int ffsll(long long val);
 
 __END_DECLS
 
-#endif /* __fatal_H__ */
+#endif /* __libglue_FFS_H__ */

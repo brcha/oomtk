@@ -22,14 +22,18 @@
 
 #include "opaginglegacy.h"
 
-#include <stdio.h>
+#include <cstdio>
 #include <ansi.h>
-#include <string.h>
+#include <cstring>
+#include <cassert>
+#include <ffs.h>
 
 #include <config.h>
 
 #include <ia32/pagesize.h>
 #include <ia32/CR.h>
+
+#include <OOMTK/OCPU>
 
 /**
  * @brief Get the one instance of paging class
@@ -56,7 +60,7 @@ extern kva_t TransientMap[];   ///< @brief Transient mappings page
  * @brief Protected constructor
  */
 OPagingLegacy::OPagingLegacy() :
-    OPaging()
+    OPagingIA32()
 {
   m_PageDirectory     = reinterpret_cast<PDE_t*>(&KernPageDir[0]);
   m_KernelPageTable   = reinterpret_cast<PTE_t*>(&KernPageTable[0]);
@@ -159,11 +163,6 @@ void OPagingLegacy::setup()
       printf(ANSI_FG_GREEN "[ok]\n" ANSI_NORMAL);*/
 };
 
-#define TRANSMAP_PERCPU_ENTRY(slot)   ((slot) + MY_CPU(id) * TRANSMAP_ENTRIES_PER_CPU)
-#define TRANSMAP_ENTRY_VA(slot)       (TRANSMAP_WINDOW_KVA + (OOMTK_PAGE_SIZE * (slot)))
-#define TRANSMAP_VA_ENTRY(va)         (((va) - TRANSMAP_WINDOW_KVA) / OOMTK_PAGE_SIZE)
-#define TRANSMAP_ENTRY_SLOT(entry)    ((entry) % TRANSMAP_ENTRIES_PER_CPU)
-
 void OPagingLegacy::transientMappingsInitialize()
 {
   memset(m_TransientMappings, 0, OOMTK_PAGE_SIZE * TRANSMAP_PAGES/2);
@@ -182,4 +181,56 @@ void OPagingLegacy::transientMappingsInitialize()
 //     m_PageDirectory[undx].bits4k.dirty    = 1;
     m_PageDirectory[undx].bits4k.ps       = 0;
   }
+}
+
+
+kva_t OPagingLegacy::map(kpa_t pa)
+{
+  assert ((pa % OOMTK_PAGE_SIZE) == 0);
+  assert (pa < PTE_PADDR_BOUND);
+  
+  uint32_t ndx = ffsll(OCPU::current()->m_transMetaMap);
+  if (ndx == 0)
+  {
+    // Grab back just one at the time and use selective flush instruction.
+    ndx = ffsll(OCPU::current()->m_transMetaMapReleased);
+    assert (ndx);
+    uint32_t slot = ndx - 1;
+    uint32_t entry = transmapPerCPUentry(slot);
+    OCPU::current()->m_transMetaMapReleased &= ~(1u << slot);
+    // local_tlb_flushva(KernMapping.asid, transmapEntryVA(entry));
+  }
+  
+  assert (ndx);
+  
+  uint32_t slot = ndx - 1;
+  uint32_t entry = transmapPerCPUentry(slot);
+  
+  m_TransientMappings[entry].value = pa;
+  m_TransientMappings[entry].bits4k.present = 1;
+  m_TransientMappings[entry].bits4k.rw = 1;
+  m_TransientMappings[entry].bits4k.accessed = 1;
+  m_TransientMappings[entry].bits4k.dirty = 1;
+  
+  kva_t va = transmapEntryVA(entry);
+  OCPU::current()->m_transMetaMap &= ~(1u << slot);
+  
+  DEBUG_PAGING printf("Transmap: map va=" OOMTK_KVA_FMT " to pa=" OOMTK_KPA_FMT "\n", va, pa);
+  
+  return va;
+}
+
+void OPagingLegacy::unmap(kva_t va)
+{
+  uint32_t entry = transmapVAentry(va);
+  uint32_t slot = transmapEntrySlot(entry);
+  
+  assert ((OCPU::current()->m_transMetaMap & (1u << slot)) == 0);
+  assert ((OCPU::current()->m_transMetaMapReleased & (1u << slot)) == 0);
+  
+  m_TransientMappings[entry].value = 0;
+  
+  OCPU::current()->m_transMetaMapReleased |= (1u << slot);
+  
+  DEBUG_PAGING printf("Transmap: unmap va=" OOMTK_KVA_FMT "\n", va);
 }

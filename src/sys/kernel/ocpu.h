@@ -30,6 +30,13 @@
 #include <OOMTK/OProcess>
 
 class OMutex;
+class OPaging;
+
+#ifdef OOMTK_ARCH_IA32
+class OPagingIA32;
+class OPagingLegacy;
+class OPagingPAE;
+#endif
 
 /**
  * @brief Every CPU has it's own cpu class.
@@ -139,8 +146,14 @@ class OCPU{
      */
     static OCPU m_vector[MAX_NCPU] asm("cpu_vector");
     
-    // Friendly mutex class
+    // Friendly classes
     friend class OMutex;
+    friend class OPaging;
+#ifdef OOMTK_ARCH_IA32
+    friend class OPagingIA32;
+    friend class OPagingLegacy;
+    friend class OPagingPAE;
+#endif
 };
 
 #endif /* __OOMTKSYS_OCPU_H__ */

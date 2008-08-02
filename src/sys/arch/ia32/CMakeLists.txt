@@ -27,7 +27,7 @@ set(arch_ia32_SOURCES
 	init.cpp
 	otss.cpp
 	ogdt.cpp
-	opaging.cpp
+	opaging-ia32.cpp
 	opaginglegacy.cpp
 	opagingpae.cpp
 )

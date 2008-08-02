@@ -17,19 +17,25 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /** @file
- * @brief OPaging support
+ * @brief Paging support
  *
  * @todo Is this file IA32 specific or generic???
  */
-#include "opaging.h"
+#include "opaging-ia32.h"
 #include "opaginglegacy.h"
 #include "opagingpae.h"
 
+#include <OOMTK/OCPU>
+
+#include <cstdio>
+
+#include <ia32/pagesize.h>
+
 extern "C" {
-    bool UsingPAE;
+  bool UsingPAE;
 }
 
-OPaging * OPaging::instance()
+OPagingIA32 * OPagingIA32::instance()
 {
   if (UsingPAE)
     return OPagingPAE::instance();
@@ -39,81 +45,80 @@ OPaging * OPaging::instance()
 // 
 // Low-level get/set operators
 
-uint32_t OPaging::cr0()
+uint32_t OPagingIA32::cr0()
 {
   uint32_t value;
 
   GNU_ASM(
-      "   mov   %%cr0, %%edx     \n" // read the register
+	  "   mov   %%cr0, %%edx     \n" // read the register
       "   movl  %%edx, %[value]  \n"
   : [value] "=m" (value)
   : /* no input */
   : "edx", "memory"
-         );
+	 );
 
   return value;
 };
 
-void OPaging::cr0(uint32_t value)
+void OPagingIA32::cr0(uint32_t value)
 {
   GNU_ASM(
-      "   movl  %[value], %%edx   \n"
+	  "   movl  %[value], %%edx   \n"
       "   mov   %%edx, %%cr0      \n" // write the register
   : /* no output */
   : [value] "m" (value)
   : "edx"
-         );
+	 );
 };
 
-uint32_t OPaging::cr3()
+uint32_t OPagingIA32::cr3()
 {
   uint32_t value;
 
   GNU_ASM(
-      "   mov   %%cr3, %%edx     \n" // read the register
+	  "   mov   %%cr3, %%edx     \n" // read the register
       "   movl  %%edx, %[value]  \n"
   : [value] "=m" (value)
   : /* no input */
   : "edx", "memory"
-         );
+	 );
 
   return value;
 };
 
-void OPaging::cr3(uint32_t value)
+void OPagingIA32::cr3(uint32_t value)
 {
   GNU_ASM(
-      "   movl  %[value], %%edx   \n"
+	  "   movl  %[value], %%edx   \n"
       "   mov   %%edx, %%cr3      \n" // write the register
   : /* no output */
   : [value] "m" (value)
   : "edx"
-         );
+	 );
 };
 
-uint32_t OPaging::cr4()
+uint32_t OPagingIA32::cr4()
 {
   uint32_t value;
 
   GNU_ASM(
-      "   mov   %%cr4, %%edx     \n" // read the register
+	  "   mov   %%cr4, %%edx     \n" // read the register
       "   movl  %%edx, %[value]  \n"
   : [value] "=m" (value)
   : /* no input */
   : "edx", "memory"
-         );
+	 );
 
   return value;
 };
 
-void OPaging::cr4(uint32_t value)
+void OPagingIA32::cr4(uint32_t value)
 {
   GNU_ASM(
-      "   movl  %[value], %%edx   \n"
+	  "   movl  %[value], %%edx   \n"
       "   mov   %%edx, %%cr4      \n" // write the register
   : /* no output */
   : [value] "m" (value)
   : "edx"
-         );
+	 );
 };
-

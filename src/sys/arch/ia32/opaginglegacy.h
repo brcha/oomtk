@@ -21,7 +21,7 @@
 /** @file
  * @brief Legacy Paging for IA-32
  */
-#include "opaging.h"
+#include "opaging-ia32.h"
 #include <types.h>
 
 /* Several macros for convenience */
@@ -40,7 +40,7 @@
  *
  * This paging techinque requires PSE (page size extension) support (Pentium and newer).
  */
-class OPagingLegacy : public OPaging
+class OPagingLegacy : public OPagingIA32
 {
   public:
     /**
@@ -67,6 +67,19 @@ class OPagingLegacy : public OPaging
      */
     virtual void transientMappingsInitialize();
 
+    /**
+     * @brief Map the physical address using transmap
+     * @param pa physical address
+     * @returns the mapped virtual address
+     */
+    virtual kva_t map(kpa_t pa);
+    
+    /**
+     * @brief Unmap the virtual address previously mapped using transmap
+     * @param va the virtual address
+     */
+    virtual void unmap(kva_t va);
+    
   protected:
     /**
      * @brief Protected constructor
