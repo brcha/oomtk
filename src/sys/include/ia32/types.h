@@ -48,6 +48,7 @@ enum {
  * @brief Type sufficient to hold a kernel-implemented physical address.
  */
 typedef uint64_t kpa_t;
+typedef uint64_t addr_t;
 
 /**
  * @brief Type sufficient to hold a count of items that will fit in the physical memory.

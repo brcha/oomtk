@@ -47,6 +47,25 @@
  */
 #define PHYSMEM_NREGIONS	512
 
+/** @brief Number of bits needed to index a PTE in an arbitrary mapping table
+ * 
+ * This should be the width in bits of the index into the widest page table on current architecture
+ */
+#define MAPPING_INDEX_BITS      10
+
+/** @brief Size of a field that can hold a value &lt;= MAPPING_INDEX_BITS
+ */
+#define SIZEOF_MAPPING_INDEX_BITS 4
+
+/** @brief Number of mapping classes for this target
+ * 
+ * Minimally, the distinct class is required for every mapping structure size. If finer control
+ * of aging the different layers is required, then there needs to be a class for each aging group.
+ */
+#define MAPPING_NCLASS          2
+#define MAPPING_CLASS_NORMAL    0
+#define MAPPING_CLASS_PDPT      1
+
 /** @brief If 1 then using hierarchical mapping scheme.
  */
 #define HIERARCHICAL_MAP	1
