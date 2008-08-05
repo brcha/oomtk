@@ -22,25 +22,28 @@
  * @brief Process
  */
 
+#if 0
 #include <OOMTK/OLinkedList>
-#include <OOMTK/OStallQueue>
-#include <OOMTK/OReadyQueue>
 #include <OOMTK/OAtomic>
 #include <OOMTK/OAtomicPtr>
 #include <OOMTK/OCPU>
 #include <OOMTK/OMapping>
+
+class OStallQueue;
+class OReadyQueue;
+#endif
 
 /**
  * @brief The process class
  * 
  * @todo This class should be implemented, this is more like a forward declaration for now...
  */
-class OProcess : public OLinkedList
+class OProcess //: public OLinkedList
 {
   public:
     OProcess();
     ~OProcess();
-    
+#if 0
     /**
      * @brief Reasons why the process cannot run
      */
@@ -58,6 +61,12 @@ class OProcess : public OLinkedList
       issue_OnLoad        = issue_Schedule, ///< @brief Issue set when process is loaded
     };
 
+    /**
+     * @brief Remove the process from the queue it is on and put it on the run queue
+     * 
+     * If the process is not sleeping on the queue or it is on run queue already, just ignore the call.
+     */
+    void unsleep();
   protected:
     /** @brief Reasons why the process cannot run
      * 
@@ -101,6 +110,8 @@ class OProcess : public OLinkedList
 //     ExProcess     state PSTATE_ALIGN;
     
     friend class OReadyQueue;
+    friend class OStallQueue;
+#endif
 };
 
 #endif /* __OOMTKSYS_OPROCESS_H__ */

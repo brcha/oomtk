@@ -23,13 +23,13 @@
  */
 
 #include <OOMTK/OSpinLock>
-#include <OOMTK/OLinkedList>
-#include <OOMTK/OProcess>
+
+class OProcess;
 
 /**
  * @brief Stall queue class
  * 
- * Stall queues are standard link structures with a lock.
+ * Stall queues are queues of processes with a lock
  */
 class OStallQueue
 {
@@ -43,29 +43,25 @@ class OStallQueue
      */
     bool isEmpty();
     
+    OProcess * removeFront();
+    
     /**
      * @brief Wake all processes on the stall queue
      */
     void wakeAll();
     
     /**
-     * @brief Enqueue on the stall queue
+     * @brief Enqueue current process on the stall queue
      */
     void enqueue();
-    
-    /**
-     * @brief Remove the @p process from the queue it is on and put it on the run queue
-     * 
-     * If the process is not sleeping on the queue or it is on run queue already, just ignore the call.
-     */
-    void unsleep(OProcess * process);
     
     void sleep();
     
   protected:
-    OLinkedList   m_head;
+    OProcess      m_head;
     OSpinLock     m_lock;
 
+    friend class OProcess;
 };
 
 #endif /* __OOMTKSYS_OSTALLQUEUE_H__ */

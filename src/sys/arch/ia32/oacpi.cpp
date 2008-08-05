@@ -22,9 +22,15 @@
 
 #include <OOMTK/OPaging>
 #include <OOMTK/OPhysicalMemoryManagement>
+#include <OOMTK/OCPU>
 
 #include <cstdio>
+#include <cstring>
+#include <cassert>
+#include <vpstring.h>
 #include <fatal.h>
+
+#include "ocpuid.h"
 
 OACPI::OACPI()
 {
@@ -51,7 +57,7 @@ uint8_t OACPI::cksum(kpa_t pa, size_t len)
     kpa_t offset = pa & OOMTK_PAGE_ADDR_MASK;
     pa -= offset;
     
-    char * va = (char *) OPaging::instance()->map(pa, char *);
+    char * va = (char *) OPaging::instance()->map(pa);
     char * ptr = va + offset;
     kpa_t count = min(len, OOMTK_PAGE_SIZE - offset);
     
@@ -111,7 +117,7 @@ kpa_t OACPI::findMadt()
   kpa_t ebda = ( (* PTOKV(0x40e, uint16_t *)) << 4);
   kpa_t rsdp = scanRegion(ebda, ebda + 1024);
   if (! rsdp)
-    rsdp = scapRegion(0xe0000, 0xfffff);
+    rsdp = scanRegion(0xe0000, 0xfffff);
   if (! rsdp)
     return 0;
   
@@ -127,9 +133,9 @@ kpa_t OACPI::findMadt()
   if (cksum(rsdt_pa, rsdt_hdr.length))
     fatal ("ACPI checksum on RSDT failed!\n");
   
-  size_t entries = (rsdt_hdr.length - sizdof(rsdt_hdr)) / 4;
+  size_t entries = (rsdt_hdr.length - sizeof(rsdt_hdr)) / 4;
   
-  DEBUG_ACPI printf("ACPI RSDT " OOMTK_KPA_FMT " %d entries=%d\n", rsdt_pa, rsdt_hdr.lendth, entries);
+  DEBUG_ACPI printf("ACPI RSDT " OOMTK_KPA_FMT " %d entries=%d\n", rsdt_pa, rsdt_hdr.length, entries);
   
   for (size_t i = 0; i < entries; i++)
   {
@@ -139,7 +145,7 @@ kpa_t OACPI::findMadt()
     memcpy_ptov(&pa32, rsdt_pa + sizeof(rsdt_hdr) + (4*i), sizeof(uint32_t));
     pa = pa32;
     
-    memcpy(ptov(&madt_hdr, pa, sizeof(madt_hdr));
+    memcpy_ptov(&madt_hdr, pa, sizeof(madt_hdr));
     
     DEBUG_ACPI printf("ACPI %c%c%c%c " OOMTK_KPA_FMT " %d.\n",
 	madt_hdr.signature[0],
@@ -165,17 +171,125 @@ kpa_t OACPI::findMadt()
 bool OACPI::probeAcpis()
 {
   kpa_t madt_pa = findMadt();
+  // TODO: lapic_pa,_va shouldn't be here, they should be in LAPIC class or something...
   kpa_t lapic_pa;
+  kva_t lapic_va;
   
   if (madt_pa == 0)
     return false;
   
-  memcpy_ptov(&lapic_pa, madt_pa + sizeof(sdt_hdr_t), sizeof(uint32_t));
+  memcpy_ptov(&lapic_pa, madt_pa + sizeof(sdt_header_t), sizeof(uint32_t));
   
   assert (lapic_pa != 0);
   OPhysicalMemoryManagement * pmm = OPhysicalMemoryManagement::instance();
-  pmm->allocRegion(lapic_pa, lapic_pa + 4095, pmm->cls_RAM, pmm->use_Kernel, "LAPIC");
-  // TODO: kmap_map (vm.c, vm.h)
+  pmm->allocRegion(lapic_pa, lapic_pa + 4096, pmm->cls_RAM, pmm->use_Kernel, "LAPIC");
+  OPaging * paging = OPaging::instance();
+  paging->kmap(IA32_LOCAL_APIC_VA, lapic_pa, OOMTK_PAGE_SIZE,
+	       OPaging::KMAP_R|OPaging::KMAP_W|OPaging::KMAP_NC, false);
+  lapic_va = IA32_LOCAL_APIC_VA;
+  
+  uint32_t multipleApicFlags;
+  memcpy_ptov(&multipleApicFlags, madt_pa + sizeof(sdt_header_t) + 4, sizeof(uint32_t));
+  if (multipleApicFlags & 0x1u)
+  {
+    printf("8259 must be disabled on lapic start.\n");
+    // lapic_requires_8259_disable = true;
+  }
+  
+  sdt_header_t madt_hdr;
+  memcpy_ptov(&madt_hdr, madt_pa, sizeof(madt_hdr));
+  
+  kpa_t madt_bound = madt_pa + madt_hdr.length;
+  kpa_t apicstruc_pa = madt_pa + sizeof(madt_hdr) + 8;
+  
+  cpu_io_apic_t ioapic;
+  
+  bool found = false;
+  
+  size_t nIoAPIC = 0;
+  
+  // Issue: ACPI doesn't specify ordering for entries in the APIC table.
+  for (kpa_t pa = apicstruc_pa; pa < madt_bound; pa += ioapic.length)
+  {
+    memcpy_ptov (&ioapic, pa, 2);
+    
+    assert (ioapic.length);
+    
+    if (ioapic.type == IO_APIC)
+    {
+      memcpy_ptov(&ioapic, pa, sizeof(ioapic));
+      
+      kpa_t ioapic_pa = ioapic.ioapicPA;
+      assert (ioapic_pa != 0);
+      pmm->allocRegion(ioapic_pa, ioapic_pa + 4096, pmm->cls_RAM, pmm->use_Kernel, "IO APIC");
+      
+      kva_t va = IA32_IO_APIC_VA + (nIoAPIC * OOMTK_PAGE_SIZE);
+      paging->kmap(va, ioapic_pa, OOMTK_PAGE_SIZE,
+		   OPaging::KMAP_R|OPaging::KMAP_W|OPaging::KMAP_NC, false);
+      
+      // TODO: ioapic_register(ioapic.globalSystemInterruptBase, va);
+      
+      printf("IO APIC id=%02x at %08x intBase %d\n",
+	     ioapic.ioapicID, ioapic.ioapicPA, ioapic.globalSystemInterruptBase);
+      
+      found = true;
+    }
+  }
+  
+  return found;
+}
+
+#include <ia32/archcpu.h>
+extern arch_cpu_t archcpu_vector[MAX_NCPU];
+
+size_t OACPI::probeCpus()
+{
+  size_t ncpu = 0;
+  uint32_t madt_pa = findMadt();
+  
+  if (madt_pa == 0)
+    return ncpu;
+  
+  OCPUID::cpuid_registers_t regs;
+  (void) OCPUID::instance()->cpuid(1u, regs);
+  uint8_t bootApicID = FIELD(regs.ebx, 31, 24);
+  
+  sdt_header_t madt_hdr;
+  memcpy_ptov(&madt_hdr, madt_pa, sizeof(madt_hdr));
+  
+  kpa_t madt_bound = madt_pa + madt_hdr.length;
+  kpa_t apicstruc_pa = madt_pa + sizeof(madt_hdr) + 8;
+  
+  cpu_local_apic_t lapic;
+  
+  // Issue: ACPI doesn't specify the ordering of the entries in the APIC table.
+  ncpu = 1;
+  for (kpa_t pa = apicstruc_pa; pa < madt_bound; pa += lapic.length)
+  {
+    memcpy_ptov(&lapic, pa, 2);
+    
+    assert (lapic.length);
+    
+    if (lapic.type == ProcessorLocalAPIC)
+    {
+      memcpy_ptov(&lapic, pa, sizeof(lapic));
+      
+      if ((lapic.flags & Enabled) == 0)
+	continue;
+      
+      size_t slot = ncpu;
+      if (lapic.lapicID == bootApicID)
+	slot = 0;
+      
+      archcpu_vector[slot].lapic_id = lapic.lapicID;
+      OCPU::m_vector[slot].m_present = true;
+      
+      if (slot != 0)
+	ncpu ++;
+    }
+  }
+  
+  return ncpu;
 }
 
 

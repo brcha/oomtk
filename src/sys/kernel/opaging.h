@@ -24,8 +24,9 @@
 #include <types.h>
 #include <fatal.h>
 #include <ansi.h>
+#include <cstddef>
 
-#define DEBUG_PAGING DEBUG_ENABLE
+#define DEBUG_PAGING DEBUG_DISABLE
 
 /**
  * @brief Generic, abstract, platform independent paging class
@@ -57,6 +58,27 @@ class OPaging
      * @param va the virtual address
      */
     virtual void unmap(kva_t va) = 0;
+    
+    enum {
+      // Permissions for kmap
+      KMAP_R      = 0x1u,
+      KMAP_W      = 0x2u,
+      KMAP_X      = 0x4u,
+      KMAP_NC     = 0x8u,
+    };
+    
+    /**
+     * @brief Map the area to the kernel master map
+     * @param va target virtual address
+     * @param pa physical address of the start of the area (must be aligned at page boundary)
+     * @param size size of the memory area (must be multiple of OOMTK_PAGE_SIZE)
+     * @param perms permissions
+     * @param remap replace any pre-existing mappings if true
+     * 
+     * @warning This method is not SMP-safe. After initialization of APs, this function can be
+     * used only for CPU-local mappings.
+     */
+    virtual void kmap(kva_t va, kpa_t pa, size_t size, uint32_t perms, bool remap) = 0;
 
   protected:
     OPaging() {};

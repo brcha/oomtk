@@ -1,5 +1,7 @@
+#ifndef __IA32_ARCHCPU_H__
+#define __IA32_ARCHCPU_H__
 /*
- *  Copyright (C) $YEAR$ by $AUTHOR$ <$EMAIL$>
+ *  Copyright (C) 2008 by Filip Brcic <brcha@gna.org>
  *
  *  This file is part of OOMTK
  *
@@ -16,3 +18,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/** @file archcpu.h
+ * @brief Architecture dependant cpu structure
+ */
+#include <types.h>
+
+struct arch_cpu_t
+{
+  kpa_t localDataPageTable;
+  kpa_t transMapMappingPage;
+  
+  uint8_t lapic_id;
+};
+
+#endif /* __IA32_ARCHCPU_H__ */

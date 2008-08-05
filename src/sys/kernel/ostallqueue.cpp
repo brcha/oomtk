@@ -18,6 +18,9 @@
  */
 #include "ostallqueue.h"
 
+#include <OOMTK/OReadyQueue>
+#include <OOMTK/OProcess>
+
 OStallQueue::OStallQueue()
 {
 }
@@ -35,5 +38,56 @@ bool OStallQueue::isEmpty()
   
   return result;
 }
+
+OProcess * OStallQueue::removeFront()
+{
+  OProcess * p = NULL;
+  
+  OSpinLock::hold_info_t hi = m_lock.grab();
+  if (!isEmpty())
+  {
+    p = m_head.next();
+    p->unlink();
+    p->m_onQ = NULL;
+  }
+  m_lock.release(hi);
+  return p;
+}
+
+void OStallQueue::wakeAll()
+{
+  OReadyQueue * rq = OReadyQueue::mainRQ();
+  
+  OSpinLock::hold_info_t hi = m_lock.grab();
+  if (!m_head.isEmpty())
+  {
+    OSpinLock::hold_info_t rqhi = rq->m_lock.grab();
+    while (!m_head.isEmpty())
+    {
+      OProcess * p = m_head.next();
+      p->onQ = rq;
+      rq->m_head.insertBefore(p);
+    }
+    rq->m_lock.release(rqhi);
+  }
+  m_lock.release(hi);
+}
+
+void OStallQueue::enqueue()
+{
+  OProcess * p = OCPU::current()->m_currentProcess;
+  
+  OSpinLock::hold_info_t hi = m_lock.grab();
+  p->onQ = this;
+  m_head.insertAfter(p);
+  m_lock.release(hi);
+}
+
+void OStallQueue::sleep()
+{
+  enqueue();
+  // sched_abandon_transaction() TODO:
+}
+
 
 

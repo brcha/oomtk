@@ -28,12 +28,6 @@
 #define NPTE_PER_PAGE         (OOMTK_PAGE_SIZE/sizeof(OPagingLegacy::PTE_t))
 #define PTE_PFRAME_BOUND      (((kpa_t) 1) << 20)
 #define PTE_PADDR_BOUND       (((kpa_t) 1) << 32)
-#define PTE_PGDIR_NDX(va)     ((va) >> 22)
-#define PTE_PGTBL_NDX(va)     (((va) >> 12) % NPTE_PER_PAGE)
-// kpa_t is 64bit, and all pa are 32bit, so downcast vefore shifting...
-#define PTE_KPA_TO_FRAME(pa)  (((uint32_t)(pa)) >> 12)
-#define PTE_FRAME_TO_KPA(frm) ((frm) << 12)
-#define PTE_CLEAR(pte)        (pte).value = 0
 
 /**
  * @brief Legacy paging support for IA-32 processors
@@ -80,12 +74,50 @@ class OPagingLegacy : public OPagingIA32
      */
     virtual void unmap(kva_t va);
     
+    /**
+     * @brief Map the area to the kernel master map
+     * @param va target virtual address
+     * @param pa physical address of the start of the area (must be aligned at page boundary)
+     * @param size size of the memory area (must be multiple of OOMTK_PAGE_SIZE)
+     * @param perms permissions
+     * @param remap replace any pre-existing mappings if true
+     * 
+     * @warning This method is not SMP-safe. After initialization of APs, this function can be
+     * used only for CPU-local mappings.
+     */
+    virtual void kmap(kva_t va, kpa_t pa, size_t size, uint32_t perms, bool remap);
+    
+    inline uint32_t pdeIndex(kva_t va)
+    {
+      // Bits 31:22 for 4k & 4m pages
+      return (va >> 22);
+    }
+    
+    inline uint32_t pteIndex(kva_t va)
+    {
+      // Valid only for 4k pages
+      // Bits 21:12 => bitmask 0000'0000'0011'1111'1111'0000'0000'0000 = 003ff000
+      return (va & 0x003ff000) >> 12;
+    }
+    
+    inline kpa_t frameToKpa(uint32_t frame)
+    {
+      // Bits 12:0 are the offset in all forms of addresses
+      return (frame << 12);
+    }
+    
+    inline uint32_t kpaToFrame(kpa_t pte)
+    {
+      // Bits 12:0 are the offset in all forms of addresses
+      return ((uint32_t)pte >> 12);
+    }
+    
   protected:
     /**
      * @brief Protected constructor
      */
     OPagingLegacy();
-
+    
   protected:
     /**
      * @brief Page directory entry

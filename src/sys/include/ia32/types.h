@@ -80,6 +80,11 @@ typedef uint64_t transmeta_t;
 typedef uint32_t asid_t;
 
 /**
+ * @brief Type of an object ID
+ */
+typedef uint64_t oid_t;
+
+/**
  * @defgroup PrintfFormats
  * @brief Printf formats for various types
  * @{

@@ -31,6 +31,7 @@
 #include <OOMTK/OPaging>
 
 extern "C" bool UsingPAE;
+extern "C" bool HavePSE;
 
 /**
  * @brief Paging base class
@@ -61,6 +62,12 @@ class OPagingIA32 : public OPaging
      * In case of legacy mapping, it will map [0, 4M] to virtual [0, 4M] and KVA + [0, 4M].
      */
     virtual void setup() = 0;
+    
+    inline bool kpaIsPageAddress(kpa_t pa)
+    {
+      // Bits 12:0 are offset, therefore if they are =0, the PA is page address
+      return (pa & ((kpa_t)0xfff)) == 0;
+    }
     
   protected:
     /**

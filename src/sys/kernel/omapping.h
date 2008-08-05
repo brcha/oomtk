@@ -55,6 +55,7 @@ class OMapping : public OAgeable
     uint8_t       m_level;        ///< @brief Level of the page table
     size_t        m_userSlots;    ///< @brief Number of leading user-mode slots
     kpa_t         m_pa;           ///< @brief Physical address of the page table
+#endif
 };
 
 #endif /* __OOMTKSYS_OMAPPING_H__ */

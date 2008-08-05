@@ -27,14 +27,6 @@
 #define NPAE_PER_PAGE             (OOMTK_PAGE_SIZE/sizeof(OPagingPAE::PTE_t))
 #define PAE_PFRAME_BOUND          (((kpa_t) 1) << 24)
 #define PAE_PADDR_BOUND           (((kpa_t) 1) << 36)
-#define PAE_PDPT_NDX(va)          (((va) >> 30) % 4)
-#define PAE_PGDIR_NDX(va)         (((va) >> 21) % NPAE_PER_PAGE)
-#define PAE_PGTBL_NDX(va)         (((va) >> 12) % NPAE_PER_PAGE)
-#define PAE_KPA_TO_FRAME(pa)      ((pa) >> 12)
-#define PAE_FRAME_TO_KPA(frm)     ((frm) << 12)
-#define PAE_CLEAR(pae)            (pae).value = 0
-
-#define KPA_IS_PAGE_ADDRESS(pa)   ((pa & ((kpa_t)0xfff)) == 0)
 
 /**
  * @brief PAE Paging support for IA32
@@ -79,6 +71,51 @@ class OPagingPAE : public OPagingIA32
      * @param va the virtual address
      */
     virtual void unmap(kva_t va);
+    
+    /**
+     * @brief Map the area to the kernel master map
+     * @param va target virtual address
+     * @param pa physical address of the start of the area (must be aligned at page boundary)
+     * @param size size of the memory area (must be multiple of OOMTK_PAGE_SIZE)
+     * @param perms permissions
+     * @param remap replace any pre-existing mappings if true
+     * 
+     * @warning This method is not SMP-safe. After initialization of APs, this function can be
+     * used only for CPU-local mappings.
+     */
+    virtual void kmap(kva_t va, kpa_t pa, size_t size, uint32_t perms, bool remap);
+    
+    inline uint32_t pdpteIndex(kva_t va)
+    {
+      // Bits 31:30 of va are pdpt index
+      return (va >> 30);
+    }
+    
+    inline uint32_t pdeIndex(kva_t va)
+    {
+      // Bits 29:21 of va are pde index for 4k & 2m pages
+      // => Bitmask = 0011'1111'1110'0000'0000'0000'0000'0000 = 3fe00000
+      return (va & 0x3fe00000) >> 21;
+    }
+    
+    inline uint32_t pteIndex(kva_t va)
+    {
+      // Bits 20:12 of va are pte index for 4k pages (non-existant for 2m pages)
+      // => Bitmask = 0000'0000'0001'1111'1111'0000'0000'0000 = 001ff000
+      return (va & 0x001ff000) >> 12;
+    }
+    
+    inline uint64_t kpaToFrame(kpa_t pa)
+    {
+      // Bits 12:0 are the offset in all forms of addresses
+      return (pa >> 12);
+    }
+    
+    inline kpa_t frametoKpa(uint64_t frame)
+    {
+      // Bits 12:0 are the offset in all forms of addresses
+      return (frame << 12);
+    }
     
   protected:
     /**

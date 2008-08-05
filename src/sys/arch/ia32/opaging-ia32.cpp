@@ -33,6 +33,7 @@
 
 extern "C" {
   bool UsingPAE;
+  bool HavePSE;
 }
 
 OPagingIA32 * OPagingIA32::instance()

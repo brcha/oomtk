@@ -36,12 +36,17 @@ class OPaging;
 class OPagingIA32;
 class OPagingLegacy;
 class OPagingPAE;
+class OACPI;
 #endif
+
+// class OReadyQueue;
+// class OStallQueue;
 
 /**
  * @brief Every CPU has it's own cpu class.
  */
-class OCPU{
+class OCPU
+{
   protected:
     /**
      * @brief Protected constructor (not for use by mortals)
@@ -60,7 +65,15 @@ class OCPU{
      */
     static OCPU * current();
     
-  private:
+    /**
+     * @brief Probe the CPUs present on this machine
+     * @returns the number of available CPUs
+     * 
+     * @note This method has architecture dependant implementation.
+     */
+    static size_t probeCPUs();
+    
+  protected:
     /**
      * @brief Mutex for locks held by current process on this CPU.
      * 
@@ -153,7 +166,10 @@ class OCPU{
     friend class OPagingIA32;
     friend class OPagingLegacy;
     friend class OPagingPAE;
+    friend class OACPI;
 #endif
+//     friend class OReadyQueue;
+//     friend class OStallQueue;
 };
 
 #endif /* __OOMTKSYS_OCPU_H__ */

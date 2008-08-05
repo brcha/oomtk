@@ -18,6 +18,14 @@
  */
 #include "oprocess.h"
 
+#include <cassert>
+
+#if 0
+#include <OOMTK/OSpinLock>
+#include <OOMTK/OStallQueue>
+#include <OOMTK/OReadyQueue>
+#endif
+
 OProcess::OProcess()
 {
 }
@@ -26,4 +34,29 @@ OProcess::~OProcess()
 {
 }
 
-
+#if 0
+void OProcess::unsleep()
+{
+  assert (m_onQ != 0);
+  
+  OStallQueue * sq;
+  OReadyQueue * rq = OReadyQueue::mainRQ();
+  OSpinLock::hold_info_t hi;
+  for (;;)
+  {
+    sq = m_onQ;
+    if (sq == 0 || sq == rq)
+      return;
+    hi = sq->m_lock.grab();
+    if (sq == m_onQ)
+      break;
+    sq->m_lock.release(hi);
+  }
+  OSpinLock::hold_info_t rqhi = rq->m_lock.grab();
+  unlink();
+  m_onQ = rq;
+  rq->m_head.insertBefore(this);
+  rq->m_lock.release(rqhi);
+  sq->m_lock.release(hi);
+}
+#endif

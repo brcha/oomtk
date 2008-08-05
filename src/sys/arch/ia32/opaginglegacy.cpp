@@ -34,6 +34,7 @@
 #include <ia32/CR.h>
 
 #include <OOMTK/OCPU>
+#include <OOMTK/OPhysicalMemoryManagement>
 
 /**
  * @brief Get the one instance of paging class
@@ -173,7 +174,7 @@ void OPagingLegacy::transientMappingsInitialize()
     const kva_t va = TRANSMAP_WINDOW_KVA + i * 4*1024*1024;
     const uint32_t pa = ((reinterpret_cast<uint32_t>(&m_TransientMappings[0])) - KVA) + offset;
     
-    uint32_t undx = PTE_PGDIR_NDX(va);
+    uint32_t undx = pdeIndex(va);
     m_PageDirectory[undx].value = pa;
     m_PageDirectory[undx].bits4k.present  = 1;
     m_PageDirectory[undx].bits4k.rw       = 1;
@@ -233,4 +234,105 @@ void OPagingLegacy::unmap(kva_t va)
   OCPU::current()->m_transMetaMapReleased |= (1u << slot);
   
   DEBUG_PAGING printf("Transmap: unmap va=" OOMTK_KVA_FMT "\n", va);
+}
+
+#define LARGE_PAGE_SIZE (OOMTK_PAGE_SIZE * NPTE_PER_PAGE)
+
+void OPagingLegacy::kmap(kva_t va, kpa_t pa, size_t size, uint32_t perms, bool remap)
+{
+  assert (va >= KVA);
+  assert ((size % OOMTK_PAGE_SIZE) == 0);
+  
+  while (size)
+  {
+    uint32_t undx = pdeIndex(va);
+    
+    if (!HavePSE)
+      goto smallPageMapping;
+    
+    if (((va | pa) % LARGE_PAGE_SIZE) || (size < LARGE_PAGE_SIZE))
+      goto smallPageMapping;
+    
+    assert (m_PageDirectory[undx].bits4m.userSuper == 0);
+    
+    // If I can't remap, and there already is a page without page-size activated, make a small page :(
+    if (m_PageDirectory[undx].bits4m.present && !m_PageDirectory[undx].bits4m.ps && !remap)
+      goto smallPageMapping;
+    
+    if (m_PageDirectory[undx].bits4m.present && !remap)
+      fatal ("Attempt to remap existing mapping at " OOMTK_KVA_FMT "!\n", va);
+    
+    m_PageDirectory[undx].value = pa; // clear everything else
+    m_PageDirectory[undx].bits4m.present  = (perms ? 1 : 0);
+    m_PageDirectory[undx].bits4m.rw       = (perms & KMAP_W) ? 1 : 0;
+    m_PageDirectory[undx].bits4m.pcd      = (perms & KMAP_NC) ? 1 : 0;
+    m_PageDirectory[undx].bits4m.accessed = 1;
+    m_PageDirectory[undx].bits4m.dirty    = 1;
+    m_PageDirectory[undx].bits4m.ps       = 1;
+    
+    va += LARGE_PAGE_SIZE;
+    pa += LARGE_PAGE_SIZE;
+    size -= LARGE_PAGE_SIZE;
+    
+    continue;
+    
+smallPageMapping:
+    if (((va | pa) % OOMTK_PAGE_SIZE) || (size < OOMTK_PAGE_SIZE))
+    fatal ("Bad alignment or size in kmap.\n");
+    
+    uint32_t lndx = pteIndex(va);
+    
+    if (!m_PageDirectory[undx].bits4k.present || m_PageDirectory[undx].bits4k.ps)
+    {
+      // TODO: This needs to call heap_alloc_page_frame()
+      OPhysicalMemoryManagement * pmm = OPhysicalMemoryManagement::instance();
+      kpa_t pa = pmm->allocBytes(pmm->needPages, OOMTK_PAGE_SIZE, pmm->use_KMap, "Kernel page table");
+      PTE_t * pgtbl = (PTE_t *)map(pa);
+      
+      if (m_PageDirectory[undx].bits4k.ps)
+      {
+	uint32_t pt_base = m_PageDirectory[undx].bits4k.pt_base;
+	for (size_t i = 0; i < NPTE_PER_PAGE; i++)
+	{
+	  pgtbl[i].value = m_PageDirectory[undx].value; // copy all bits
+	  pgtbl[i].bits4k.page_base = pt_base + i;
+	}
+      } else
+      {
+	memset(pgtbl, 0, OOMTK_PAGE_SIZE);
+      }
+      
+      unmap((kva_t) pgtbl);
+      
+      // Setup a generic upper-level mapping entry for all kernel uses. Permissions will be
+      // determined at the lower level.
+      m_PageDirectory[undx].value = pa;
+      m_PageDirectory[undx].bits4k.present  = 1;
+      m_PageDirectory[undx].bits4k.rw       = 1;
+      m_PageDirectory[undx].bits4k.accessed = 1;
+      m_PageDirectory[undx].bits4k.ps       = 0;
+    }
+    
+    assert (m_PageDirectory[undx].bits4k.userSuper == 0 &&
+	m_PageDirectory[undx].bits4k.present == 1 &&
+	m_PageDirectory[undx].bits4k.rw      == 1 &&
+	m_PageDirectory[undx].bits4k.ps      == 0);
+    
+    kpa_t lowerTableAddr = frameToKpa(m_PageDirectory[undx].bits4k.pt_base);
+    
+    PTE_t * pgtbl = (PTE_t *) map(lowerTableAddr);
+    
+    pgtbl[lndx].bits4k.page_base  = kpaToFrame(pa);
+    pgtbl[lndx].bits4k.present    = (perms ? 1 : 0);
+    pgtbl[lndx].bits4k.rw         = (perms & KMAP_W) ? 1 : 0;
+    pgtbl[lndx].bits4k.pcd        = (perms & KMAP_NC) ? 1 : 0;
+    pgtbl[lndx].bits4k.accessed   = 1;
+    pgtbl[lndx].bits4k.dirty      = 1;
+    
+    unmap((kva_t) pgtbl);
+    
+    va += OOMTK_PAGE_SIZE;
+    pa += OOMTK_PAGE_SIZE;
+    size -= OOMTK_PAGE_SIZE;
+  }
 }

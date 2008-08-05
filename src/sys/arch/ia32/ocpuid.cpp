@@ -1,7 +1,7 @@
 /*
- *  Copyright (C) 2006-2007 by Filip Brcic <brcha@users.sourceforge.net>
+ *  Copyright (C) 2006-2008 by Filip Brcic <brcha@gna.org>
  *
- *  This file is part of OOMTK (http://launchpad.net/oomtk)
+ *  This file is part of OOMTK
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,41 +17,30 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "CPUID.h"
+#include "ocpuid.h"
 
-#include <stdio.h>
-#include <VgaConsole.h>
+#include <cstdio>
 #include <types.h>
 #include INC_ARCH(EFLAGS.h)
 #include <fatal.h>
-#include <string.h>
+#include <ansi.h>
+#include <cstring>
 
-/**
- * \brief Make only one instance of this class
- * \returns the instance
- */
-CPUID * CPUID::instance(bool printOut)
+#define DEBUG_CPUID DEBUG_ENABLE
+
+OCPUID * OCPUID::instance()
 {
-  static CPUID _instance = CPUID(printOut);
+  static OCPUID _instance = OCPUID();
 
   return &_instance;
 };
 
-/**
- * \brief Do the identification
- */
-void CPUID::identify()
+void OCPUID::identify()
 {
   if (_identified)
     return; // CPU has already been identified...
 
-  if (!is486())
-    fatal(ANSI_FG_RED "You need newer processor than 386 to run OOMTK\n");
-
-  if (!supportsCPUID())
-    fatal(ANSI_FG_RED "This CPU doesn't support CPUID instruction!!!\n");
-
-  cpuidRegisters regs;
+  cpuid_registers_t regs;
 
   // returns maximum eax number for calling the CPUID (= max function)
   maximumFunction = cpuid(0, regs);
@@ -134,7 +123,7 @@ void CPUID::identify()
     // Terminate the _cpuName string
     _cpuName[48] = '\0';
     // Print it on the console
-    printf("CPU0: %s\n", _cpuName);
+    DEBUG_CPUID printf("CPU0: %s\n", _cpuName);
   }
 
   // Check all the features and show results
@@ -179,94 +168,36 @@ void CPUID::identify()
         features[i].has = regs.edx & (1u << features[i].bit);
         break;
       default:
-        fatal(ANSI_FG_RED "ERROR in CPUID::identify(): features[%d].reg = %d\n",
+        fatal(ANSI_FG_RED "ERROR in OCPUID::identify(): features[%d].reg = %d\n",
               i, features[i].reg);
     }
 
-    if (features[i].has)
-    {
-      uint32_t len = strlen(features[i].name) + 1;
-      if (firstPass)
+    DEBUG_CPUID {
+      if (features[i].has)
       {
-        printf("CPU0: [ "); // 8 characters
-        firstPass = false;
-        currentLine = 11;
+	uint32_t len = strlen(features[i].name) + 1;
+	if (firstPass)
+	{
+	  printf("CPU0: [ "); // 8 characters
+	  firstPass = false;
+	  currentLine = 11;
+	}
+	if ((currentLine + len) >= 75) // must write new line
+	{
+	  printf("\n        "); // 8 spaces
+	  currentLine = 11;
+	}
+	printf("%s ", features[i].name);
+	currentLine += len;
       }
-      if ((currentLine + len) >= 75) // must write new line
-      {
-        printf("\n        "); // 8 spaces
-        currentLine = 11;
-      }
-      printf("%s ", features[i].name);
-      currentLine += len;
     }
+    printf("]\n");
   }
-  printf("]\n");
 
   _identified = true;
 };
 
-bool CPUID::is486()
-{
-  uint32_t i486;
-
-  GNU_ASM(
-      "   pushf                 \n" /* Push flags onto the stack    */
-      "   popl  %%eax           \n" /* Get the original flags       */
-      "   movl  %%eax, %%ecx    \n" /* Save the original flags      */
-      "   xorl  %[ac], %%eax    \n" /* Flip the AC bit in flags     */
-      "   pushl %%eax           \n" /* Put new flags on the stack   */
-      "   popf                  \n" /* Replace current flags        */
-      "   pushf                 \n" /* Get new flags                */
-      "   popl  %%eax           \n" /* and store them in eax        */
-      "   xorl  %%ecx, %%eax    \n" /* Compare new and old flags    */
-      "   jz    1f              \n" /* new=old => 386               */
-      "   movl  $1, %[i486]     \n" /* 486 = true                   */
-      "   jmp   2f              \n" /* Go to the end of function    */
-      "1: movl  $0, %[i486]     \n" /* 486 = false                  */
-      "2: pushl %%ecx           \n" /* Restore the old flags        */
-      "   popf                  \n"
-  : [i486] "=m" (i486)
-  : [ac] "i" (EFLAGS_AC)
-  : "memory", "eax", "ecx"
-         );
-
-  return (i486)?true:false;
-};
-
-bool CPUID::supportsCPUID()
-{
-  uint32_t cpuidSupported;
-
-  GNU_ASM(
-      "   pushf                 \n" /* Push the flags onto the stack  */
-      "   xorl  %[id], (%%esp)  \n" /* Set the ID bit                 */
-      "   movl  (%%esp), %%eax  \n" /* Save the flags with ID bit set */
-      "   popf                  \n"
-      "   pushf                 \n"
-      "   cmpl  (%%esp), %%eax  \n"
-      "   je    1f              \n"
-      "   movl  $0, %[cpuidok]  \n"
-      "   jmp   2f              \n"
-      "1: movl  $1, %[cpuidok]  \n"
-      "2: pushl %%eax           \n"
-      "   popf                  \n"
-      "   popl  %%eax           \n" /* I need the same number of push-pops */
-  : [cpuidok] "=m" (cpuidSupported)
-  : [id] "i" (EFLAGS_ID)
-  : "memory", "eax"
-         );
-
-  return (cpuidSupported)?true:false;
-};
-
-/**
- * \brief Calls the CPUID function
- * \param code cpuid code (-> eax)
- * \param regs returned cpuid registers
- * \returns contents of eax
- */
-inline uint32_t CPUID::cpuid(uint32_t code, cpuidRegisters & regs)
+uint32_t OCPUID::cpuid(uint32_t code, cpuid_registers_t & regs)
 {
   GNU_ASM(
       "   movl  %[code], %%eax    \n" /* Put the code where it belongs */
@@ -282,14 +213,9 @@ inline uint32_t CPUID::cpuid(uint32_t code, cpuidRegisters & regs)
   return regs.eax;
 };
 
-/**
- * \brief CPUID Constructor
- * \param printOut print the messages on screen or not
- */
-CPUID::CPUID(bool printOut)
+OCPUID::OCPUID()
 {
   // Construct local variables
-  _printOut = printOut;
   _identified = false;
 
   // Initialize the CPU features list
@@ -367,51 +293,12 @@ CPUID::CPUID(bool printOut)
   addFeature(TscInvariant, 0x80000007u, EDX, "TscInvariant", 8, AMD);
 };
 
-#include <stdarg.h>
-
-/**
- * \brief Printf replacement that checks _printOut flag
- * \param message the printf format of message
- * \param ... the remaining arguments to printf
- * \returns the same int that printf returns
- */
-int CPUID::printf(const char * message, ...)
-{
-  int n;
-  va_list args;
-
-  if (!_printOut)
-    return 0;
-
-  va_start(args, message);
-  n = vprintf(message, args);
-  va_end(args);
-
-  return n;
-}
-
-/**
- * \brief Extract the fields from the word
- * \param word input word
- * \param hi upper field limit
- * \param lo lower field limit
- * \returns word[hi:lo] bits
- */
-inline uint32_t CPUID::fields(uint32_t word, uint8_t hi, uint8_t lo)
+inline uint32_t OCPUID::fields(uint32_t word, uint8_t hi, uint8_t lo)
 {
   return (((2u << hi) - 1u) & word) >> lo;
 }
 
-/**
- * \brief Add the feature to the feature list
- * \param id id of the feature (hopefully less then sizeof(features) :) )
- * \param code the cpuid code that goes to eax
- * \param reg the register index (EAX, EBX, ECX or EDX)
- * \param name the name that should be printed on screen (sizeof(name) < 20)
- * \param bit the bit that defines the feature
- * \param vendor the bitfield of vendors that support this feature
- */
-void CPUID::addFeature(uint32_t id, uint32_t code, uint32_t reg, const char * name,
+void OCPUID::addFeature(uint32_t id, uint32_t code, uint32_t reg, const char * name,
                        uint32_t bit, uint32_t vendor)
 {
   features[id].code   = code;

@@ -62,9 +62,6 @@ extern "C" {
   extern uint32_t _bss_start[];
   extern uint32_t _bss_end[];
   extern uint32_t _end[];
-  
-  // temporary, for trying the kernel...
-  bool HavePSE;
 }
 
 OPhysicalMemoryManagement::Class mmapToClass(uint32_t multibootType)
@@ -307,6 +304,8 @@ void arch_init(void)
   protectMultibootModules();
   
   OCommandLine::instance()->processOptions();
+  
+  OCPU::probeCPUs();
   
   for (;;);
 }

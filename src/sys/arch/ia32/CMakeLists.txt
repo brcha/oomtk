@@ -30,6 +30,8 @@ set(arch_ia32_SOURCES
 	opaging-ia32.cpp
 	opaginglegacy.cpp
 	opagingpae.cpp
+	ocpuid.cpp
+	oacpi.cpp
 )
 
 set(oomtk_LIBRARIES
