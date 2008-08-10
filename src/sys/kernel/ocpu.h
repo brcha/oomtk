@@ -73,6 +73,11 @@ class OCPU
      */
     static size_t probeCPUs();
     
+    static inline size_t ncpu()
+    {
+      return m_ncpu;
+    }
+    
   protected:
     /**
      * @brief Mutex for locks held by current process on this CPU.

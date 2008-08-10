@@ -207,7 +207,7 @@ kva_t OPagingLegacy::map(kpa_t pa)
   uint32_t slot = ndx - 1;
   uint32_t entry = transmapPerCPUentry(slot);
   
-  m_TransientMappings[entry].value = pa;
+  m_TransientMappings[entry].value = (uint32_t)pa;
   m_TransientMappings[entry].bits4k.present = 1;
   m_TransientMappings[entry].bits4k.rw = 1;
   m_TransientMappings[entry].bits4k.accessed = 1;

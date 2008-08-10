@@ -297,7 +297,7 @@ void arch_init(void)
   protectKernelMemory();
   printf("PMM, ");
   
-  // Findout how many regions are currently available before protecting multiboot regions
+  // Find out how many regions are currently available before protecting multiboot regions
   // because they are going to be released afterwards...
   size_t totalPages = pmm->available(pmm->needPages, OOMTK_PAGE_SIZE, false);
   
@@ -306,6 +306,10 @@ void arch_init(void)
   OCommandLine::instance()->processOptions();
   
   OCPU::probeCPUs();
+  
+  printf("\n%d pages initially available\n", totalPages);
+  
+  size_t nReservedPages = (OCPU::ncpu() - 1) * KSTACK_NPAGES;
   
   for (;;);
 }

@@ -173,13 +173,6 @@ setup_legacy_map:
 	addl	$4, %esi
 	loop	1b
 
-	/* Adjust video adapter (0x000b8000) to be write-through */
-	movl	$8, %ecx
-	movl	$EXT(KernPageTable)-KVA+(0xb8*4), %esi
-1:	orl	$(PTE_PWT|PTE_PCD), (%esi)
-	addl	$4, %esi
-	loop	1b
-
 	movl	$EXT(KernPageDir)-KVA, %esi
 	movl	$EXT(KernPageTable)-KVA, %edx
 	orl	$(PTE_V|PTE_W|PTE_A|PTE_D), %edx
@@ -207,13 +200,6 @@ setup_pae_map:
 	movl	$0, 4(%esi)
 	addl	$8, %esi
 	addl	$0x1000, %edx
-	loop	1b
-
-	/* Video adapter is write-through */
-	movl	$8, %ecx
-	movl	$EXT(KernPageTable)-KVA+(0xb8*8), %esi
-1:	orl	$(PAE_PWT|PAE_PCD), (%esi)
-	addl	$8, %esi
 	loop	1b
 
 	movl	$EXT(KernPageDir)-KVA, %esi
@@ -256,10 +242,6 @@ enable_paging:
 	/* Setup %cr0 */
 	mov	%cr0, %edx
 	orl	$(CR0_PG|CR0_AM|CR0_WP|CR0_ET|CR0_TS|CR0_MP|CR0_PE), %edx
-#if	HAVE_CONSOLE
-	/* Preserve write-through mode */
-	orl	$(CR0_NW), %edx
-#endif
 	mov	%edx, %cr0
 
 #if 	HAVE_CONSOLE
