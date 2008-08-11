@@ -41,7 +41,7 @@ class OMutex
 {
   public:
     OMutex();
-    ~OMutex();
+    virtual ~OMutex();
     
     struct hold_info_t
     {
@@ -102,31 +102,31 @@ class OMutex
      * @brief Grab the mutex
      * @returns the hold_info_t structure, needed for mutex release
      */
-    hold_info_t grab();
+    virtual hold_info_t grab();
     
     /**
      * @brief Attempt to grab the mutex.
      * @param hi is filled with release info on success
      * @returns false on failure, true on success
      */
-    bool tryGrab(hold_info_t * hi);
+    virtual bool tryGrab(hold_info_t * hi);
     
     /**
      * @brief Release a held mutex
      * @param hi a hold_info_t returned by most recent grab() or tryGrab()
      */
-    void release(hold_info_t hi);
+    virtual void release(hold_info_t hi);
     
     /**
      * @brief Check if mutex is held by the inquiring CPU
      * @returns true if mutex is held by the inquiring CPU
      */
-    bool isHeld();
+    virtual bool isHeld();
     
     /**
      * @brief Release all process locks currently held by the process running on this CPU
      */
-    void releaseAllProcessLocks();
+    virtual void releaseAllProcessLocks();
     
   protected:
     /**
@@ -135,7 +135,7 @@ class OMutex
      * @param outValue value the lock should take upon release (if successful)
      * @returns true on success, false on failure
      */
-    bool doTryLock(word_t currentValue, word_t * outValue);
+    virtual bool doTryLock(word_t currentValue, word_t * outValue);
   protected:
     OAtomic m_atomic;
 };

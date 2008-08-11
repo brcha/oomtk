@@ -23,8 +23,9 @@
  */
 
 #include <OOMTK/OSpinLock>
+#include <OOMTK/OProcess>
 
-class OProcess;
+class OInterruptVector;
 
 /**
  * @brief Stall queue class
@@ -62,6 +63,7 @@ class OStallQueue
     OSpinLock     m_lock;
 
     friend class OProcess;
+    friend class OInterruptVector;
 };
 
 #endif /* __OOMTKSYS_OSTALLQUEUE_H__ */

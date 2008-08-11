@@ -21,8 +21,8 @@
 #include <cstdio>
 #include <cassert>
 
+#include <fatal.h>
 #include <ansi.h>
-
 #include <multiboot.h>
 
 #include <ia32/pagesize.h>
@@ -311,5 +311,5 @@ void arch_init(void)
   
   size_t nReservedPages = (OCPU::ncpu() - 1) * KSTACK_NPAGES;
   
-  for (;;);
+  fatal ("Kernel not finished yet!\n");
 }

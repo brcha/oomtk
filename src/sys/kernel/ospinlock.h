@@ -34,7 +34,7 @@ class OSpinLock : virtual public OMutex
 {
   public:
     OSpinLock();
-    ~OSpinLock();
+    virtual ~OSpinLock();
     
     /**
      * @brief Grap a spinlock unconditionally
@@ -44,7 +44,7 @@ class OSpinLock : virtual public OMutex
      * in critical sections, when you know that no yield is possible Spinlocks may
      * not be recursively acquired.
      */
-    hold_info_t grab();
+    virtual hold_info_t grab();
 };
 
 #endif /* __OOMTKSYS_OSPINLOCK_H__ */

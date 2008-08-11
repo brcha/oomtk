@@ -35,6 +35,8 @@ set(kernel_SOURCES
   ospinlock.cpp
   opaging.cpp
   ocommandline.cpp
+  ointerruptvector.cpp
+  ${OOMTK_ARCH}/ointerruptvector-${OOMTK_ARCH}.cpp
   )
 
 add_library(Kernel STATIC ${kernel_SOURCES})
