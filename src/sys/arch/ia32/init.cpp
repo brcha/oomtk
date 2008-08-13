@@ -30,12 +30,13 @@
 #include <OOMTK/OVgaConsole>
 #include <OOMTK/OCPU>
 #include <OOMTK/Version>
+#include <OOMTK/OPaging>
 #include <OOMTK/OPhysicalMemoryManagement>
 #include <OOMTK/OCommandLine>
 
 #include "ogdt.h"
 #include "otss.h"
-#include "opaging.h"
+#include "opaging-ia32.h"
 #include "opagingpae.h"
 #include "opaginglegacy.h"
 

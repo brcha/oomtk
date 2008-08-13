@@ -120,11 +120,6 @@ include_directories( ${sys_SOURCE_DIR}/libs/libc++/include )
 # supc++
 include_directories( ${sys_SOURCE_DIR}/libs/supc++/include )
 
-# Kernel headers
-include_directories( ${sys_SOURCE_DIR}/kernel 
-  ${sys_BINARY_DIR}/kernel
-  )
-
 add_subdirectory(arch)    # This directory contains architecture dependant files
 add_subdirectory(kernel)  # This directory contains mostly architecture independant kernel classes
 add_subdirectory(libs)    # This directory contains 3rd party libraries

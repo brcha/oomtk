@@ -26,7 +26,22 @@
 #include <types.h>
 #include <cstddef>
 
-class OAgeable;
+class OAgeList;
+
+/**
+ * @brief Everything in the age list should inherit ageable class
+ */
+class OAgeable : public OLinkedList
+{
+  public:
+    OAgeable();
+    ~OAgeable();
+    
+  protected:
+    OAgeList    * m_list;
+    
+    friend class  OAgeList;
+};
 
 /**
  * @brief Age list class
@@ -110,21 +125,6 @@ class OAgeList
     bool        m_needsFill;  ///< @brief count fell below low water but has not reached high water yet
     size_t      m_lowWater;   ///< @brief Low water: if cound is below this, list should be filled to high water
     size_t      m_highWater;  ///< @brief High water
-};
-
-/**
- * @brief Everything in the age list should inherit ageable class
- */
-class OAgeable : public OLinkedList
-{
-  public:
-    OAgeable();
-    ~OAgeable();
-    
-  protected:
-    OAgeList    * m_list;
-    
-    friend class  OAgeList;
 };
 
 #endif

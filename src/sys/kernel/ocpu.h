@@ -25,9 +25,9 @@
 #include <types.h>
 #include <config.h>
 #include <cstddef>
+#include <macros.h>
 
 #include <OOMTK/OAtomic>
-#include <OOMTK/OProcess>
 
 class OMutex;
 class OPaging;
@@ -41,6 +41,7 @@ class OACPI;
 
 // class OReadyQueue;
 // class OStallQueue;
+class OProcess;
 
 /**
  * @brief Every CPU has it's own cpu class.
@@ -175,6 +176,8 @@ class OCPU
 #endif
 //     friend class OReadyQueue;
 //     friend class OStallQueue;
+    
+    OFFSET_FRIENDLY;
 };
 
 #endif /* __OOMTKSYS_OCPU_H__ */
