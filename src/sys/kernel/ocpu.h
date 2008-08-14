@@ -42,6 +42,8 @@ class OACPI;
 // class OReadyQueue;
 // class OStallQueue;
 class OProcess;
+class OInterruptVector;
+class OVectorHandlers;
 
 /**
  * @brief Every CPU has it's own cpu class.
@@ -78,6 +80,12 @@ class OCPU
     {
       return m_ncpu;
     }
+    
+    enum Flags
+    {
+      flag_WasPreempted       = 0x1,    ///< @brief Process executing on current CPU has been preempted
+      flag_NeedWakeup         = 0x2,    ///< @brief Wakeup processing is required on current CPU
+    };
     
   protected:
     /**
@@ -151,7 +159,7 @@ class OCPU
     /**
      * @brief Linked list of interrupt vector entries that need to be awaken.
      */
-    // Something * m_wakeVectors;
+    OInterruptVector * m_wakeVectors;
     
     /**
      * @brief The number of CPUs
@@ -176,6 +184,9 @@ class OCPU
 #endif
 //     friend class OReadyQueue;
 //     friend class OStallQueue;
+    
+    friend class OInterruptVector;
+    friend class OVectorHandlers;
     
     OFFSET_FRIENDLY;
 };

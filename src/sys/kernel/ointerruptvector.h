@@ -34,6 +34,7 @@
 #include <OOMTK/OSpinLock>
 
 class OProcess;
+class OVectorHandlers;
 
 /**
  * @brief Interrupt vector class
@@ -48,7 +49,7 @@ class OInterruptVector
      * @note This is the closest thing to a constructor for this class, but it doesn't construct one
      * instance, instead it constructs the whole array of NUM_VECTORS size.
      */
-    void initialize();
+    static void initialize();
 
   protected:
     /// @brief Constructor is not meant to be used by mortals
@@ -179,6 +180,26 @@ class OInterruptVector
      * @warning This method has architecture dependant implementation
      */
     static OInterruptVector * mapInterrupt (irq_t irq);
+    
+    /**
+     * @brief Set hardware interrupt vector entry
+     * @param entry interrupt vector entry
+     * @param handlerPtr interrupt handler method pointer
+     * @param allowUser if user-mode interrupts are allowed
+     * 
+     * @warning This method has architecture dependant implementation
+     */
+    static void setHardwareVector(int entry, void (*handlerPtr)(void), bool allowUser);
+    
+    /**
+     * @brief Global interrupt/trap/exception handler
+     * @param inProc Process in which the interrupt occured (or NULL if in kernel)
+     * @param saveArea Register set saved on context switch
+     * 
+     * @note This function will not always return. It returns if the interrupt was in kernel
+     * @note This function is called from arch/ia32/interrupts.S
+     */
+    static void OnTrapOrInterrupt(OProcess * inProc, fixed_regs_t * saveArea) asm ("irq_OnTrapOrInterrupt");
 
   protected:
     handler_t       m_handler;    ///< @brief Handler function
@@ -199,6 +220,10 @@ class OInterruptVector
     static OInterruptVector   m_vectorMap[NUM_VECTOR];
     /// @brief Reverse map from IRQs to vector entries
     static OInterruptVector * m_irqVector[NUM_IRQ];
+    /// @brief Number of interrupt sources
+    static irq_t              m_numGlobalIRQ;
+    
+    friend class OVectorHandlers;
 };
 
 #endif /* __OOMTKSYS_OINTERRUPTVECTOR_H__ */

@@ -31,7 +31,7 @@
 class OReadyQueue : public OStallQueue
 {
   public:
-    OReadyQueue * mainRQ();
+    static OReadyQueue * mainRQ();
     
   protected:
     OReadyQueue();

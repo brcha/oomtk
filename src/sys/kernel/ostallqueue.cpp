@@ -65,7 +65,7 @@ void OStallQueue::wakeAll()
     while (!m_head.isEmpty())
     {
       OProcess * p = m_head.next();
-      p->onQ = rq;
+      p->m_onQ = rq;
       rq->m_head.insertBefore(p);
     }
     rq->m_lock.release(rqhi);
@@ -78,7 +78,7 @@ void OStallQueue::enqueue()
   OProcess * p = OCPU::current()->m_currentProcess;
   
   OSpinLock::hold_info_t hi = m_lock.grab();
-  p->onQ = this;
+  p->m_onQ = this;
   m_head.insertAfter(p);
   m_lock.release(hi);
 }

@@ -27,7 +27,6 @@
 #include <OOMTK/OAtomicPtr>
 #include <OOMTK/OCPU>
 #include <OOMTK/OMapping>
-#include <OOMTK/OStallQueue>
 
 #include <types.h>
 #include <cstddef>
@@ -36,7 +35,9 @@
 
 #include INC_ARCH(registers.h)
 
+class OStallQueue;
 class OReadyQueue;
+class OVectorHandlers;
 
 /**
  * @brief The process class
@@ -105,7 +106,7 @@ class OProcess : public OLinkedList
     OMapping  *   m_mapping;
 
     /// @brief Stall queue for all processes waiting to send to this one
-    OStallQueue   m_rcvWaitQ;
+//     OStallQueue   m_rcvWaitQ;
 
     /// @brief Non-zero when we aree in an extended IPC transaction with a peer
     OProcess    * m_ipcPeer;
@@ -117,6 +118,7 @@ class OProcess : public OLinkedList
 
     friend class OReadyQueue;
     friend class OStallQueue;
+    friend class OVectorHandlers;
     
     OFFSET_FRIENDLY;
 };

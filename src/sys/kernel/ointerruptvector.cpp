@@ -21,6 +21,7 @@
 // Initialize the static members
 OInterruptVector   OInterruptVector::m_vectorMap[NUM_VECTOR];
 OInterruptVector * OInterruptVector::m_irqVector[NUM_IRQ];
+irq_t              OInterruptVector::m_numGlobalIRQ;
 
 OInterruptVector::OInterruptVector()
 {

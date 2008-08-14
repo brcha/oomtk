@@ -23,10 +23,9 @@
  */
 
 #include <OOMTK/OSpinLock>
-#include <OOMTK/OLinkedList>
+#include <OOMTK/OProcess>
 
 class OInterruptVector;
-class OProcess;
 
 /**
  * @brief Stall queue class
@@ -60,7 +59,7 @@ class OStallQueue
     void sleep();
     
   protected:
-    OLinkedList   m_head;
+    OProcess      m_head;
     OSpinLock     m_lock;
 
     friend class OProcess;

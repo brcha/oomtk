@@ -37,6 +37,9 @@ set(kernel_SOURCES
   ocommandline.cpp
   ointerruptvector.cpp
   ${OOMTK_ARCH}/ointerruptvector-${OOMTK_ARCH}.cpp
+  oreadyqueue.cpp
+  ostallqueue.cpp
+  olinkedlist.cpp
   )
 
 add_library(Kernel STATIC ${kernel_SOURCES})

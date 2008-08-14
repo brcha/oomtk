@@ -48,7 +48,7 @@ void OReadyQueue::add(OProcess * process, bool atFront)
 
 void OReadyQueue::remove(OProcess * process)
 {
-  assert (process->onQ == this);
+  assert (process->m_onQ == this);
   
   OSpinLock::hold_info_t hi = m_lock.grab();
   assert (!process->isEmpty()); // check if the process link is empty
